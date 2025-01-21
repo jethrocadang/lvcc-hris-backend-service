@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Hash;
 class OauthController extends Controller
 {
     public function googleLogin() {
-        return Socialite::driver('google')->redirect();
+        return Socialite::driver('google')->stateless()->redirect();
     }
 
     public function googleAuthentication(Request $request) {
@@ -39,7 +39,7 @@ class OauthController extends Controller
             ]);
 
             if ($newUser){
-                Auth::login($newUser);
+                Auth::login(user: $newUser);
                 return response()->json([
                     'new' => "true",
                     'name' => $googleUser->name,
@@ -50,7 +50,7 @@ class OauthController extends Controller
                 ]);
                 }
               }
-        }catch(Exception){
+        }catch(\Exception $e){
             dd($e);
         }
         
