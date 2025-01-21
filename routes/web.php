@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\OauthController;
+use App\Http\Controllers\Api\V1\OauthController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
