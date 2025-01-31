@@ -32,7 +32,7 @@ class OauthController extends Controller
                 ->post('https://accounts.google.com/o/oauth2/token', [
                             'client_id' => config('services.google.client_id'),
                             'client_secret' => config('services.google.client_secret'),
-                            'redirect_uri' => 'http://localhost:3000',
+                            'redirect_uri' => config('services.google.frontend_redirect'),
                             'grant_type' => 'authorization_code',
                             'code' => $request->code,
                         ]);
@@ -42,7 +42,7 @@ class OauthController extends Controller
                 return response()->json([
                     'error' => 'Failed to exchange authorization code',
                     'code' => $request->code,
-                    'google_error' => $response->json(),  // Add detailed Google error message
+                    'google_error' => $response->json(),
                 ], 400);
             }
 
@@ -105,11 +105,11 @@ class OauthController extends Controller
                 return response()->json(['error' => 'Refresh token not found'], 401);
             }
 
-            // Decode the refresh token
-            $decoded = $this->decodeJwtToken($refreshToken);
+            // Decode the refresh token (ensure it's valid & unexpired)
+            $decoded = $this->decodeJwtToken($refreshToken, 'refresh');
 
-            if (!$decoded || $decoded->type !== 'refresh') {
-                return response()->json(['error' => 'Invalid refresh token'], 401);
+            if (!$decoded || $decoded->type !== 'refresh' || $decoded->exp < time()) {
+                return response()->json(['error' => 'Invalid or expired refresh token'], 401);
             }
 
             // Find the user
@@ -122,9 +122,23 @@ class OauthController extends Controller
             // Generate a new access token
             $accessToken = $this->generateJwtToken($user, 'access');
 
+            // (Optional) Rotate the refresh token
+            $newRefreshToken = $this->generateJwtToken($user, 'refresh');
+            $newRefreshTokenCookie = cookie(
+                'refresh_token',
+                $newRefreshToken,
+                7 * 24 * 60,
+                '/',
+                null,
+                config('app.env') === 'production',
+                true,
+                false,
+                'lax'
+            );
+
             return response()->json([
                 'access_token' => $accessToken,
-            ]);
+            ])->withCookie($newRefreshTokenCookie);
         } catch (\Exception $e) {
             Log::error('Token refresh failed: ' . $e->getMessage());
             return response()->json(['error' => 'Failed to refresh token', 'message' => $e->getMessage()], 500);
@@ -134,24 +148,25 @@ class OauthController extends Controller
     // Generate JWT token
     private function generateJwtToken($user, $type)
     {
-        $key = config('jwt.secret'); // Secret key for signing the token
+        $key = $type === 'access' ? config('jwt.access_secret') : config('jwt.refresh_secret');
+
         $payload = [
-            'iss' => config('app.url'), // Issuer
-            'aud' => config('app.url'), // Audience
-            'iat' => time(), // Issued at
-            'exp' => $type === 'access' ? time() + 3600 : time() + 86400 * 7, // Expiration time
-            'user_id' => $user->id, // User ID
-            'type' => $type, // Token type (access or refresh)
+            'iss' => config('app.url'),
+            'aud' => config('app.url'),
+            'iat' => time(),
+            'exp' => $type === 'access' ? time() + 3600 : time() + 86400 * 7, // 1 hour for access, 7 days for refresh
+            'user_id' => $user->id,
+            'type' => $type,
         ];
 
         return JWT::encode($payload, $key, 'HS256');
     }
 
     // Decode JWT token
-    private function decodeJwtToken($token)
+    private function decodeJwtToken($token, $type)
     {
         try {
-            $key = config('jwt.secret'); // Secret key for verifying the token
+            $key = $type === 'access' ? config('jwt.access_secret') : config('jwt.refresh_secret'); // Secret key for verifying the token
             return JWT::decode($token, new Key($key, 'HS256'));
         } catch (\Exception $e) {
             Log::error('Token decode failed: ' . $e->getMessage());

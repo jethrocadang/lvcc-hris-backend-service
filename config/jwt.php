@@ -9,7 +9,8 @@ return [
     | This key is used to sign the tokens. Make sure to set this in your .env file.
     |
     */
-    'secret' => env('JWT_SECRET', 'fallback_secret_if_env_missing'),
+    'refresh_secret' => env('JWT_REFRESH_SECRET', 'fallback_secret_if_env_missing'),
+    'access_secret' => env('JWT_ACCESS_SECRET', 'fallback_secret_if_env_missing'),
 
     /*
     |--------------------------------------------------------------------------
