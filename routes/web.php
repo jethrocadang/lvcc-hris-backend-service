@@ -10,7 +10,7 @@ Route::get('/', function () {
 
 Route::controller(OauthController::class)->group( function(){
     Route::get('auth/google', 'googleLogin')->name('auth.google');
-    Route::get('auth/google-callback', 'googleAuthentication')->name('auth.google-callback');
+    Route::post('auth/google-callback', 'googleAuthentication')->name('auth.google-callback');
 });
 
 Route::get('/dashboard', function () {
