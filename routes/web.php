@@ -1,14 +1,14 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Api\V1\OauthController;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-Route::controller(OauthController::class)->group( function(){
+Route::controller(OauthController::class)->group(function () {
     Route::get('auth/google', 'googleLogin')->name('auth.google');
     Route::post('auth/google-callback', 'googleAuthentication')->name('auth.google-callback');
 });

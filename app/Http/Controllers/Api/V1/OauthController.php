@@ -4,13 +4,12 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use Illuminate\Http\Request;
-use Laravel\Socialite\Facades\Socialite;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
-
+use Illuminate\Support\Facades\Log;
+use Laravel\Socialite\Facades\Socialite;
 
 class OauthController extends Controller
 {
@@ -19,7 +18,6 @@ class OauthController extends Controller
     {
         return response()->json(['message' => 'working v1']);
     }
-
 
     // Handle Google OAuth callback
     public function googleAuthentication(Request $request)
@@ -30,15 +28,14 @@ class OauthController extends Controller
             ]);
 
             // Exchange authorization code for access token
-            $response = Http::withHeaders([
-                'Content-Type' => 'application/json',
-            ])->post('https://accounts.google.com/o/oauth2/token', [
-                        'client_id' => config('services.google.client_id'),
-                        'client_secret' => config('services.google.client_secret'),
-                        'redirect_uri' => 'http://localhost:3000',
-                        'grant_type' => 'authorization_code',
-                        'code' => $request->code,
-                    ]);
+            $response = Http::withHeaders(['Content-Type' => 'application/json', ])
+                ->post('https://accounts.google.com/o/oauth2/token', [
+                            'client_id' => config('services.google.client_id'),
+                            'client_secret' => config('services.google.client_secret'),
+                            'redirect_uri' => 'http://localhost:3000',
+                            'grant_type' => 'authorization_code',
+                            'code' => $request->code,
+                        ]);
 
             if (!$response->successful()) {
                 Log::error('Google OAuth Error:', $response->json());
@@ -96,7 +93,6 @@ class OauthController extends Controller
             return response()->json(['error' => 'Failed to authenticate', 'message' => $e->getMessage()], 500);
         }
     }
-
 
     // Refresh JWT token
     public function refreshToken(Request $request)
