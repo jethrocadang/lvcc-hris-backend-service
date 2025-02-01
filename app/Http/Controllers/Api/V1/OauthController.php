@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Services\JwtService;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 use Illuminate\Http\Request;
@@ -66,9 +67,12 @@ class OauthController extends Controller
                 ]);
             }
 
+            if ($user->wasRecentlyCreated) {
+                $user->assignRole('user');
+            }
             // Generate JWT tokens
-            $accessToken = $this->generateJwtToken($user, 'access');
-            $refreshToken = $this->generateJwtToken($user, 'refresh');
+            $accessToken = JwtService::generateJwtToken($user, 'access');
+            $refreshToken = JwtService::generateJwtToken($user, 'refresh');
 
             // Create an HTTP-only cookie for the refresh token
             $refreshTokenCookie = cookie(
@@ -106,7 +110,7 @@ class OauthController extends Controller
             }
 
             // Decode the refresh token (ensure it's valid & unexpired)
-            $decoded = $this->decodeJwtToken($refreshToken, 'refresh');
+            $decoded = JwtService::decodeJwtToken($refreshToken);
 
             if (!$decoded || $decoded->type !== 'refresh' || $decoded->exp < time()) {
                 return response()->json(['error' => 'Invalid or expired refresh token'], 401);
@@ -120,10 +124,10 @@ class OauthController extends Controller
             }
 
             // Generate a new access token
-            $accessToken = $this->generateJwtToken($user, 'access');
+            $accessToken = JwtService::generateJwtToken($user, 'access');
 
-            // (Optional) Rotate the refresh token
-            $newRefreshToken = $this->generateJwtToken($user, 'refresh');
+            // Rotate the refresh token
+            $newRefreshToken = JwtService::generateJwtToken($user, 'refresh');
             $newRefreshTokenCookie = cookie(
                 'refresh_token',
                 $newRefreshToken,
@@ -142,35 +146,6 @@ class OauthController extends Controller
         } catch (\Exception $e) {
             Log::error('Token refresh failed: ' . $e->getMessage());
             return response()->json(['error' => 'Failed to refresh token', 'message' => $e->getMessage()], 500);
-        }
-    }
-
-    // Generate JWT token
-    private function generateJwtToken($user, $type)
-    {
-        $key = $type === 'access' ? config('jwt.access_secret') : config('jwt.refresh_secret');
-
-        $payload = [
-            'iss' => config('app.url'),
-            'aud' => config('app.url'),
-            'iat' => time(),
-            'exp' => $type === 'access' ? time() + 3600 : time() + 86400 * 7, // 1 hour for access, 7 days for refresh
-            'user_id' => $user->id,
-            'type' => $type,
-        ];
-
-        return JWT::encode($payload, $key, 'HS256');
-    }
-
-    // Decode JWT token
-    private function decodeJwtToken($token, $type)
-    {
-        try {
-            $key = $type === 'access' ? config('jwt.access_secret') : config('jwt.refresh_secret'); // Secret key for verifying the token
-            return JWT::decode($token, new Key($key, 'HS256'));
-        } catch (\Exception $e) {
-            Log::error('Token decode failed: ' . $e->getMessage());
-            return null;
         }
     }
 }
