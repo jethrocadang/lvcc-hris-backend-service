@@ -2,42 +2,45 @@
 
 namespace App\Services;
 
-use Firebase\JWT\JWT;
-use Firebase\JWT\Key;
+use Tymon\JWTAuth\Facades\JWTAuth;
+use Tymon\JWTAuth\Token;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
 
 class JwtService
 {
-    public static function generateJwtToken($user, $type)
+    public static function generateJwtToken($user, $type = 'access')
     {
-        $key = $type === 'access' ? config('jwt.access_secret') : config('jwt.refresh_secret');
-        $payload = [
-            'iss' => config('app.url'),
-            'aud' => config('app.url'),
-            'iat' => time(),
-            'exp' => $type === 'access' ? time() + 3600 : time() + (86400 * 7),
+        $ttl = $type === 'access' ? config('jwt.ttl') : config('jwt.refresh_ttl');
+        $secret = $type === 'access' ? config('jwt.access_secret') : config('jwt.refresh_secret');
+
+        $customClaims = [
             'user_id' => $user->id,
-            'role' => $user->id,
+            'role' => $user->getRoleNames(),
             'type' => $type,
         ];
 
-        return JWT::encode($payload, $key, 'HS256');
+        // Temporarily override the JWT secret & TTL
+        Config::set('jwt.secret', $secret);
+        Config::set('jwt.ttl', $ttl);
+
+        // Generate JWT token
+        return JWTAuth::claims($customClaims)->fromUser($user);
     }
 
-    public static function decodeJwtToken($token)
+    public static function decodeJwtToken($token, $type = 'access')
     {
         try {
-            $decoded = JWT::decode($token, new Key(config('jwt.access_secret'), 'HS256'));
-            return $decoded;
-        } catch (\Exception $e1) {
-            Log::warning('JWT decoding failed with access secret: ' . $e1->getMessage());
+            $secret = $type === 'access' ? config('jwt.access_secret') : config('jwt.refresh_secret');
+            Config::set('jwt.secret', $secret);
 
-            try {
-                return JWT::decode($token, new Key(config('jwt.refresh_secret'), 'HS256'));
-            } catch (\Exception $e2) {
-                Log::error('JWT decoding failed with both secrets: ' . $e2->getMessage());
-                return null;
-            }
+            return JWTAuth::setToken(new Token($token))->getPayload();
+        } catch (\Exception $e) {
+            Log::error('JWT decoding failed: ' . $e->getMessage());
+            return null;
         }
     }
 }
+
+
+

@@ -5,12 +5,11 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Services\JwtService;
-use Firebase\JWT\JWT;
-use Firebase\JWT\Key;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Laravel\Socialite\Facades\Socialite;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class OauthController extends Controller
 {
@@ -71,8 +70,8 @@ class OauthController extends Controller
                 $user->assignRole('user');
             }
             // Generate JWT tokens
-            $accessToken = JwtService::generateJwtToken($user, 'access');
-            $refreshToken = JwtService::generateJwtToken($user, 'refresh');
+            $accessToken = JWTAuth::fromUser($user);
+            $refreshToken = JWTAuth::claims(['type' => 'refresh'])->fromUser($user);
 
             // Create an HTTP-only cookie for the refresh token
             $refreshTokenCookie = cookie(

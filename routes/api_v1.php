@@ -30,3 +30,7 @@ Route::controller(OauthController::class)->group(function () {
  *  For protected routes, you need to group them inside JwtMiddleware and RoleMiddleware
  * ==============================
  */
+
+ Route::middleware(JwtMiddleware::class)->get('jwt', function () {
+    return response()->json(['message' => 'Authenticated user']);
+});
