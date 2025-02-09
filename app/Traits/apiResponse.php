@@ -4,7 +4,6 @@ namespace App\Traits;
 
 use Exception;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Log;
 
 trait ApiResponse
@@ -14,8 +13,7 @@ trait ApiResponse
         return response()->json([
             'success' => true,
             'message' => $message,
-            'data' => $data instanceof JsonResource ? $data->resolve() : $data,
-        ], $status);
+            ...($data ? ['data' => $data] : [])], $status);
     }
 
     protected function errorResponse(string $message, array $errors = [], int $status = 400, ?Exception $exception = null): JsonResponse
