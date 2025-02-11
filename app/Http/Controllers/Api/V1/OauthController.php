@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Laravel\Socialite\Facades\Socialite;
 use Tymon\JWTAuth\Facades\JWTAuth;
+use App\Models\ActivityLog;
 
 class OauthController extends Controller
 {
@@ -64,7 +65,19 @@ class OauthController extends Controller
                     'avatar_url' => $googleUser->avatar,
                     'email_verified_at' => now(),
                 ]);
-            }
+    
+                // Log new user creation
+                ActivityLog::create([
+                    'user_id' => $user->id,
+                    'logged_in_at' => now(),
+                ]);
+                } else {
+                    // Log existing user login
+                    ActivityLog::create([
+                        'user_id' => $user->id,
+                        'logged_in_at' => now(),
+                    ]);
+                }
 
             if ($user->wasRecentlyCreated) {
                 $user->assignRole('user');
