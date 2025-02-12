@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\V1\OauthController;
+use App\Http\Controllers\Api\V1\JobPostingController;
 use App\Http\Middleware\JwtMiddleware;
 use Illuminate\Support\Facades\Route;
 
@@ -33,4 +34,16 @@ Route::controller(OauthController::class)->group(function () {
 
  Route::middleware(JwtMiddleware::class)->get('jwt', function () {
     return response()->json(['message' => 'Authenticated user']);
+});
+
+/**
+ * ==============================
+ *  Job Post CRUD Routes
+ * ==============================
+ */
+Route::controller(JobPostingController::class)->group(function () {
+    Route::post('/create/job-post', 'createJobPost');
+    Route::get('/get/job-post', 'getJobPost');
+    Route::put('/update/job-post/{id}', 'updateJobPost');
+    Route::delete('/delete/job-post/{id}', 'deleteJobPost');
 });

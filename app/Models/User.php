@@ -65,4 +65,10 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->hasMany(ActivityLog::class);
     }
+
+
+    public function jobPostings(): HasMany
+    {
+        return $this->hasMany(JobPosting::class);
+    }
 }
