@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\V1\OauthController;
 use App\Http\Controllers\Api\V1\JobPostingController;
+use App\Http\Controllers\Api\V1\ActivityLogController;
 use App\Http\Middleware\JwtMiddleware;
 use Illuminate\Support\Facades\Route;
 
@@ -31,10 +32,16 @@ Route::controller(OauthController::class)->group(function () {
  *  For protected routes, you need to group them inside JwtMiddleware and RoleMiddleware
  * ==============================
  */
-
- Route::middleware(JwtMiddleware::class)->get('jwt', function () {
+Route::middleware(JwtMiddleware::class)->get('jwt', function () {
     return response()->json(['message' => 'Authenticated user']);
 });
+
+/**
+ * ==============================
+ *  Activity Log Routes
+ * ==============================
+ */
+Route::get('/get/activity-logs', [ActivityLogController::class, 'getActivityLogs']);
 
 /**
  * ==============================
