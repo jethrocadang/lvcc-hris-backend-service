@@ -11,9 +11,5 @@ class Position extends Model
 
     protected $fillable = ['position_title',
                            'description'];
-}
 
-    // public function department_position(): BelongsTo
-    // {
-    //     return $this->belongsTo(DepartmentPosition::class);
-    // }
+}
