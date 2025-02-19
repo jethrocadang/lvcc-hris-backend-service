@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\V1\OauthController;
+use App\Http\Controllers\Api\V1\PasswordController;
 use App\Http\Controllers\Api\V1\JobPostingController;
 use App\Http\Controllers\Api\V1\ActivityLogController;
 use App\Http\Middleware\JwtMiddleware;
@@ -25,6 +26,7 @@ Route::get('test', function () {
 Route::controller(OauthController::class)->group(function () {
     Route::post('auth/google-callback', 'googleAuthentication');
     Route::get('auth/test', [OauthController::class, 'test']);
+    Route::post('auth/login', 'login');
 });
 
 /**
@@ -53,4 +55,14 @@ Route::controller(JobPostingController::class)->group(function () {
     Route::get('/get/job-post', 'getJobPost');
     Route::put('/update/job-post/{id}', 'updateJobPost');
     Route::delete('/delete/job-post/{id}', 'deleteJobPost');
+});
+
+/**
+ * ==============================
+ *  Setting Password Routes
+ * ==============================
+ */
+Route::controller(PasswordController::class)->group(function () {
+    Route::post('/create/password' , 'createPassword');
+    Route::post('/update/password' , 'updatePassword');
 });
