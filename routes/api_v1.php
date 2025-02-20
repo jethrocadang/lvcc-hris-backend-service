@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\V1\JobPostingController;
 use App\Http\Controllers\Api\V1\ActivityLogController;
 use App\Http\Controllers\Api\V1\DepartmentController;
 use App\Http\Controllers\Api\V1\PositionController;
+use App\Http\Controllers\Api\V1\DeptPosController;
 use App\Http\Middleware\JwtMiddleware;
 use Illuminate\Support\Facades\Route;
 
@@ -86,4 +87,11 @@ Route::controller(PositionController::class)->group(function () {
     Route::get('/get/positions', 'getPositions');
     Route::put('/update/position/{id}', 'updatePosition');
     Route::delete('/delete/position/{id}', 'deletePosition');
+});
+
+Route::controller(DeptPosController::class)->group(function () {
+    Route::post('/create/department-position', 'createDeptPos');
+    Route::get('/get/department-positions', 'getDeptPos');
+    Route::put('/update/department-position/{id}', 'updateDeptPos');
+    Route::delete('/delete/department-position/{id}', 'deleteDeptPos');
 });
