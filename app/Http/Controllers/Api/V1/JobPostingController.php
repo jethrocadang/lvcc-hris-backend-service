@@ -15,7 +15,6 @@ class JobPostingController extends Controller
     {
         //create job post
         $jobPost = JobPost::create($request->validated());
-
         //return response with job post data
         return response()->json([
             'message' => 'Job posting created successfully!',
@@ -34,10 +33,8 @@ class JobPostingController extends Controller
     {
         // Find job post by id
         $jobPost = JobPost::findOrFail($id);
-
         // Update the chosen job post
         $jobPost->update($request->validated());
-
         return response()->json([
             'message' => 'Job posting updated successfully!',
             'job' => new JobPostResource($jobPost)
@@ -49,7 +46,6 @@ class JobPostingController extends Controller
         //delete specific job post
         $jobPost = JobPost::findOrFail($id);
         $jobPost->delete();
-
         return response()->json(['message' => 'Job posting deleted successfully!'], 200);
     }
 }
