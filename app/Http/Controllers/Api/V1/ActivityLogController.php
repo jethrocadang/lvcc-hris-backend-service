@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Http\Controllers;
-use App\Models\ActivityLog;
+namespace App\Http\Controllers\Api\V1;
 
+use App\Models\ActivityLog;
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 class ActivityLogController extends Controller
