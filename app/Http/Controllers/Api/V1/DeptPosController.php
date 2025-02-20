@@ -13,6 +13,8 @@ class DeptPosController extends Controller
     public function createDeptPos(DeptPosRequest $request){
 
         $deptPos = DepartmentPosition::create($request->validated());
+        
+        $deptPos->load(['department', 'position']);
 
         return response()->json([
             'message' => 'Department Position created successfully!',
@@ -22,7 +24,8 @@ class DeptPosController extends Controller
 
     public function getDeptPos(){
 
-        $deptPos = DepartmentPosition::all();
+        $deptPos = DepartmentPosition::with(['department', 'position'])->get();
+
         return response()->json(['department_positions' => DeptPosResource::collection($deptPos)], 200);
     }
 
@@ -30,6 +33,9 @@ class DeptPosController extends Controller
 
         //find department position by id
         $deptPos = DepartmentPosition::findOrFail($id);
+        $deptPos->update($request->all());
+
+        $deptPos->load(['department', 'position']);
 
         //update the chosen department position
         $deptPos->update($request->validated());
