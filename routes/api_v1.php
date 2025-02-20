@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\V1\DepartmentController;
 use App\Http\Controllers\Api\V1\PositionController;
 use App\Http\Controllers\Api\V1\DeptPosController;
 use App\Http\Controllers\Api\V1\PolicyController;
+use App\Http\Controllers\Api\V1\UserAgreementController;
 use App\Http\Middleware\JwtMiddleware;
 use Illuminate\Support\Facades\Route;
 
@@ -108,4 +109,9 @@ Route::controller(PolicyController::class)->group(function () {
     Route::get('/get/policies', 'getPolicies');
     Route::put('/update/policy/{id}', 'updatePolicy');
     Route::delete('/delete/policy/{id}', 'deletePolicy');
+});
+
+Route::controller(UserAgreementController::class)->group(function () {
+    Route::post('/create/user-agreement', 'createUserAgreement');
+    Route::get('/get/user-agreements', 'getUserAgreements');
 });
