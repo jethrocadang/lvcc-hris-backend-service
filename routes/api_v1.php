@@ -25,7 +25,7 @@ Route::get('test', function () {
 
 Route::controller(OauthController::class)->group(function () {
     Route::post('auth/google-callback', 'googleAuthentication');
-    Route::get('auth/test', [OauthController::class, 'test']);
+    Route::get('auth/test', 'test');
     Route::post('auth/login', 'login');
 });
 
