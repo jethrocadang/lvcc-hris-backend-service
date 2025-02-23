@@ -11,7 +11,8 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Laravel\Socialite\Facades\Socialite;
 use Tymon\JWTAuth\Facades\JWTAuth;
-use Exception;
+use Illuminate\Support\Facades\Hash;
+use App\Models\ActivityLog;
 
 class OauthController extends Controller
 {
@@ -58,6 +59,21 @@ class OauthController extends Controller
                     'avatar_url' => $googleUser->avatar,
                     'email_verified_at' => now(),
                 ]);
+    
+                // Log new user creation
+                ActivityLog::create([
+                    'user_id' => $user->id,
+                    'logged_in_at' => now(),
+                ]);
+                } else {
+                    // Log existing user login
+                    ActivityLog::create([
+                        'user_id' => $user->id,
+                        'logged_in_at' => now(),
+                    ]);
+                }
+
+            if ($user->wasRecentlyCreated) {
                 $user->assignRole('user');
             }
 
@@ -130,8 +146,65 @@ class OauthController extends Controller
                 'access_token' => $newAccessToken,
                 'token_type' => 'Bearer'
             ])->withCookie($newRefreshTokenCookie);
-        } catch (Exception $e) {
-            return $this->errorResponse('Failed to refresh token', [], 500, $e);
+        } catch (\Exception $e) {
+            Log::error('Token refresh failed: ' . $e->getMessage());
+            return response()->json(['error' => 'Failed to refresh token', 'message' => $e->getMessage()], 500);
         }
+
+        
     }
+
+    // Log in via email and password
+    public function login(Request $request)
+    {
+        try {
+            $credentials = $request->validate([
+                'email' => 'required|email',
+                'password' => 'required',
+            ]);
+        
+                // Find user by email
+                $user = User::where('email', $credentials['email'])->first();
+        
+                if (!$user) {
+                    return response()->json(['error' => 'User not found'], 404);
+                }
+        
+                // Verify the password
+                if (!Hash::check($credentials['password'], $user->password)) {
+                    return response()->json(['error' => 'Invalid credentials'], 401);
+                }
+    
+                //Log user activity
+                ActivityLog::create([
+                    'user_id' => $user->id,
+                    'logged_in_at' => now(),
+                ]);
+        
+                // Generate JWT tokens
+                $accessToken = JWTAuth::fromUser($user);
+                $refreshToken = JWTAuth::claims(['type' => 'refresh'])->fromUser($user);
+        
+                // Create an HTTP-only cookie for the refresh token
+                $refreshTokenCookie = cookie(
+                    'refresh_token',
+                    $refreshToken,
+                    7 * 24 * 60, // 7 days
+                    '/',
+                    null,
+                    config('app.env') === 'production',
+                    true,
+                    false,
+                    'lax'
+                );
+        
+                return response()->json([
+                    'user' => $user,
+                    'access_token' => $accessToken,
+                ])->withCookie($refreshTokenCookie);
+            } catch (\Exception $e) {
+                Log::error('Login failed: ' . $e->getMessage());
+                return response()->json(['error' => 'Failed to login', 'message' => $e->getMessage()], 500);
+            }
+        }
 }
