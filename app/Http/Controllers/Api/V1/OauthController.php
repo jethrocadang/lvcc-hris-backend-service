@@ -101,7 +101,7 @@ class OauthController extends Controller
                     'token_type' => 'Bearer'
                 ]
             )->withCookie($refreshTokenCookie);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return $this->errorResponse('Google authentication failed', [], 500, $e);
         }
     }
