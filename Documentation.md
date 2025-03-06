@@ -1,8 +1,13 @@
 # Database
 
-Package used Spatie Multitenancy 4.0
+# Packages
+
+- Package used Spatie Multitenancy 4.0
+- [Spatie Multitenancy](https://spatie.be/docs/laravel-multitenancy/v4/introduction).
 
 # Installation
+
+1. Copy & paste the `.env.example` to your `.env`
 
 1. Since the package is installed just run :
 
@@ -17,7 +22,15 @@ Package used Spatie Multitenancy 4.0
 
 - `php artisan db:seed --class=TenantSeeder --database=landlord`
 
-3. Manual migrations is needed, because sometimes the migrations duplicates to each tenant.
+3. Run the job for creating the database
+
+- `php artisan queue:work`
+
+4. Run migrations for both tenants
+
+- `php artisan tenants:artisan "migrate --path=database/migrations/tenant/ --database=tenant"`
+
+3. Run migrations for each tenant.
 
 - `php artisan tenants:artisan "migrate --path=database/migrations/tenant/ats --database=tenant" --tenant=1`
 

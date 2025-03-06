@@ -2,9 +2,12 @@
 
 namespace App\Models;
 
+use App\Jobs\CreateTenantDatabaseJob;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Spatie\Multitenancy\Models\Tenant;
+
+
 
 class NewTenantModel extends Tenant
 {
@@ -21,23 +24,9 @@ class NewTenantModel extends Tenant
         });
 
         static::created(function (NewTenantModel $tenant) {
+            \Log::info("Dispatching job for: " . $tenant->database);
             // Create the new tenant database
-            $tenant->createDatabase();
-        });
+            CreateTenantDatabaseJob::dispatch($tenant)->onQueue(null);        });
 
-        static::deleting(function (NewTenantModel $tenant) {
-            // Drop the tenant database when the tenant is deleted
-            $tenant->dropDatabase();
-        });
-    }
-
-    public function createDatabase()
-    {
-        DB::statement("CREATE DATABASE `{$this->database}`");
-    }
-
-    public function dropDatabase()
-    {
-        DB::statement("DROP DATABASE IF EXISTS `{$this->database}`");
     }
 }
