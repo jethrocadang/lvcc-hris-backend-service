@@ -23,11 +23,22 @@ class OauthController extends Controller
         return $this->successResponse('API is working', ['version' => 'v1']);
     }
 
+    /**
+     * Handles the Google OAuth2 authentication process.
+     *
+     * @param Request $request The incoming request containing the authorization code.
+     *
+     * @return \Illuminate\Http\JsonResponse The response containing the user's information and JWT tokens.
+     *
+     * @throws \Exception If an error occurs during the authentication process.
+     */
     public function googleAuthentication(Request $request)
     {
         try {
+            // This validates the incoming request authorization code from google
             $request->validate(['code' => 'required|string']);
 
+            // This function sends api request to google in exchange for the credentials of the user.
             $response = Http::withHeaders(['Content-Type' => 'application/json'])
                 ->post('https://accounts.google.com/o/oauth2/token', [
                     'client_id' => config('services.google.client_id'),
@@ -59,7 +70,7 @@ class OauthController extends Controller
                     'avatar_url' => $googleUser->avatar,
                     'email_verified_at' => now(),
                 ]);
-    
+
                 // Log new user creation
                 ActivityLog::create([
                     'user_id' => $user->id,
