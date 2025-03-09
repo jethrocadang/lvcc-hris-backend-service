@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\Api\V1\OauthController;
+use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\PasswordController;
 use App\Http\Controllers\Api\V1\JobPostingController;
 use App\Http\Controllers\Api\V1\ActivityLogController;
@@ -29,7 +29,7 @@ Route::get('test', function () {
  * ==============================
  */
 
-Route::controller(OauthController::class)->group(function () {
+Route::controller(AuthController::class)->group(function () {
     Route::post('auth/google-callback', 'googleAuthentication');
     Route::get('auth/test', 'test');
     Route::post('auth/login', 'login');
