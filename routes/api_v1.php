@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\PasswordController;
 use App\Http\Controllers\Api\V1\JobPostingController;
+use App\Http\Controllers\Api\V1\Ats\JobApplicationController;
 use App\Http\Controllers\Api\V1\ActivityLogController;
 use App\Http\Controllers\Api\V1\DepartmentController;
 use App\Http\Controllers\Api\V1\PositionController;
@@ -123,3 +124,19 @@ Route::controller(UserPolicyAgreementController::class)->group(function () {
     Route::put('/update/user-policy-agreement/{id}', 'updateUserPolicyAgreement');
     Route::delete('/delete/user-policy-agreement/{id}', 'deleteUserPolicyAgreement');
 });
+
+/**
+ * ==============================
+ *  Applicant Registration Routes
+ * ==============================
+ */
+
+
+ /**
+ * ==============================
+ *  Mail Routes
+ * ==============================
+ */
+
+Route::post('/pre-register', [JobApplicationController::class, 'createApplication']);
+Route::get('/verify-email/{token}', [JobApplicationController::class, 'verifyEmail']);
