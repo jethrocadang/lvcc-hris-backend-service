@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('avatar_url')->nullable();
             $table->string('verification_token', 40)->nullable()->unique();
             //TODO Not sure where to add, job_applicants or job_applications
-            $table->enum('status', ['active', 'archived', 'rejected'])->default('active');
+            $table->enum('status', ['not_verified', 'active', 'archived', 'rejected'])->default('active');
 
             $table->timestamps();
         });
