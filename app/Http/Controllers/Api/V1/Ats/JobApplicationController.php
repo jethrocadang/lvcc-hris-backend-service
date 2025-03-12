@@ -10,6 +10,10 @@ use App\Services\Auth\JwtService;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Illuminate\Support\Carbon;
+use Spatie\Multitenancy\Models\Tenant;
+use Illuminate\Support\Facades\DB;
+
+
 
 class JobApplicationController extends Controller
 {
@@ -20,11 +24,35 @@ class JobApplicationController extends Controller
         $this->jwtService = $jwtService;
     }
 
+    public function test()
+    {
+
+        \Log::info('Current Tenant:', ['tenant' => Tenant::current()]);
+        return response()->json(['tenant' => Tenant::current()]);
+    }
+
     public function createApplication(JobApplicationRequest $request)
     {
+        \Log::info('createApplication() method reached with request data:', $request->all());
+
+        $tenant = Tenant::current();
+
+        if (!$tenant) {
+            return response()->json(['message' => 'No active tenant'], 400);
+        }
+
+        \Log::info(' Active Tenant:', ['database' => $tenant->database]);
+
+        // Confirm which database is being used
+        \Log::info('urrent Database:', ['db' => DB::connection()->getDatabaseName()]);
+
+        // Confirm that JobApplicant is using the right connection
+        $jobApplicantModel = new JobApplicant();
+        \Log::info('JobApplicant Connection:', ['connection' => $jobApplicantModel->getConnectionName()]);
+
         $verificationToken = Str::random(40);
 
-        $jobApplicant = JobApplicant::create([
+        $jobApplicant = new JobApplicant([
             'first_name' => $request->first_name,
             'middle_name' => $request->middle_name,
             'last_name' => $request->last_name,
@@ -32,14 +60,15 @@ class JobApplicationController extends Controller
             'verification_token' => $verificationToken,
         ]);
 
-        // Send email verification link
-        Mail::to($jobApplicant->email)->send(new \App\Mail\VerifyEmail($jobApplicant));
+        // Ensure the model is being saved to the tenant database
+        $jobApplicant->save();
 
         return response()->json([
             'message' => 'Verification email sent successfully!',
             'applicant' => new JobApplicationResource($jobApplicant)
         ], 201);
     }
+
 
     public function verifyEmail($token)
     {

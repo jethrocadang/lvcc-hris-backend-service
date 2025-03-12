@@ -4,13 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 class JobApplicant extends Model
 {
-    use HasFactory;
-
-    protected $connection = 'ats_db';
+    use HasFactory, UsesTenantConnection;
+    protected $table = 'job_applicants';
 
     protected $fillable = [
         'first_name',

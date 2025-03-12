@@ -30,9 +30,7 @@ class JobApplicationRequest extends FormRequest
             'email' => [
                 'required',
                 'email',
-                Rule::unique('applicants', 'email')->where(function ($query) {
-                    $query->getConnection()->setDatabaseName('ats_db');
-                }),
+                // Error yung rules dito
             ],
         ];
     }
