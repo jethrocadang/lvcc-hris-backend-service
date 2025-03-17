@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('email_verified_at')->nullable();
             $table->string('avatar_url')->nullable();
             //TODO Not sure where to add, job_applicants or job_applications
-            $table->enum('status', ['not_verified', 'active', 'archived', 'rejected'])->default('active');
+            $table->enum('status', ['active', 'archived', 'rejected'])->default('active');
 
             $table->timestamps();
         });

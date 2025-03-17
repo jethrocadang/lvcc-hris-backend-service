@@ -15,6 +15,11 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->append(CorsMiddleware::class);
+        $middleware
+        ->group('tenant', [
+            \Spatie\Multitenancy\Http\Middleware\NeedsTenant::class,
+            \App\Http\Middleware\EnsureTenantIsSet::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
