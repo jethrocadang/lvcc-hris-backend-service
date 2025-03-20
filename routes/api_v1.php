@@ -131,7 +131,7 @@ Route::controller(UserPolicyAgreementController::class)->group(function () {
  Route::middleware('tenant')->group(function() {
      Route::post('/pre-register', [JobApplicationController::class, 'createApplication']);
      Route::get('/test-api', [JobApplicationController::class, 'test']);
-     Route::get('/verify-email/{token}', [JobApplicationController::class, 'verifyEmail']);
+     Route::get('/verify-email/{token}', [JobApplicationController::class, 'verifyEmail'])->name('email.verify');
     // routes
 });
 

@@ -18,7 +18,8 @@ class JobApplicant extends Model
         'email',
         'email_verified_at',
         'status',
-        'avatar_url'
+        'avatar_url',
+        'verification_token',
     ];
 
     protected $casts = [

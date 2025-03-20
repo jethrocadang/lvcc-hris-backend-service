@@ -6,7 +6,9 @@ use App\Models\JobApplicant;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Ats\JobApplicationRequest;
 use App\Http\Resources\JobApplicationResource;
-use App\Services\Auth\JwtService;
+// use App\Services\Auth\JwtService;
+use App\Mail\VerificationEmail;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Illuminate\Support\Carbon;
@@ -19,18 +21,19 @@ class JobApplicationController extends Controller
 {
     protected $jwtService;
 
-    public function __construct(JwtService $jwtService)
-    {
-        $this->jwtService = $jwtService;
-    }
+    // public function __construct(JwtService $jwtService)
+    // {
+    //     $this->jwtService = $jwtService;
+    // }
 
-    public function test()
-    {
+    // public function test()
+    // {
 
-        \Log::info('Current Tenant:', ['tenant' => Tenant::current()]);
-        return response()->json(['tenant' => Tenant::current()]);
-    }
+    //     \Log::info('Current Tenant:', ['tenant' => Tenant::current()]);
+    //     return response()->json(['tenant' => Tenant::current()]);
+    // }
 
+    //Creating a job application
     public function createApplication(JobApplicationRequest $request)
     {
         \Log::info('createApplication() method reached with request data:', $request->all());
@@ -41,10 +44,10 @@ class JobApplicationController extends Controller
             return response()->json(['message' => 'No active tenant'], 400);
         }
 
-        \Log::info(' Active Tenant:', ['database' => $tenant->database]);
+        \Log::info('Active Tenant:', ['database' => $tenant->database]);
 
         // Confirm which database is being used
-        \Log::info('urrent Database:', ['db' => DB::connection()->getDatabaseName()]);
+        \Log::info('Current Database:', ['db' => DB::connection()->getDatabaseName()]);
 
         // Confirm that JobApplicant is using the right connection
         $jobApplicantModel = new JobApplicant();
@@ -63,6 +66,8 @@ class JobApplicationController extends Controller
         // Ensure the model is being saved to the tenant database
         $jobApplicant->save();
 
+        Mail::to($jobApplicant->email)->send(new \App\Mail\VerificationEmail($jobApplicant));
+
         return response()->json([
             'message' => 'Verification email sent successfully!',
             'applicant' => new JobApplicationResource($jobApplicant)
@@ -72,36 +77,34 @@ class JobApplicationController extends Controller
 
     public function verifyEmail($token)
     {
-        $applicant = JobApplicant::where('verification_token', $token)->first();
 
-        if (!$applicant) {
+        $tenant = Tenant::current();
+
+        if (!$tenant) {
+            return response()->json(['message' => 'No active tenant'], 400);
+        }
+        
+        $jobapplicant = JobApplicant::where('verification_token', $token)->first();
+
+        if (!$jobapplicant) {
             return response()->json(['message' => 'Invalid or expired token'], 400);
         }
 
         // Mark applicant as verified
-        $applicant->update([
+        $jobapplicant->update([
             'email_verified_at' => now(),
             'verification_token' => null,
         ]);
 
-        // Create a User record
-        $user = \App\Models\User::updateOrCreate(
-            ['email' => $applicant->email],
-            [
-                'name' => "{$applicant->first_name} {$applicant->last_name}",
-                'password' => bcrypt(Str::random(16)), // Temporary password
-            ]
-        );
-
         // Generate JWT token for portal access
-        $tokens = $this->jwtService->generateTokens($user);
+        $portalToken = Str::random(40);
 
         // Send portal access email
-        Mail::to($applicant->email)->send(new \App\Mail\PortalAccessEmail($tokens['access_token']));
+        Mail::to($jobapplicant->email)->send(new \App\Mail\PortalAccess($portalToken['access_token']));
 
         return response()->json([
             'message' => 'Email verified successfully! Portal access has been sent.',
-            'token' => $tokens['access_token']
+            'token' => $portalToken['access_token']
         ], 200);
     }
 }
