@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\V1\Ats\JobApplicationController;
 use App\Http\Controllers\Api\V1\ActivityLogController;
 use App\Http\Controllers\Api\V1\Hris\DepartmentController;
 use App\Http\Controllers\Api\V1\Hris\JobPositionController;
+use App\Http\Controllers\Api\V1\EmailTemplateController;
 use App\Http\Controllers\Api\V1\PolicyController;
 use App\Http\Controllers\Api\V1\UserAgreementController;
 use App\Http\Controllers\Api\V1\UserPolicyAgreementController;
@@ -121,17 +122,21 @@ Route::controller(UserPolicyAgreementController::class)->group(function () {
  * ==============================
  */
 
+Route::middleware('tenant')->group(function() {
+    Route::post('/pre-register', [JobApplicationController::class, 'createApplication']);
+    Route::get('/test-api', [JobApplicationController::class, 'test']);
+    Route::get('/verify-email/{token}', [JobApplicationController::class, 'verifyEmail'])->name('email.verify');
+   // routes
+});
 
  /**
  * ==============================
- *  Mail Routes
+ *  Email Template Routes
  * ==============================
  */
-
- Route::middleware('tenant')->group(function() {
-     Route::post('/pre-register', [JobApplicationController::class, 'createApplication']);
-     Route::get('/test-api', [JobApplicationController::class, 'test']);
-     Route::get('/verify-email/{token}', [JobApplicationController::class, 'verifyEmail'])->name('email.verify');
-    // routes
+Route::controller(EmailTemplateController::class)->group(function () {
+    Route::post('/create/email-template', 'createEmail');
+    Route::get('/get/email-templates', 'getEmails');
+    Route::put('/update/email-template/{id}', 'updateEmail');
+    Route::delete('/delete/email-template/{id}', 'deleteEmail');
 });
-

@@ -30,7 +30,6 @@ class VerificationEmail extends Mailable
             ->with([
                 'applicant' => $this->applicant,
                 'verificationUrl' => $this->verificationUrl,
-                'tenant_id' => $this->tenant
             ]);
     }
 }

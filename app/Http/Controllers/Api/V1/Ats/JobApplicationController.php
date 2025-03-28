@@ -6,8 +6,10 @@ use App\Models\JobApplicant;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Ats\JobApplicationRequest;
 use App\Http\Resources\JobApplicationResource;
+use App\Mail\PortalAccessEmail;
 // use App\Services\Auth\JwtService;
 use App\Mail\VerificationEmail;
+use App\Mail\PortalAccessEmailEmail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
@@ -26,12 +28,12 @@ class JobApplicationController extends Controller
     //     $this->jwtService = $jwtService;
     // }
 
-    // public function test()
-    // {
+    public function test()
+    {
 
-    //     \Log::info('Current Tenant:', ['tenant' => Tenant::current()]);
-    //     return response()->json(['tenant' => Tenant::current()]);
-    // }
+        \Log::info('Current Tenant:', ['tenant' => Tenant::current()]);
+        return response()->json(['tenant' => Tenant::current()]);
+    }
 
     //Creating a job application
     public function createApplication(JobApplicationRequest $request)
@@ -66,7 +68,7 @@ class JobApplicationController extends Controller
         // Ensure the model is being saved to the tenant database
         $jobApplicant->save();
 
-        Mail::to($jobApplicant->email)->send(new \App\Mail\VerificationEmail($jobApplicant));
+        Mail::to($jobApplicant->email)->send(new VerificationEmail($jobApplicant));
 
         return response()->json([
             'message' => 'Verification email sent successfully!',
@@ -100,7 +102,7 @@ class JobApplicationController extends Controller
         $portalToken = Str::random(40);
 
         // Send portal access email
-        Mail::to($jobapplicant->email)->send(new \App\Mail\PortalAccess($portalToken['access_token']));
+        Mail::to($jobapplicant->email)->send(new PortalAccessEmail($portalToken['access_token']));
 
         return response()->json([
             'message' => 'Email verified successfully! Portal access has been sent.',
