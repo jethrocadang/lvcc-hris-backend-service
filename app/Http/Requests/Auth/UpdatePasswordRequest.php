@@ -8,7 +8,6 @@ class UpdatePasswordRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
-     * Set to true if no special authorization is needed.
      */
     public function authorize(): bool
     {

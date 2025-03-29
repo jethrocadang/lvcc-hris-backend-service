@@ -19,8 +19,9 @@ class UpdatePasswordService
     public function updatePassword(string $email, string $currentPassword, string $newPassword): array
     {
         try {
-            // Find the user by email
+            // Find the user by email throws an exception if not found
             $user = User::where('email', $email)->firstOrFail();
+
 
             // Check if the current password is correct
             if (!Hash::check($currentPassword, $user->password)) {

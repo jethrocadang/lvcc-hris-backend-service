@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\PasswordController;
-use App\Http\Controllers\Api\V1\JobPostingController;
+use App\Http\Controllers\Api\V1\Ats\JobPostingController;
 use App\Http\Controllers\Api\V1\Ats\JobApplicationController;
 use App\Http\Controllers\Api\V1\ActivityLogController;
 use App\Http\Controllers\Api\V1\DepartmentController;
@@ -34,6 +34,7 @@ Route::controller(AuthController::class)->group(function () {
     Route::post('auth/google-callback', 'googleAuthentication');
     Route::get('auth/test', 'test');
     Route::post('auth/login', 'login');
+    Route::patch('auth/update-password', 'updatePassword');
 });
 
 /**
