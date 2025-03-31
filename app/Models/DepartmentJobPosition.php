@@ -4,14 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Department;
-use App\Models\Position;
+use App\Models\JobPosition;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class DepartmentPosition extends Model
+class DepartmentJobPosition extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['department_id', 'position_id'];
+    protected $fillable = ['department_id', 'job_position_id'];
 
     public function department()
     {
@@ -20,7 +20,7 @@ class DepartmentPosition extends Model
 
     public function position()
     {
-        return $this->belongsTo(Position::class);
+        return $this->belongsTo(JobPosition::class);
     }
 }
 

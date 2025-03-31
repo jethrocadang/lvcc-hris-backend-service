@@ -7,24 +7,24 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Activitylog\LogOptions;
 
-class Department extends Model
+class JobPosition extends Model
 {
     use HasFactory, LogsActivity;
 
     protected $fillable = [
-        'name',
+        'title',
         'description'
     ];
 
-    /**
+        /**
      * Define Spatie's logging options.
      */
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-            ->logOnly(['name', 'description']) // Log only these attributes
+            ->logOnly(['title', 'description']) // Log only these attributes
             ->logOnlyDirty() // Log only changed attributes
-            ->useLogName('department') // Set custom log name
-            ->setDescriptionForEvent(fn(string $eventName) => ucfirst($eventName) . " department: {$this->name}");
+            ->useLogName('job position') // Set custom log name
+            ->setDescriptionForEvent(fn(string $eventName) => ucfirst($eventName) . " job position: {$this->title}");
     }
 }

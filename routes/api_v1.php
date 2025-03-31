@@ -1,16 +1,15 @@
 <?php
 
 use App\Http\Controllers\Api\V1\AuthController;
-use App\Http\Controllers\Api\V1\PasswordController;
 use App\Http\Controllers\Api\V1\Ats\JobPostingController;
 use App\Http\Controllers\Api\V1\Ats\JobApplicationController;
 use App\Http\Controllers\Api\V1\ActivityLogController;
-use App\Http\Controllers\Api\V1\DepartmentController;
-use App\Http\Controllers\Api\V1\PositionController;
-use App\Http\Controllers\Api\V1\DeptPosController;
+use App\Http\Controllers\Api\V1\Hris\DepartmentController;
+use App\Http\Controllers\Api\V1\Hris\JobPositionController;
 use App\Http\Controllers\Api\V1\PolicyController;
 use App\Http\Controllers\Api\V1\UserAgreementController;
 use App\Http\Controllers\Api\V1\UserPolicyAgreementController;
+use App\Http\Controllers\Api\V1\Hris\DepartmentJobPositionController;
 use App\Http\Middleware\JwtMiddleware;
 use Illuminate\Support\Facades\Route;
 
@@ -67,16 +66,6 @@ Route::controller(JobPostingController::class)->group(function () {
 
 /**
  * ==============================
- *  Setting Password Routes
- * ==============================
- */
-Route::controller(PasswordController::class)->group(function () {
-    Route::post('/create/password' , 'createPassword');
-    Route::post('/update/password' , 'updatePassword');
-});
-
-/**
- * ==============================
  *  Department, Position, and Department_position Routes
  * ==============================
  */
@@ -87,18 +76,18 @@ Route::controller(DepartmentController::class)->group(function () {
     Route::delete('/delete/department/{id}', 'deleteDepartment');
 });
 
-Route::controller(PositionController::class)->group(function () {
-    Route::post('/create/position', 'createPosition');
-    Route::get('/get/positions', 'getPositions');
-    Route::put('/update/position/{id}', 'updatePosition');
-    Route::delete('/delete/position/{id}', 'deletePosition');
+Route::controller(JobPositionController::class)->group(function () {
+    Route::post('/create/job-position', 'createJobPosition');
+    Route::get('/get/job-positions', 'getJobPositions');
+    Route::put('/update/job-position/{id}', 'updateJobPosition');
+    Route::delete('/delete/job-position/{id}', 'deletePosition');
 });
 
-Route::controller(DeptPosController::class)->group(function () {
-    Route::post('/create/department-position', 'createDeptPos');
-    Route::get('/get/department-positions', 'getDeptPos');
-    Route::put('/update/department-position/{id}', 'updateDeptPos');
-    Route::delete('/delete/department-position/{id}', 'deleteDeptPos');
+Route::controller(DepartmentJobPositionController::class)->group(function () {
+    Route::post('/create/department-job-position', 'store');
+    Route::get('/get/department-job-positions', 'getDeptPos');
+    Route::put('/update/department-job-position/{id}', 'updateDeptPos');
+    Route::delete('/delete/department-job-position/{id}', 'deleteDeptPos');
 });
 
 /**
