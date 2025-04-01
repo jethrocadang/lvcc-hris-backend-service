@@ -73,7 +73,7 @@ class JobPositionService
         } catch (ModelNotFoundException $e) {
             // Throws error only for ID not found
             Log::warning("Job Position with ID {$id} not found.");
-            throw new ModelNotFoundException('Job position not found.');
+            throw new ModelNotFoundException("Job Position with ID {$id} not found.");
         } catch (Exception $e) {
             // Throws any error not catched at the top
             Log::error('Job Position update failed', ['error' => $e->getMessage()]);
@@ -99,7 +99,7 @@ class JobPositionService
             return true;
         } catch (ModelNotFoundException $e) {
             Log::warning("Job Position with ID {$id} not found.");
-            throw new ModelNotFoundException('Job position not found.');
+            throw new ModelNotFoundException("Job Position with ID {$id} not found.");
         } catch (Exception $e) {
             Log::error('Job Position deletion failed', ['error' => $e->getMessage()]);
             throw new Exception('Failed to delete job position.');

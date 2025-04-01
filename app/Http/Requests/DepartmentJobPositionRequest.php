@@ -11,7 +11,7 @@ class DepartmentJobPositionRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -23,7 +23,21 @@ class DepartmentJobPositionRequest extends FormRequest
     {
         return [
             "department_id" => ["required", "integer", "exists:departments,id"],
-            "position_id" => ["required", "integer", "exists:positions,id"],
+            "job_position_id" => [
+                "required",
+                "integer",
+                "exists:job_positions,id",
+                function ($attribute, $value, $fail) {
+                    if (
+                        \DB::table('department_positions')
+                            ->where('department_id', $this->department_id)
+                            ->where('job_position_id', $value)
+                            ->exists()
+                    ) {
+                        $fail("This job position is already assigned to this department.");
+                    }
+                }
+            ],
         ];
     }
 }

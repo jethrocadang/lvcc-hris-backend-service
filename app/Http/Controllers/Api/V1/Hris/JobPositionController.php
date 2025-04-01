@@ -77,7 +77,7 @@ class JobPositionController extends Controller
                 ? $this->successResponse('Job position updated successfully!', $jobPosition)
                 : $this->errorResponse('Failed to update job position.', [], 500);
         } catch (ModelNotFoundException $e) {
-            return $this->errorResponse('Job position not found.', [], 404);
+            return $this->errorResponse($e->getMessage(), [], 404);
         } catch (Exception $e) {
             return $this->errorResponse('An error occurred while updating the job position.', ['error' => $e->getMessage()], 500);
         }
@@ -96,7 +96,7 @@ class JobPositionController extends Controller
 
             return $this->successResponse('Job position deleted successfully!', []);
         } catch (ModelNotFoundException $e) {
-            return $this->errorResponse('Job position not found.', [], 404);
+            return $this->errorResponse($e->getMessage(), [], 404);
         } catch (Exception $e) {
             return $this->errorResponse('An error occurred while deleting the job position.', ['error' => $e->getMessage()], 500);
         }

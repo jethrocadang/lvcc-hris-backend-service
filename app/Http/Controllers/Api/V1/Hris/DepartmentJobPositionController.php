@@ -10,6 +10,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Exception;
 
+//TODO ADD DETACHED FUNCTIONALITY
 class DepartmentJobPositionController extends Controller
 {
     use ApiResponse;
@@ -26,7 +27,7 @@ class DepartmentJobPositionController extends Controller
      *
      * @return JsonResponse
      */
-    public function index(): JsonResponse
+    public function getDepartmentJobPositions(): JsonResponse
     {
         $data = $this->service->getAll();
         return $this->successResponse('Department-job position associations retrieved successfully.', $data);
@@ -38,7 +39,7 @@ class DepartmentJobPositionController extends Controller
      * @param DepartmentJobPositionRequest $request
      * @return JsonResponse
      */
-    public function store(DepartmentJobPositionRequest $request): JsonResponse
+    public function attachDepartmentJobPosition(DepartmentJobPositionRequest $request): JsonResponse
     {
         try {
             $record = $this->service->attachJobPositionToDepartment($request->validated());
@@ -58,7 +59,7 @@ class DepartmentJobPositionController extends Controller
      * @param int $jobPositionId
      * @return JsonResponse
      */
-    public function destroy(int $departmentId, int $jobPositionId): JsonResponse
+    public function deleteDepartmentPosition(int $departmentId, int $jobPositionId): JsonResponse
     {
         try {
             $deleted = $this->service->detachJobPositionFromDepartment($departmentId, $jobPositionId);

@@ -80,14 +80,14 @@ Route::controller(JobPositionController::class)->group(function () {
     Route::post('/create/job-position', 'createJobPosition');
     Route::get('/get/job-positions', 'getJobPositions');
     Route::put('/update/job-position/{id}', 'updateJobPosition');
-    Route::delete('/delete/job-position/{id}', 'deletePosition');
+    Route::delete('/delete/job-position/{id}', 'deleteJobPosition');
 });
 
 Route::controller(DepartmentJobPositionController::class)->group(function () {
-    Route::post('/create/department-job-position', 'store');
-    Route::get('/get/department-job-positions', 'getDeptPos');
-    Route::put('/update/department-job-position/{id}', 'updateDeptPos');
-    Route::delete('/delete/department-job-position/{id}', 'deleteDeptPos');
+    Route::post('/create/department-job-position', 'attachDepartmentJobPosition');
+    Route::get('/get/department-job-positions', 'getDepartmentJobPositions');
+    // Route::put('/update/department-job-position/{id}', 'updateDeptPos');
+    Route::delete('/delete/department-job-position/{id}', 'deleteDepartmentPosition');
 });
 
 /**

@@ -16,6 +16,11 @@ class Department extends Model
         'description'
     ];
 
+    public function jobPositions()
+    {
+        return $this->belongsToMany(JobPosition::class, 'department_positions');
+    }
+
     /**
      * Define Spatie's logging options.
      */
