@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('email_templates', function (Blueprint $table) {
             $table->id();
-            $table->integer('version');
+            $table->string('version');
             $table->string('template_type');
             $table->string('email_title');
             $table->string('email_body');

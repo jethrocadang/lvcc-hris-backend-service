@@ -20,6 +20,9 @@ return Application::configure(basePath: dirname(__DIR__))
             \Spatie\Multitenancy\Http\Middleware\NeedsTenant::class,
             \App\Http\Middleware\EnsureTenantIsSet::class,
         ]);
+        // TODO fix this shit!
+        // $middleware->append(JwtMiddleware::class);
+
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

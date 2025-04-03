@@ -13,8 +13,17 @@ return new class extends Migration
     {
         Schema::create('user_policy_agreements', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('policy_id')->constrained()->onDelete('cascade');
-            $table->foreignId('user_agreement_id')->constrained()->onDelete('cascade');
+            $table->foreignId('policy_version_id')->constrained()->onDelete('cascade');
+
+            // Di naka foreignId, old version gamit ko para madali magets.
+            // Employee reference (HRIS - landlord_db)
+            $table->unsignedBigInteger('employee_id')->nullable()->unique();
+            $table->foreign('employee_id')->references('id')->on('employees')->onDelete('cascade');
+            // naka index lang kasi naka store sa kabilang ats_db ID nito
+            // Job Applicant reference (ATS - ats_db)
+            $table->unsignedBigInteger('job_applicant_id')->nullable()->index();
+            $table->foreign('job_applicant_id')->references('id')->on('job_applicants')->onDelete('cascade');
+
             $table->timestamp('policy_accepted_at')->nullable();
             $table->timestamps();
         });

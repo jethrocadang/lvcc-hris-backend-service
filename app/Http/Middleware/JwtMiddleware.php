@@ -8,6 +8,7 @@ use Tymon\JWTAuth\Exceptions\TokenExpiredException;
 use Tymon\JWTAuth\Exceptions\TokenInvalidException;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
 
 class JwtMiddleware
@@ -18,6 +19,8 @@ class JwtMiddleware
     public function handle(Request $request, Closure $next): Response
     {
         try {
+            Log::info('JwtMiddleware triggered', ['path' => $request->path()]);
+
             // Check if token exists & parse it
             $user = JWTAuth::parseToken()->authenticate();
 

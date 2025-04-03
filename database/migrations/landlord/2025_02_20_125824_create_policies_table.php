@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('policies', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained();
             $table->string('version')->unique();
             $table->text('content');
             $table->timestamp('effective_at')->nullable();

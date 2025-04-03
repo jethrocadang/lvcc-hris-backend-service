@@ -22,9 +22,13 @@ class UserPolicyAgreementRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'policy_id' => 'required|integer',
-            'user_agreement_id' => 'required|integer',
-            'policy_accepted_at' => 'nullable|date',
+            // TODO uncomment this lines when both tables are set
+            // 'employee_id' => 'nullable|exists:employees,id|unique:user_policy_agreements,employee_id',
+            // 'job_applicant_id' => 'nullable|exists:job_applicants,id|unique:user_policy_agreements,job_applicant_id',
+            // 'policy_version_id' => 'required|exists:policy_versions,id',
+            'employee_id' => 'nullable|exists:employees,id|unique:user_policy_agreements,employee_id',
+            'job_applicant_id' => 'nullable|exists:job_applicants,id|unique:user_policy_agreements,job_applicant_id',
+            'policy_version_id' => 'required|exists:policy_versions,id',
         ];
     }
 }

@@ -109,4 +109,54 @@ class DepartmentService
         }
     }
 
+
+    /**
+     * Retrieve all department-job position associations.
+     */
+    public function getAll()
+    {
+        return Department::with('jobPositions')->get();
+    }
+
+    /**
+     * Attach a job position to a department.
+     */
+    public function attachJobPositionToDepartment(array $data): array
+    {
+        try {
+            $department = Department::findOrFail($data['department_id']);
+            $department->jobPositions()->attach($data['job_position_id']);
+
+            return [
+                'department_id' => $department->id,
+                'job_position_id' => $data['job_position_id'],
+            ];
+        } catch (ModelNotFoundException $e) {
+            Log::warning("Department or Job Position not found.", $data);
+            throw new ModelNotFoundException('Department or Job Position not found.');
+        } catch (Exception $e) {
+            Log::error('Failed to attach job position to department.', ['error' => $e->getMessage()]);
+            throw new Exception('Failed to attach job position to department.');
+        }
+    }
+
+    /**
+     * Detach a job position from a department.
+     */
+    public function detachJobPositionFromDepartment(int $departmentId, int $jobPositionId): bool
+    {
+        try {
+            $department = Department::findOrFail($departmentId);
+            $department->jobPositions()->detach($jobPositionId);
+
+            return true;
+        } catch (ModelNotFoundException $e) {
+            Log::warning("Department or Job Position not found.", ['department_id' => $departmentId, 'job_position_id' => $jobPositionId]);
+            throw new ModelNotFoundException('Department or Job Position not found.');
+        } catch (Exception $e) {
+            Log::error('Failed to detach job position from department.', ['error' => $e->getMessage()]);
+            throw new Exception('Failed to detach job position from department.');
+        }
+    }
+
 }

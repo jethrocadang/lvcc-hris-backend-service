@@ -7,8 +7,8 @@ use App\Http\Requests\DepartmentRequest;
 use App\Services\Hris\DepartmentService;
 use App\Traits\ApiResponse;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use App\Http\Requests\DepartmentJobPositionRequest;
 
 use Exception;
 
@@ -23,7 +23,7 @@ class DepartmentController extends Controller
         $this->departmentService = $departmentService;
     }
 
-    public function getDepartments()
+    public function index()
     {
         $departments = $this->departmentService->getDepartments();
 
@@ -31,7 +31,7 @@ class DepartmentController extends Controller
             ? $this->successResponse('Departments retrieved successfully!', $departments)
             : $this->errorResponse('No departments found', [], 404);
     }
-    public function createDepartment(DepartmentRequest $request): JsonResponse
+    public function store(DepartmentRequest $request): JsonResponse
     {
         try {
 
@@ -43,7 +43,7 @@ class DepartmentController extends Controller
     }
 
 
-    public function updateDepartment(DepartmentRequest $request, int $id): JsonResponse
+    public function update(DepartmentRequest $request, int $id): JsonResponse
     {
         try {
             $department = $this->departmentService->updateDepartment($request, $id);
@@ -56,7 +56,7 @@ class DepartmentController extends Controller
     }
 
 
-    public function deleteDepartment(int $id): JsonResponse
+    public function destroy(int $id): JsonResponse
     {
         try {
             $this->departmentService->deleteDepartment($id);
@@ -69,4 +69,27 @@ class DepartmentController extends Controller
         }
     }
 
+    public function attachDepartmentJobPosition(DepartmentJobPositionRequest $request): JsonResponse
+    {
+        try {
+            $record = $this->departmentService->attachJobPositionToDepartment($request->validated());
+
+            return $this->successResponse('Department-job position association created successfully.', $record, 201);
+        } catch (Exception $e) {
+            return $this->errorResponse('Failed to attach job position to department.', ['error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function detachDepartmentJobPosition(int $departmentId, int $jobPositionId): JsonResponse
+    {
+        try {
+            $this->departmentService->detachJobPositionFromDepartment($departmentId, $jobPositionId);
+
+            return $this->successResponse('Department-job position association removed successfully.', [], 200);
+        } catch (ModelNotFoundException $e) {
+            return $this->errorResponse('Department or Job Position not found.', [], 404);
+        } catch (Exception $e) {
+            return $this->errorResponse('Failed to detach job position from department.', ['error' => $e->getMessage()], 500);
+        }
+    }
 }
