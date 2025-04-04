@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Policy;
-use App\Models\UserAgreement;
+// use App\Models\UserAgreement;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class UserPolicyAgreement extends Model
@@ -13,7 +13,7 @@ class UserPolicyAgreement extends Model
 
     protected $fillable = [
         'policy_id',
-        'user_agreement_id',
+        // 'user_agreement_id',
         'policy_accepted_at',
     ];
 
@@ -22,8 +22,8 @@ class UserPolicyAgreement extends Model
         return $this->belongsTo(Policy::class);
     }
 
-    public function user_agreement()
-    {
-        return $this->belongsTo(UserAgreement::class);
-    }
+    // public function user_agreement()
+    // {
+    //     return $this->belongsTo(UserAgreement::class);
+    // }
 }
