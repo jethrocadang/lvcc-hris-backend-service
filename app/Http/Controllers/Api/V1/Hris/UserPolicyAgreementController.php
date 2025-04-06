@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Api\V1\Hris;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UserPolicyAgreementRequest;
-use App\Models\UserPolicyAgreement;
 use App\Services\Hris\UserPolicyAgreementService;
 use App\Traits\ApiResponse;
 use Illuminate\Http\JsonResponse;
@@ -67,7 +66,7 @@ class UserPolicyAgreementController extends Controller
         }
     }
 
-    public function attachUserPolicyAgreement(UserPolicyAgreement $request): JsonResponse
+    public function attachUserPolicyAgreement(UserPolicyAgreementRequest $request): JsonResponse
     {
         try {
             $record = $this->userPolicyAgreementService->attachPolicyToUserAgreement($request->validated());

@@ -16,8 +16,7 @@ use App\Http\Controllers\Api\V1\Ats\JobApplicationController;
 
 use App\Http\Controllers\Api\V1\ActivityLogController;
 use App\Http\Controllers\Api\V1\EmailTemplateController;
-use App\Http\Controllers\Api\V1\UserAgreementController;
-use App\Http\Controllers\Api\V1\UserPolicyAgreementController;
+use App\Http\Controllers\Api\V1\Hris\UserPolicyAgreementController;
 use App\Http\Middleware\JwtMiddleware;
 use Illuminate\Support\Facades\Route;
 
@@ -102,12 +101,7 @@ Route::apiResource('job-positions', JobPositionController::class);
 
 
 
-Route::controller(UserPolicyAgreementController::class)->group(function () {
-    Route::post('/create/user-policy-agreement', 'createUserPolicyAgreement');
-    Route::get('/get/user-policy-agreements', 'getUserPolicyAgreements');
-    Route::put('/update/user-policy-agreement/{id}', 'updateUserPolicyAgreement');
-    Route::delete('/delete/user-policy-agreement/{id}', 'deleteUserPolicyAgreement');
-});
+Route::controller('user-policy', UserPolicyAgreementController::class);
 
 /**
  * ==============================
