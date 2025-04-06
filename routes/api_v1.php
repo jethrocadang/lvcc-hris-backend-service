@@ -1,15 +1,22 @@
 <?php
+// App\Http\Controllers\Api\V1;
+use App\Http\Controllers\Api\V1\AuthController;
 
-use App\Http\Controllers\Api\V1\OauthController;
-use App\Http\Controllers\Api\V1\PasswordController;
-use App\Http\Controllers\Api\V1\JobPostingController;
+//App\Http\Controllers\Api\V1\Hris;
+use App\Http\Controllers\Api\V1\Hris\DepartmentController;
+use App\Http\Controllers\Api\V1\Hris\JobPositionController;
+use App\Http\Controllers\Api\V1\Hris\PolicyController;
+// use App\Http\Controllers\Api\V1\Hris\DepartmentJobPositionController;
+
+
+// App\Http\Controllers\Api\V1\Ats;
+use App\Http\Controllers\Api\V1\Ats\JobPostingController;
+use App\Http\Controllers\Api\V1\Ats\JobApplicationController;
+
+
 use App\Http\Controllers\Api\V1\ActivityLogController;
-use App\Http\Controllers\Api\V1\DepartmentController;
-use App\Http\Controllers\Api\V1\PositionController;
-use App\Http\Controllers\Api\V1\DeptPosController;
-use App\Http\Controllers\Api\V1\PolicyController;
-use App\Http\Controllers\Api\V1\UserAgreementController;
-use App\Http\Controllers\Api\V1\UserPolicyAgreementController;
+use App\Http\Controllers\Api\V1\EmailTemplateController;
+use App\Http\Controllers\Api\V1\Hris\UserPolicyAgreementController;
 use App\Http\Middleware\JwtMiddleware;
 use Illuminate\Support\Facades\Route;
 
@@ -29,10 +36,11 @@ Route::get('test', function () {
  * ==============================
  */
 
-Route::controller(OauthController::class)->group(function () {
+Route::controller(AuthController::class)->group(function () {
     Route::post('auth/google-callback', 'googleAuthentication');
     Route::get('auth/test', 'test');
     Route::post('auth/login', 'login');
+    Route::patch('auth/update-password', 'updatePassword');
 });
 
 /**
@@ -40,8 +48,13 @@ Route::controller(OauthController::class)->group(function () {
  *  For protected routes, you need to group them inside JwtMiddleware and RoleMiddleware
  * ==============================
  */
-Route::middleware(JwtMiddleware::class)->get('jwt', function () {
-    return response()->json(['message' => 'Authenticated user']);
+Route::middleware(JwtMiddleware::class)->group(function () {
+    Route::controller(DepartmentController::class)->group(function () {
+        Route::post('/create/department', 'createDepartment');
+        Route::get('/get/departments', 'getDepartments');
+        Route::put('/update/department/{id}', 'updateDepartment');
+        Route::delete('/delete/department/{id}', 'deleteDepartment');
+    });
 });
 
 /**
@@ -65,61 +78,47 @@ Route::controller(JobPostingController::class)->group(function () {
 
 /**
  * ==============================
- *  Setting Password Routes
- * ==============================
- */
-Route::controller(PasswordController::class)->group(function () {
-    Route::post('/create/password' , 'createPassword');
-    Route::post('/update/password' , 'updatePassword');
-});
-
-/**
- * ==============================
  *  Department, Position, and Department_position Routes
  * ==============================
  */
-Route::controller(DepartmentController::class)->group(function () {
-    Route::post('/create/department', 'createDepartment');
-    Route::get('/get/departments', 'getDepartments');
-    Route::put('/update/department/{id}', 'updateDepartment');
-    Route::delete('/delete/department/{id}', 'deleteDepartment');
-});
+Route::apiResource('departments', DepartmentController::class);
+Route::apiResource('job-positions', JobPositionController::class);
 
-Route::controller(PositionController::class)->group(function () {
-    Route::post('/create/position', 'createPosition');
-    Route::get('/get/positions', 'getPositions');
-    Route::put('/update/position/{id}', 'updatePosition');
-    Route::delete('/delete/position/{id}', 'deletePosition');
-});
+// Route::controller(DepartmentJobPositionController::class)->group(function () {
+//     Route::post('/create/department-job-position', 'attachDepartmentJobPosition');
+//     Route::get('/get/department-job-positions', 'getDepartmentJobPositions');
+//     // Route::put('/update/department-job-position/{id}', 'updateDeptPos');
+//     Route::delete('/delete/department-job-position/{id}', 'deleteDepartmentPosition');
+// });
 
-Route::controller(DeptPosController::class)->group(function () {
-    Route::post('/create/department-position', 'createDeptPos');
-    Route::get('/get/department-positions', 'getDeptPos');
-    Route::put('/update/department-position/{id}', 'updateDeptPos');
-    Route::delete('/delete/department-position/{id}', 'deleteDeptPos');
+/**
+ * ==============================
+ *  Policy and User Policy Agreements Routes
+ * ==============================
+ */
+
+ Route::apiResource('policies', PolicyController::class);
+
+
+
+Route::controller('user-policy', UserPolicyAgreementController::class);
+
+/**
+ * ==============================
+ *  Applicant Registration Routes
+ * ==============================
+ */
+
+Route::middleware('tenant')->group(function () {
+    Route::post('/pre-register', [JobApplicationController::class, 'createApplication']);
+    Route::get('/test-api', [JobApplicationController::class, 'test']);
+    Route::get('/verify-email/{token}', [JobApplicationController::class, 'verifyEmail'])->name('email.verify');
+    // routes
 });
 
 /**
  * ==============================
- *  Policy, User Agreement, and User Policy Agreements Routes
+ *  Email Template Routes
  * ==============================
  */
-
-Route::controller(PolicyController::class)->group(function () {
-    Route::post('/create/policy', 'createPolicy');
-    Route::get('/get/policies', 'getPolicies');
-    Route::put('/update/policy/{id}', 'updatePolicy');
-    Route::delete('/delete/policy/{id}', 'deletePolicy');
-});
-
-Route::controller(UserAgreementController::class)->group(function () {
-    Route::post('/create/user-agreement', 'createUserAgreement');
-    Route::get('/get/user-agreements', 'getUserAgreements');
-});
-
-Route::controller(UserPolicyAgreementController::class)->group(function () {
-    Route::post('/create/user-policy-agreement', 'createUserPolicyAgreement');
-    Route::get('/get/user-policy-agreements', 'getUserPolicyAgreements');
-    Route::put('/update/user-policy-agreement/{id}', 'updateUserPolicyAgreement');
-    Route::delete('/delete/user-policy-agreement/{id}', 'deleteUserPolicyAgreement');
-});
+Route::apiResource('email-templates', EmailTemplateController::class);

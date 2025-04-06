@@ -22,7 +22,7 @@ class DepartmentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'department_name' => ['required', 'string', 'max:50'],
+            'name' => ['required', 'string', 'max:255', 'unique:departments,name'],
             'description' => ['required', 'string', 'max:255'],
         ];
     }

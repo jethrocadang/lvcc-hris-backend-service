@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use App\Models\Position;
+use App\Models\JobPosition;
 
 class PositionSeeder extends Seeder
 {
@@ -13,10 +13,10 @@ class PositionSeeder extends Seeder
      */
     public function run(): void
     {
-        Position::insert([
-            ['position_title' => 'Manager', 'description' => 'Manages employee inside MIS department'],
-            ['position_title' => 'Developer', 'description' => 'Develops software for the company'],
-            ['position_title' => 'Designer', 'description' => 'Designs the company website'],
+        JobPosition::insert([
+            ['title' => 'Manager', 'description' => 'Manages employee inside MIS department'],
+            ['title' => 'Developer', 'description' => 'Develops software for the company'],
+            ['title' => 'Designer', 'description' => 'Designs the company website'],
         ]);
     }
 }
