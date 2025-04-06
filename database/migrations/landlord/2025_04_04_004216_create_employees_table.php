@@ -57,6 +57,7 @@ return new class extends Migration
 
             $table->date('employment_end_date')->nullable(); // Date when employment ended (nullable)
             $table->string('latest_position_designation')->nullable(); // Latest position title (optional)
+            // TODO can update to json
             $table->date('work_schedule')->nullable(); // Placeholder for schedule info (to be refined)
 
             $table->timestamps(); // Created_at & updated_at timestamps
