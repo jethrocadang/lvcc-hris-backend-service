@@ -71,6 +71,11 @@ class UserPolicyAgreementService
         }
     }
 
+    public function getAll()
+    {
+        return UserPolicyAgreement::with('policies')->get();
+    }
+
     public function attachPolicyToUserAgreement(array $data)
     {
         try{

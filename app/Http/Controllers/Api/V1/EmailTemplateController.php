@@ -2,58 +2,71 @@
 
 namespace App\Http\Controllers\Api\V1;
 
-use Illuminate\Http\Request;
+
 use App\Models\EmailTemplate;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\EmailTemplateRequest;
-use App\Http\Resources\EmailTemplateResource;
-use Illuminate\Validation\Rules\Email;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use App\Traits\ApiResponse;
+use Exception;
+use App\Services\Hris\EmailTemplateService;
+
 
 class EmailTemplateController extends Controller
 {
-    public function createEmail(EmailTemplateRequest $request){
+    use ApiResponse;
 
-        //create email
-        $email = EmailTemplate::create($request->validated());
-        
-        return response()->json([
-            'message' => 'Email template created successfully!',
-            'email' => new EmailTemplateResource($email)
-        ], 201);
+    private EmailTemplateService $emailTemplateService;
+
+    public function __construct(EmailTemplateService $emailTemplateService)
+    {
+        $this->emailTemplateService = $emailTemplateService;
     }
 
-    public function getEmails(){
+    public function index(): JsonResponse
+    {
+        $emailTemplates = $this->emailTemplateService->getEmailTemplates();
 
-        //get all email templates
-        $email = EmailTemplate::all();
-
-        return response()->json([
-            'email_templates' => EmailTemplateResource::collection($email)
-        ], 200);
+        return $emailTemplates->isNotEmpty()
+            ? $this->successResponse('Email templates retrieved successfully!', $emailTemplates)
+            : $this->errorResponse('No email templates found', [], 404);
     }
 
-    public function updateEmail(EmailTemplateRequest $request, $id){
-
-        // update email template by id
-        $email = EmailTemplate::findOrFail($id);
-
-        $email->update($request->validated());
-
-        return response()->json([
-            'message' => 'Email template updated successsfuly!',
-            'email' => new EmailTemplateResource($email)
-        ], 200);
+    public function store(EmailTemplateRequest $request): JsonResponse
+    {
+        try {
+            $emailTemplate = $this->emailTemplateService->createEmailTemplate($request);
+            return $this->successResponse('Email template created successfully!', $emailTemplate, 201);
+        } catch (Exception $e) {
+            return $this->errorResponse('An error occurred while creating the email template.', ['error' => $e->getMessage()], 500);
+        }
     }
 
-    public function deleteEmail($id){
+    public function update(EmailTemplateRequest $request, int $id): JsonResponse
+    {
+        try {
+            $emailTemplate = $this->emailTemplateService->updateEmailTemplate($request, $id);
+            return $this->successResponse('Email template updated successfully!', $emailTemplate);
+        } catch (ModelNotFoundException $e) {
+            return $this->errorResponse($e->getMessage(), [], 404);
+        } catch (Exception $e) {
+            return $this->errorResponse('Failed to update email template!', ['error' => $e->getMessage()], 500);
+        }
+    }
 
-        //delete email template by id
-        $email = EmailTemplate::findOrFail($id);
+    public function destroy(int $id): JsonResponse
+    {
+        try {
+            // Find the email template by ID
+            EmailTemplate::findOrFail($id)->delete();
 
-        $email->delete();
-
-        return response()->json([
-            'message' => 'Email template deleted successfully!'
-        ], 200);
+            // Return success response
+            return response()->json(['message' => 'Email template deleted successfully!'], 200);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['message' => 'Email template not found!'], 404);
+        } catch (Exception $e) {
+            return response()->json(['message' => 'Failed to delete email template!'], 500);
+        }
     }
 }

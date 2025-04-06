@@ -121,9 +121,4 @@ Route::middleware('tenant')->group(function () {
  *  Email Template Routes
  * ==============================
  */
-Route::controller(EmailTemplateController::class)->group(function () {
-    Route::post('/create/email-template', 'createEmail');
-    Route::get('/get/email-templates', 'getEmails');
-    Route::put('/update/email-template/{id}', 'updateEmail');
-    Route::delete('/delete/email-template/{id}', 'deleteEmail');
-});
+Route::apiResource('email-templates', EmailTemplateController::class);
