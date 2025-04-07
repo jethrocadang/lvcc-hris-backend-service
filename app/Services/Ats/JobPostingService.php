@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Job;
+namespace App\Services\Ats;
 
 use App\Http\Requests\Job\JobPostRequest;
 use App\Http\Resources\JobPostResource;
