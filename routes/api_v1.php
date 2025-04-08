@@ -17,6 +17,7 @@ use App\Http\Controllers\Api\V1\Ats\JobApplicationController;
 use App\Http\Controllers\Api\V1\ActivityLogController;
 use App\Http\Controllers\Api\V1\EmailTemplateController;
 use App\Http\Controllers\Api\V1\Hris\UserPolicyAgreementController;
+use App\Http\Controllers\Api\V1\Hris\InterviewScheduleSlotController;
 use App\Http\Middleware\JwtMiddleware;
 use Illuminate\Support\Facades\Route;
 
@@ -83,24 +84,13 @@ Route::controller(JobPostingController::class)->group(function () {
  */
 Route::apiResource('departments', DepartmentController::class);
 Route::apiResource('job-positions', JobPositionController::class);
-
-// Route::controller(DepartmentJobPositionController::class)->group(function () {
-//     Route::post('/create/department-job-position', 'attachDepartmentJobPosition');
-//     Route::get('/get/department-job-positions', 'getDepartmentJobPositions');
-//     // Route::put('/update/department-job-position/{id}', 'updateDeptPos');
-//     Route::delete('/delete/department-job-position/{id}', 'deleteDepartmentPosition');
-// });
-
 /**
  * ==============================
  *  Policy and User Policy Agreements Routes
  * ==============================
  */
 
- Route::apiResource('policies', PolicyController::class);
-
-
-
+Route::apiResource('policies', PolicyController::class);
 Route::controller('user-policy', UserPolicyAgreementController::class);
 
 /**
@@ -122,3 +112,10 @@ Route::middleware('tenant')->group(function () {
  * ==============================
  */
 Route::apiResource('email-templates', EmailTemplateController::class);
+
+/**
+ * ==============================
+ *  Email Template Routes
+ * ==============================
+ */
+Route::apiResource('interview-slots', InterviewScheduleSlotController::class);

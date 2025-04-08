@@ -29,7 +29,7 @@ return new class extends Migration
             // Foreign key referencing the 'users' table (admin)
             $table->foreignId('admin')  // 'admin' references the 'id' column in the 'users' table
                   ->constrained('users') // Establishing the foreign key relationship with 'users'
-                  ->onDelete('cascade'); // Cascade delete when the user is deleted
+                  ->onDelete('cascade')->nullable(); // Cascade delete when the user is deleted
 
             $table->date('scheduled_date'); // The date of the interview
             $table->time('start_time'); // The start time of the interview
