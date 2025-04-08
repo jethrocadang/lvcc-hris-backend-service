@@ -14,11 +14,12 @@ use App\Http\Controllers\Api\V1\AuthController;
 // use App\Http\Controllers\Api\V1\Ats\JobApplicationController;
 
 
-// use App\Http\Controllers\Api\V1\ActivityLogController;
-// use App\Http\Controllers\Api\V1\EmailTemplateController;
-// use App\Http\Controllers\Api\V1\Hris\UserPolicyAgreementController;
-// use App\Http\Middleware\JwtMiddleware;
-// use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\V1\ActivityLogController;
+use App\Http\Controllers\Api\V1\EmailTemplateController;
+use App\Http\Controllers\Api\V1\Hris\UserPolicyAgreementController;
+use App\Http\Controllers\Api\V1\Hris\InterviewScheduleSlotController;
+use App\Http\Middleware\JwtMiddleware;
+use Illuminate\Support\Facades\Route;
 
 // /**
 //  * ==============================
@@ -64,44 +65,33 @@ Route::controller(AuthController::class)->group(function () {
 //  */
 // Route::get('/get/activity-logs', [ActivityLogController::class, 'getActivityLogs']);
 
-// /**
-//  * ==============================
-//  *  Job Post CRUD Routes
-//  * ==============================
-//  */
-// Route::controller(JobPostingController::class)->group(function () {
-//     Route::post('/create/job-post', 'createJobPost');
-//     Route::get('/get/job-post', 'getJobPost');
-//     Route::put('/update/job-post/{id}', 'updateJobPost');
-//     Route::delete('/delete/job-post/{id}', 'deleteJobPost');
-// });
+/**
+ * ==============================
+ *  Job Post CRUD Routes
+ * ==============================
+ */
+Route::controller(JobPostingController::class)->group(function () {
+    Route::post('/create/job-post', 'createJobPost');
+    Route::get('/get/job-post', 'getJobPost');
+    Route::put('/update/job-post/{id}', 'updateJobPost');
+    Route::delete('/delete/job-post/{id}', 'deleteJobPost');
+});
 
-// /**
-//  * ==============================
-//  *  Department, Position, and Department_position Routes
-//  * ==============================
-//  */
-// Route::apiResource('departments', DepartmentController::class);
-// Route::apiResource('job-positions', JobPositionController::class);
+/**
+ * ==============================
+ *  Department, Position, and Department_position Routes
+ * ==============================
+ */
+Route::apiResource('departments', DepartmentController::class);
+Route::apiResource('job-positions', JobPositionController::class);
+/**
+ * ==============================
+ *  Policy and User Policy Agreements Routes
+ * ==============================
+ */
 
-// // Route::controller(DepartmentJobPositionController::class)->group(function () {
-// //     Route::post('/create/department-job-position', 'attachDepartmentJobPosition');
-// //     Route::get('/get/department-job-positions', 'getDepartmentJobPositions');
-// //     // Route::put('/update/department-job-position/{id}', 'updateDeptPos');
-// //     Route::delete('/delete/department-job-position/{id}', 'deleteDepartmentPosition');
-// // });
-
-// /**
-//  * ==============================
-//  *  Policy and User Policy Agreements Routes
-//  * ==============================
-//  */
-
-//  Route::apiResource('policies', PolicyController::class);
-
-
-
-// Route::controller('user-policy', UserPolicyAgreementController::class);
+Route::apiResource('policies', PolicyController::class);
+Route::controller('user-policy', UserPolicyAgreementController::class);
 
 // /**
 //  * ==============================
@@ -122,3 +112,23 @@ Route::controller(AuthController::class)->group(function () {
 //  * ==============================
 //  */
 // Route::apiResource('email-templates', EmailTemplateController::class);
+
+/**
+ * ==============================
+ *  Email Template Routes
+ * ==============================
+ */
+
+Route::middleware('tenant')->group(function () {
+    Route::post('/pre-register', [JobApplicationController::class, 'createApplication']);
+    Route::get('/test-api', [JobApplicationController::class, 'test']);
+    Route::get('/verify-email/{token}', [JobApplicationController::class, 'verifyEmail'])->name('email.verify');
+    // routes
+});
+
+/**
+ * ==============================
+ *  Email Template Routes
+ * ==============================
+ */
+Route::apiResource('interview-slots', InterviewScheduleSlotController::class);

@@ -59,14 +59,14 @@ class EmailTemplateController extends Controller
     {
         try {
             // Find the email template by ID
-            EmailTemplate::findOrFail($id)->delete();
+            $this->emailTemplateService->deleteEmailTemplate($id);
 
             // Return success response
-            return response()->json(['message' => 'Email template deleted successfully!'], 200);
+            return $this->successResponse('Email template deleted successfully!', []);
         } catch (ModelNotFoundException $e) {
-            return response()->json(['message' => 'Email template not found!'], 404);
+            return $this->errorResponse($e->getMessage(), [], 404);
         } catch (Exception $e) {
-            return response()->json(['message' => 'Failed to delete email template!'], 500);
+            return $this->errorResponse('Failed to delete department!', ['error' => $e->getMessage()], 500);
         }
     }
 }
