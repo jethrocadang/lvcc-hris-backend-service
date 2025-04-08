@@ -90,6 +90,7 @@ Route::apiResource('job-positions', JobPositionController::class);
  */
 
 Route::apiResource('policies', PolicyController::class);
+Route::apiResource('policies', PolicyController::class);
 Route::controller('user-policy', UserPolicyAgreementController::class);
 
 // /**

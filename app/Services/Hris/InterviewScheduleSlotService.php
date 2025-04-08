@@ -27,7 +27,7 @@ class InterviewScheduleSlotService
             : collect();
     }
 
-    /**
+        /**
      * Get interview schedule slot by ID.
      *
      * @param int $id
