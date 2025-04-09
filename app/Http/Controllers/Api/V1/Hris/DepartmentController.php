@@ -31,6 +31,19 @@ class DepartmentController extends Controller
             ? $this->successResponse('Departments retrieved successfully!', $departments)
             : $this->errorResponse('No departments found', [], 404);
     }
+
+    public function show(int $id): JsonResponse
+    {
+        try {
+            $department = $this->departmentService->getDepartmentById($id);
+            return $this->successResponse('Department retrieved successfully!', $department);
+        } catch (ModelNotFoundException $e) {
+            return $this->errorResponse($e->getMessage(), [], 404);
+        } catch (Exception $e) {
+            return $this->errorResponse('Failed to retrieve department!', ['error' => $e->getMessage()], 500);
+        }
+    }
+
     public function store(DepartmentRequest $request): JsonResponse
     {
         try {
@@ -41,7 +54,6 @@ class DepartmentController extends Controller
             return $this->errorResponse('An error occurred while creating the department.', ['error' => $e->getMessage()], 500);
         }
     }
-
 
     public function update(DepartmentRequest $request, int $id): JsonResponse
     {

@@ -37,6 +37,32 @@ class PolicyService
     }
 
     /**
+     * Retrieve a policy by its ID.
+     *
+     * @param int $id The ID of the policy to retrieve.
+     * @return PolicyResource The policy resource.
+     * @throws ModelNotFoundException If the policy with the given ID is not found.
+     */
+    public function getPolicyById(int $id): PolicyResource
+    {
+        try {
+            // Find the policy by ID or throw an exception if not found
+            $policy = Policy::findOrFail($id);
+
+            // Return the policy as a resource
+            return new PolicyResource($policy);
+        } catch (ModelNotFoundException $e) {
+            // Log and rethrow a not found exception
+            Log::warning("Policy with ID {$id} not found.");
+            throw new ModelNotFoundException("Policy with ID {$id} not found.");
+        } catch (Exception $e) {
+            // Log any unexpected errors and rethrow the exception
+            Log::error('Policy retrieval failed', ['error' => $e->getMessage()]);
+            throw $e;
+        }
+    }
+
+    /**
      * Create a new policy.
      *
      * @param PolicyRequest $policyRequest The validated request containing policy details.

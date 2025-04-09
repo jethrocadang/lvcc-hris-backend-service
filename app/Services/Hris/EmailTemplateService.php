@@ -28,6 +28,32 @@ class EmailTemplateService
             : collect();
     }
 
+    /**
+     * Get email template by ID.
+     *
+     * @param int $id
+     * @return EmailTemplateResource
+     * @throws ModelNotFoundException|Exception
+     */
+    public function getEmailTemplateById(int $id): EmailTemplateResource
+    {
+        try {
+            // Find the email template by ID
+            $emailTemplate = EmailTemplate::findOrFail($id);
+
+            // Return the email template
+            return new EmailTemplateResource($emailTemplate);
+        } catch (ModelNotFoundException $e) {
+            // Log error if not found
+            Log::error('Email template not found', ['error' => $e->getMessage()]);
+            throw $e;
+        } catch (Exception $e) {
+            // Log errors and return the exception
+            Log::error('Email template retrieval failed', ['error' => $e->getMessage()]);
+            throw $e;
+        }
+    }
+
     public function createEmailTemplate(EmailTemplateRequest $request): EmailTemplateResource
     {
         try {

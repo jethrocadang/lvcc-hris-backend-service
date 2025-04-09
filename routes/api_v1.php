@@ -15,7 +15,7 @@ use App\Http\Controllers\Api\V1\AuthController;
 
 
 use App\Http\Controllers\Api\V1\ActivityLogController;
-use App\Http\Controllers\Api\V1\EmailTemplateController;
+use App\Http\Controllers\Api\V1\Hris\EmailTemplateController;
 use App\Http\Controllers\Api\V1\Hris\UserPolicyAgreementController;
 use App\Http\Controllers\Api\V1\Hris\InterviewScheduleSlotController;
 use App\Http\Middleware\JwtMiddleware;
