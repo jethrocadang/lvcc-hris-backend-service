@@ -29,6 +29,32 @@ class JobPositionService
     }
 
     /**
+     * Get job position by ID.
+     *
+     * @param int $id
+     * @return JobPositionResource
+     * @throws ModelNotFoundException|Exception
+     */
+    public function getJobPositionById(int $id): JobPositionResource
+    {
+        try {
+            // Find the job position by ID
+            $jobPosition = JobPosition::findOrFail($id);
+
+            // Return the job position
+            return new JobPositionResource($jobPosition);
+        } catch (ModelNotFoundException $e) {
+            // Log error if not found
+            Log::error('Job Position not found', ['error' => $e->getMessage()]);
+            throw $e;
+        } catch (Exception $e) {
+            // Log errors and return the exception
+            Log::error('Job Position retrieval failed', ['error' => $e->getMessage()]);
+            throw $e;
+        }
+    }
+
+    /**
      * Create a new job position.
      *
      * @param JobPositionRequest $request

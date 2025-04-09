@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\V1;
+namespace App\Http\Controllers\Api\V1\Hris;
 
 
 use App\Models\EmailTemplate;
@@ -31,6 +31,18 @@ class EmailTemplateController extends Controller
         return $emailTemplates->isNotEmpty()
             ? $this->successResponse('Email templates retrieved successfully!', $emailTemplates)
             : $this->errorResponse('No email templates found', [], 404);
+    }
+
+    public function show(int $id): JsonResponse
+    {
+        try {
+            $emailTemplate = $this->emailTemplateService->getEmailTemplateById($id);
+            return $this->successResponse('Email template retrieved successfully!', $emailTemplate);
+        } catch (ModelNotFoundException $e) {
+            return $this->errorResponse($e->getMessage(), [], 404);
+        } catch (Exception $e) {
+            return $this->errorResponse('Failed to retrieve email template!', ['error' => $e->getMessage()], 500);
+        }
     }
 
     public function store(EmailTemplateRequest $request): JsonResponse

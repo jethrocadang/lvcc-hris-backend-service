@@ -21,6 +21,21 @@ class UserPolicyAgreementService
             : collect();
     }
 
+    public function getUserPolicyAgreementById(int $id): UserPolicyAgreementResource
+    {
+        try {
+            $userPolicyAgreement = UserPolicyAgreement::findOrFail($id);
+
+            return new UserPolicyAgreementResource($userPolicyAgreement);
+        } catch (ModelNotFoundException $e) {
+            Log::warning("User policy agreement with ID {$id} not found.");
+            throw new ModelNotFoundException("User policy agreement with ID {$id} not found.");
+        } catch (Exception $e) {
+            Log::error('User policy agreement retrieval failed', ['error' => $e->getMessage()]);
+            throw $e;
+        }
+    }
+
     public function createUserPolicyAgreement(UserPolicyAgreementRequest $request): UserPolicyAgreementResource
     {
         try {

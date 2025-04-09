@@ -72,6 +72,31 @@ class PolicyController extends Controller
     }
 
     /**
+     * Retrieve a specific policy by its ID.
+     *
+     * @param int $id The ID of the policy to retrieve.
+     * @return \Illuminate\Http\JsonResponse JSON response with policy data or an error message.
+     */
+    public function show($id)
+    {
+        try {
+            // Attempt to fetch the policy by ID
+            $policy = $this->policyService->getPolicyById($id);
+
+            // Return success response with policy data
+            return $this->successResponse('Policy retrieved successfully!', $policy);
+        } catch (ModelNotFoundException $e) {
+            // Handle case where policy with given ID is not found
+            return $this->errorResponse('Policy not found.', [], 404);
+        } catch (Exception $e) {
+            // Handle any unexpected exceptions during retrieval
+            return $this->errorResponse('Failed to retrieve policy!', [
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
      * Update an existing policy.
      *
      * @param PolicyRequest $request The validated request containing updated policy details.
