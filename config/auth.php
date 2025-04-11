@@ -44,6 +44,10 @@ return [
             'driver' => 'jwt',
             'provider' => 'users',
         ],
+        'ats' => [
+            'driver' => 'jwt',
+            'provider' => 'applicants'
+        ]
     ],
 
     /*
@@ -69,10 +73,8 @@ return [
             'model' => env('AUTH_MODEL', App\Models\User::class),
         ],
 
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
+        'applicants' => 'eloquent',
+        'model' => App\Models\JobApplication::class
     ],
 
     /*

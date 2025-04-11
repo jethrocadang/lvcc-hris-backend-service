@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignId('job_applicant_id') // Foreign key referencing 'job_applicants' table
                   ->constrained('job_applicants')
                   ->onDelete('cascade');
-            $table->string('application_token'); // Column to store a unique token for the application
+            $table->string('portal_token'); // Column to store a unique token for the application
             $table->timestamps(); // Adds 'created_at' and 'updated_at' timestamp columns
         });
     }

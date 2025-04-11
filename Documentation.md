@@ -13,9 +13,7 @@
 
 - composer install
 
-3. Migrate landlord 
-
-- `php artisan migrate --path=database/migrations/landlord --database=landlord`
+3. Migrate landlord`
 
 
 2. Create the tenant database, just seed the database
@@ -53,5 +51,10 @@
 3. eth_db -  `php artisan tenants:artisan "migrate --path=database/migrations/tenant/eth --database=tenant" --tenant=2` 
 
 note: you can still do `migrate:fresh` or `migrate:refresh`
+
+
+# Consuming APIs
+
+1. Add `X-Tenant-ID` on headers
 
 

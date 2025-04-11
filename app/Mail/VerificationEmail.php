@@ -13,23 +13,22 @@ class VerificationEmail extends Mailable
     use Queueable, SerializesModels;
 
     public JobApplicant $applicant;
-    public string $verificationUrl;
-    public int $tenant;
 
     public function __construct(JobApplicant $applicant)
     {
         $this->applicant = $applicant;
-        $this->verificationUrl = route('email.verify', ['token' => $applicant->verification_token]);
     }
 
     public function build()
     {
+        $verifyEmailUrl = 'frontend.com' . '/verify-email?token='. $this->applicant->verification_token;
+
         return $this->from(config('mail.from.address'), config('mail.from.name'))
             ->subject('Verify Your Email')
             ->view('mail.verify-email')
             ->with([
                 'applicant' => $this->applicant,
-                'verificationUrl' => $this->verificationUrl,
+                'verifyEmailUrl' => $verifyEmailUrl,
             ]);
     }
 }

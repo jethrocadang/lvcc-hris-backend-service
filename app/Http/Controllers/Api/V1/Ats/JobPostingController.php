@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api\V1\Ats;
 use App\Http\Controllers\Controller;
 use App\Traits\ApiResponse;
 use App\Http\Requests\Job\JobPostRequest;
-use App\Services\Job\JobPostingService;
+use App\Services\Ats\JobPostingService;
 use Illuminate\Http\JsonResponse;
 
 class JobPostingController extends Controller
