@@ -2,6 +2,8 @@
 
 namespace App\Http\Resources;
 
+use App\Http\Resources\DepartmentJobPositionResource;
+use App\Http\Resources\EmployeeInformationResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -16,8 +18,12 @@ class EmployeeResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'user_id' => $this->user_id,
-            'department_position_id' => $this->department_position_id,
+            'user_id' => [
+                'id' => $this->user?->id,
+                'name' => $this->user?->name,
+                'avatar_url' => $this->user?->avatar_url,
+            ],
+            'department_position_id' => new DepartmentJobPositionResource($this->departmentJobPosition),
             'employee_information' => new EmployeeInformationResource($this->employeeInformation),
             'employee_id' => $this->employee_id,
             'employee_type' => $this->employee_type,

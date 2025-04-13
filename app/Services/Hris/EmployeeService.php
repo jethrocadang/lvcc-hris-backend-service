@@ -29,7 +29,7 @@ class EmployeeService
             $employee = Employee::create($employeeData);
 
             // Eager load the relation
-            $employee->load('employeeInformation');
+            $employee->load(['employeeInformation', 'departmentJobPosition', 'user']);
 
             DB::commit();
             return new EmployeeResource($employee);
