@@ -75,10 +75,10 @@ class EmployeeService
         try {
             // find employee
             $employee = Employee::findOrFail($id);
-    
+
             //update  employee targeting employee information
             $employee->employeeInformation->update($request->validated());
-    
+
             return new EmployeeResource($employee);
         } catch (Exception $e) {
             Log::error('Employee info-only update failed', ['error' => $e->getMessage()]);
@@ -115,5 +115,5 @@ class EmployeeService
         }
     }
 
-    
+
 }
