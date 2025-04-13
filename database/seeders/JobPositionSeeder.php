@@ -6,7 +6,7 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\JobPosition;
 
-class PositionSeeder extends Seeder
+class JobPositionSeeder extends Seeder
 {
     /**
      * Run the database seeds.
