@@ -12,6 +12,7 @@ class Employee extends Model
 
     protected $fillable = [
         'user_id',
+        'employee_id',
         'department_position_id',
         'employee_information_id',
         'employee_type',
@@ -25,11 +26,16 @@ class Employee extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class)->select('id', 'name', 'avatar_url');
     }
 
     public function employeeInformation()
     {
         return $this->belongsTo(EmployeeInformation::class);
+    }
+
+    public function departmentJobPosition()
+    {
+        return $this->belongsTo(DepartmentJobPosition::class, 'department_position_id');
     }
 }

@@ -5,18 +5,19 @@ use Illuminate\Support\Facades\Route;
 //App\Http\Controllers\Api\V1\Hris;
 use App\Http\Middleware\JwtMiddleware;
 use App\Http\Controllers\Api\V1\AuthController;
-use App\Http\Controllers\Api\V1\EmployeeController;
+use App\Http\Controllers\Api\V1\ActivityLogController;
 // use App\Http\Controllers\Api\V1\Hris\DepartmentJobPositionController;
 
 
 // App\Http\Controllers\Api\V1\Ats;
-use App\Http\Controllers\Api\V1\ActivityLogController;
 use App\Http\Controllers\Api\V1\Hris\PolicyController;
+use App\Http\Controllers\Api\V1\Hris\EmployeeController;
 
 
 use App\Http\Controllers\Api\V1\Ats\JobPostingController;
 use App\Http\Controllers\Api\V1\Hris\DepartmentController;
 use App\Http\Controllers\Api\V1\Hris\JobPositionController;
+use App\Http\Controllers\Api\V1\EmployeeController as Enter;
 use App\Http\Controllers\Api\V1\Ats\JobApplicationController;
 use App\Http\Controllers\Api\V1\Hris\EmailTemplateController;
 use App\Http\Controllers\Api\V1\Hris\UserPolicyAgreementController;

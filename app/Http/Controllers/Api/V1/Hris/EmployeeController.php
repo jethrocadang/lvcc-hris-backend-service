@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\V1;
+namespace App\Http\Controllers\Api\V1\Hris;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\EmployeeInformationRequest;
 use App\Http\Requests\EmployeeRequest;

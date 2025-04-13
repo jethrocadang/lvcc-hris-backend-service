@@ -23,6 +23,7 @@ class EmployeeRequest extends FormRequest
     {
         return [
             'user_id' => 'required|exists:users,id|unique:employees,user_id',
+            'employee_id' => 'required|string|unique:employees,employee_id',
             'department_position_id' => 'required|exists:department_positions,id',
             'employee_type' => 'required|in:full-time,part-time,volunteer',
             'employment_status' => 'required|in:regular,probationary',
