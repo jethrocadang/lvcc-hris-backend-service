@@ -2,7 +2,10 @@
 
 namespace App\Http\Requests;
 
+<<<<<<< HEAD
 use Illuminate\Validation\Rule;
+=======
+>>>>>>> cf452f6 ( chore[hris_db]: employee and its infos added (not-working/in-progress))
 use Illuminate\Foundation\Http\FormRequest;
 
 class EmployeeInformationRequest extends FormRequest
@@ -22,9 +25,12 @@ class EmployeeInformationRequest extends FormRequest
      */
     public function rules(): array
     {
+<<<<<<< HEAD
         $employeeInfoId = $this->route('id') // or wherever you pass the ID
         ?? optional($this->employee_information)->id;
 
+=======
+>>>>>>> cf452f6 ( chore[hris_db]: employee and its infos added (not-working/in-progress))
         return [
             'first_name' => 'required|string|max:255',
             'middle_name' => 'nullable|string|max:255',
@@ -44,6 +50,7 @@ class EmployeeInformationRequest extends FormRequest
             'pagibig_number' => 'nullable|string',
             'sss_number' => 'nullable|string',
             'philhealth_number' => 'nullable|string',
+<<<<<<< HEAD
         'work_email' => [
             'required',
             'email',
@@ -54,6 +61,10 @@ class EmployeeInformationRequest extends FormRequest
             'email',
             Rule::unique('employee_informations', 'personal_email')->ignore($employeeInfoId),
         ],
+=======
+            'work_email' => 'required|email|unique:employee_informations,work_email',
+            'personal_email' => 'nullable|email|unique:employee_informations,personal_email',
+>>>>>>> cf452f6 ( chore[hris_db]: employee and its infos added (not-working/in-progress))
         ];
     }
 }
