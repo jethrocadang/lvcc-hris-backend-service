@@ -1,25 +1,26 @@
 <?php
 // App\Http\Controllers\Api\V1;
-use App\Http\Controllers\Api\V1\AuthController;
+use Illuminate\Support\Facades\Route;
 
 //App\Http\Controllers\Api\V1\Hris;
-use App\Http\Controllers\Api\V1\Hris\DepartmentController;
-use App\Http\Controllers\Api\V1\Hris\JobPositionController;
-use App\Http\Controllers\Api\V1\Hris\PolicyController;
+use App\Http\Middleware\JwtMiddleware;
+use App\Http\Controllers\Api\V1\AuthController;
+use App\Http\Controllers\Api\V1\EmployeeController;
 // use App\Http\Controllers\Api\V1\Hris\DepartmentJobPositionController;
 
 
 // App\Http\Controllers\Api\V1\Ats;
-use App\Http\Controllers\Api\V1\Ats\JobPostingController;
-use App\Http\Controllers\Api\V1\Ats\JobApplicationController;
-
-
 use App\Http\Controllers\Api\V1\ActivityLogController;
+use App\Http\Controllers\Api\V1\Hris\PolicyController;
+
+
+use App\Http\Controllers\Api\V1\Ats\JobPostingController;
+use App\Http\Controllers\Api\V1\Hris\DepartmentController;
+use App\Http\Controllers\Api\V1\Hris\JobPositionController;
+use App\Http\Controllers\Api\V1\Ats\JobApplicationController;
 use App\Http\Controllers\Api\V1\Hris\EmailTemplateController;
 use App\Http\Controllers\Api\V1\Hris\UserPolicyAgreementController;
 use App\Http\Controllers\Api\V1\Hris\InterviewScheduleSlotController;
-use App\Http\Middleware\JwtMiddleware;
-use Illuminate\Support\Facades\Route;
 
 /**
  * ==============================
@@ -119,3 +120,11 @@ Route::apiResource('email-templates', EmailTemplateController::class);
  * ==============================
  */
 Route::apiResource('interview-slots', InterviewScheduleSlotController::class);
+
+
+/**
+ * ==============================
+ *  Employee and Employee Information Routes
+ * ==============================
+ */
+Route::apiResource('employees', EmployeeController::class);
