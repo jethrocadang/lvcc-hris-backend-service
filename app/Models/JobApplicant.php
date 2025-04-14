@@ -31,4 +31,9 @@ class JobApplicant extends Model
         return $this->hasOne(JobApplication::class, 'job_applicant_id');
     }
 
+    public function jobApplicantInformation()
+    {
+        return $this->hasOne(JobApplicantInformation::class, 'job_applicant_id');
+    }
+
 }

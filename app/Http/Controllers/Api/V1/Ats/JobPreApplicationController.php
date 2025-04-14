@@ -12,7 +12,7 @@ use Exception;
 /**
  * Handles job application registration and email verification for applicants.
  */
-class JobApplicationController extends Controller
+class JobPreApplicationController extends Controller
 {
     use ApiResponse;
 
@@ -49,7 +49,6 @@ class JobApplicationController extends Controller
                 201
             );
         } catch (Exception $e) {
-            // Log the exception for debugging (optional)
             return $this->errorResponse(
                 'Failed to register new Applicant!',
                 ['error' => $e->getMessage()],
