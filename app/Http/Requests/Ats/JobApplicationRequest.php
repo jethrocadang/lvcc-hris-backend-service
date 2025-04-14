@@ -30,7 +30,6 @@ class JobApplicationRequest extends FormRequest
             'email' => [
                 'required',
                 'email',
-                // Error yung rules dito
             ],
         ];
     }

@@ -16,11 +16,11 @@ return new class extends Migration
             $table->id(); // Primary key (auto-incrementing ID)
 
             // Foreign key linking to the job_applicants table, ensuring each applicant has a unique record
-            $table->foreignId('applicant_id')->unique()->constrained('job_applicants')->onDelete('cascade');
+            $table->foreignId('job_applicant_id')->unique()->constrained('job_applicants')->onDelete('cascade');
 
             // Personal information
-            $table->string('current_address'); // Applicant's current residential address
-            $table->string('contact_number'); // Applicant's contact number
+            $table->string('current_address')->nullable(); // Applicant's current residential address
+            $table->string('contact_number')->nullable(); // Applicant's contact number
 
             // Religious background (optional fields)
             $table->string('religion')->nullable(); // Religion of the applicant
