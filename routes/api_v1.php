@@ -29,7 +29,15 @@ use App\Http\Controllers\Api\V1\Hris\InterviewScheduleSlotController;
 // Route::get('test', function () {
 //     return 'test - API v1';
 // });
+// Route::get('test', function () {
+//     return 'test - API v1';
+// });
 
+// /**
+//  * ==============================
+//  *  Authentication Routes (JWT + OAuth)
+//  * ==============================
+//  */
 // /**
 //  * ==============================
 //  *  Authentication Routes (JWT + OAuth)
@@ -56,7 +64,26 @@ Route::controller(AuthController::class)->group(function () {
 //         Route::delete('/delete/department/{id}', 'deleteDepartment');
 //     });
 // });
+// /**
+//  * ==============================
+//  *  For protected routes, you need to group them inside JwtMiddleware and RoleMiddleware
+//  * ==============================
+//  */
+// Route::middleware(JwtMiddleware::class)->group(function () {
+//     Route::controller(DepartmentController::class)->group(function () {
+//         Route::post('/create/department', 'createDepartment');
+//         Route::get('/get/departments', 'getDepartments');
+//         Route::put('/update/department/{id}', 'updateDepartment');
+//         Route::delete('/delete/department/{id}', 'deleteDepartment');
+//     });
+// });
 
+// /**
+//  * ==============================
+//  *  Activity Log Routes
+//  * ==============================
+//  */
+// Route::get('/get/activity-logs', [ActivityLogController::class, 'getActivityLogs']);
 // /**
 //  * ==============================
 //  *  Activity Log Routes
