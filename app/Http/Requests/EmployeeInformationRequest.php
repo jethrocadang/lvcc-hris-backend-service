@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class EmployeeInformationRequest extends FormRequest
@@ -21,6 +22,9 @@ class EmployeeInformationRequest extends FormRequest
      */
     public function rules(): array
     {
+        $employeeInfoId = $this->route('id') // or wherever you pass the ID
+        ?? optional($this->employee_information)->id;
+
         return [
             'first_name' => 'required|string|max:255',
             'middle_name' => 'nullable|string|max:255',
@@ -40,8 +44,16 @@ class EmployeeInformationRequest extends FormRequest
             'pagibig_number' => 'nullable|string',
             'sss_number' => 'nullable|string',
             'philhealth_number' => 'nullable|string',
-            'work_email' => 'required|email|unique:employee_informations,work_email',
-            'personal_email' => 'nullable|email|unique:employee_informations,personal_email',
+        'work_email' => [
+            'required',
+            'email',
+            Rule::unique('employee_informations', 'work_email')->ignore($employeeInfoId),
+        ],
+        'personal_email' => [
+            'nullable',
+            'email',
+            Rule::unique('employee_informations', 'personal_email')->ignore($employeeInfoId),
+        ],
         ];
     }
 }

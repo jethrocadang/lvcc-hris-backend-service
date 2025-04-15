@@ -184,5 +184,6 @@ class DepartmentService
             throw new Exception('Failed to detach job position from department.');
         }
     }
+    
 
 }
