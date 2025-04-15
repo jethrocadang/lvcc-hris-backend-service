@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class EmployeeRequest extends FormRequest
@@ -21,9 +22,19 @@ class EmployeeRequest extends FormRequest
      */
     public function rules(): array
     {
+        $employeeId = $this->route('id') ?? optional($this->employee)->id;
+
         return [
-            'user_id' => 'required|exists:users,id|unique:employees,user_id',
-            'employee_id' => 'required|string|unique:employees,employee_id',
+            'user_id' => [
+                'required',
+                'exists:users,id',
+                Rule::unique('employees', 'user_id')->ignore($employeeId),
+            ],
+            'employee_id' => [
+                'required',
+                'string',
+                Rule::unique('employees', 'employee_id')->ignore($employeeId),
+            ],
             'department_position_id' => 'required|exists:department_positions,id',
             'employee_type' => 'required|in:full-time,part-time,volunteer',
             'employment_status' => 'required|in:regular,probationary',

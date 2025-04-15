@@ -24,9 +24,14 @@ class EmployeeController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(): JsonResponse
     {
-        
+        try {
+            $employees = $this->employeeService->getEmployees();
+            return $this->successResponse('Employees retrieved successfully!', $employees);
+        } catch (Exception $e) {
+            return $this->errorResponse('Failed to retrieve employees.', ['error' => $e->getMessage()], 500);
+        }
     }
 
     /**
@@ -45,24 +50,67 @@ class EmployeeController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(string $id): JsonResponse
     {
-        //
+        try {
+            $employee = $this->employeeService->getEmployeeById($id);
+            return $this->successResponse('Employee retrieved successfully!', $employee);
+        } catch (Exception $e) {
+            return $this->errorResponse('Failed to retrieve employee.', ['error' => $e->getMessage()], 404);
+        }
+    }
+
+    // public function update(EmployeeInformationRequest $infoRequest, EmployeeRequest $employeeRequest, int $id): JsonResponse
+    // {
+    //     try {
+    //         $employee = $this->employeeService->updateEmployee($infoRequest, $employeeRequest,$id);
+    //         return $this->successResponse('Employee updated successfully!', $employee);                  <!-- updating employee and its info [not-working] -->
+    //     } catch (Exception $e) {
+    //         return $this->errorResponse('Failed to update employee.', ['error' => $e->getMessage()], 500);
+    //     }
+    // }
+
+    /**
+     * Update the Employee Information only.
+     */
+    public function updateInformationOnly(EmployeeInformationRequest $request, int $id): JsonResponse
+    {
+        try {
+            $employee = $this->employeeService->updateEmployeeInformationOnly($request, $id);
+            return $this->successResponse('Employee information updated successfully!', $employee);
+        } catch (Exception $e) {
+            return $this->errorResponse('Failed to update employee information.', ['error' => $e->getMessage()], 500);
+        }
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update the Employee only.
      */
-    public function update(Request $request, string $id)
+    public function updateEmployeeOnly(EmployeeRequest $request, int $id): JsonResponse
     {
-        //
+        try {
+            $employee = $this->employeeService->updateEmployeeOnly($request, $id);
+            return $this->successResponse('Employee updated successfully!', $employee);
+        } catch (Exception $e) {
+            return $this->errorResponse('Failed to update employee.', ['error' => $e->getMessage()], 500);
+        }
     }
+
+    
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(int $id): JsonResponse
     {
-        //
+        try {
+            $this->employeeService->deleteEmployee($id);
+            return $this->successResponse('Employee deleted successfully!', []);
+        } catch (Exception $e) {
+            return $this->errorResponse('Failed to delete employee.', ['error' => $e->getMessage()], 500);
+        }
     }
 }
+
+
+//fix pati dapat employee_info deleted
