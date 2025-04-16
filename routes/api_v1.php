@@ -17,12 +17,9 @@ use App\Http\Controllers\Api\V1\Hris\EmployeeController;
 use App\Http\Controllers\Api\V1\Ats\JobPostingController;
 use App\Http\Controllers\Api\V1\Hris\DepartmentController;
 use App\Http\Controllers\Api\V1\Hris\JobPositionController;
-use App\Http\Controllers\Api\V1\Ats\JobApplicationController;
-use App\Http\Controllers\Api\V1\Hris\EmailTemplateController;
 use App\Http\Controllers\Api\V1\Hris\UserPolicyAgreementController;
 use App\Http\Controllers\Api\V1\Hris\InterviewScheduleSlotController;
-use App\Http\Middleware\JwtMiddleware;
-use Illuminate\Support\Facades\Route;
+
 
 /**
  * ==============================
@@ -102,12 +99,7 @@ Route::controller('user-policy', UserPolicyAgreementController::class);
 //  * ==============================
 //  */
 
-// Route::middleware('tenant')->group(function () {
-//     Route::post('/pre-register', [JobApplicationController::class, 'createApplication']);
-//     Route::get('/test-api', [JobApplicationController::class, 'test']);
-//     Route::get('/verify-email/{token}', [JobApplicationController::class, 'verifyEmail'])->name('email.verify');
-//     // routes
-// });
+
 
 // /**
 //  * ==============================
@@ -122,12 +114,6 @@ Route::controller('user-policy', UserPolicyAgreementController::class);
  * ==============================
  */
 
-Route::middleware('tenant')->group(function () {
-    Route::post('/pre-register', [JobApplicationController::class, 'createApplication']);
-    Route::get('/test-api', [JobApplicationController::class, 'test']);
-    Route::get('/verify-email/{token}', [JobApplicationController::class, 'verifyEmail'])->name('email.verify');
-    // routes
-});
 
 /**
  * ==============================
