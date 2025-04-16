@@ -30,6 +30,18 @@ class UserPolicyAgreementController extends Controller
         : $this->errorResponse('No user policy agreement found', [], 404);
     }
 
+    public function show(int $id): JsonResponse
+    {
+        try {
+            $userPolicyAgreement = $this->userPolicyAgreementService->getUserPolicyAgreementById($id);
+            return $this->successResponse('User policy agreement retrieved successfully!.', $userPolicyAgreement);
+        } catch (ModelNotFoundException $e) {
+            return $this->errorResponse($e->getMessage(), [], 404);
+        } catch (Exception $e) {
+            return $this->errorResponse('Failed to retrieve user policy agreement.', ['error' => $e->getMessage()], 500);
+        }
+    }
+
 
     public function store(UserPolicyAgreementRequest $request): JsonResponse
     {

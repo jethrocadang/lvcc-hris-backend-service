@@ -103,7 +103,7 @@ return [
     |
     */
 
-    'ttl' => env('JWT_TTL', 60),
+    'ttl' => (int) env('JWT_TTL'),
 
     /*
     |--------------------------------------------------------------------------
@@ -297,7 +297,7 @@ return [
         */
 
         'storage' =>  Tymon\JWTAuth\Providers\Storage\Illuminate::class,
-        
+
 
     ],
 

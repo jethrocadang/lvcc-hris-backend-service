@@ -28,6 +28,32 @@ class DepartmentService
             : collect();
     }
 
+        /**
+     * Get interview schedule slot by ID.
+     *
+     * @param int $id
+     * @return DepartmentResource
+     * @throws ModelNotFoundException|Exception
+     */
+    public function getDepartmentById(int $id): DepartmentResource
+    {
+        try {
+            // Find the interview schedule slot by ID
+            $department = Department::findOrFail($id);
+
+            // Return the interview schedule slot
+            return new DepartmentResource($department);
+        } catch (ModelNotFoundException $e) {
+            // Log error if not found
+            Log::error('Department not found', ['error' => $e->getMessage()]);
+            throw $e;
+        } catch (Exception $e) {
+            // Log errors and return the exception
+            Log::error('Department retrieval failed', ['error' => $e->getMessage()]);
+            throw $e;
+        }
+    }
+
     /**
      * Create a new department.
      *
@@ -158,5 +184,6 @@ class DepartmentService
             throw new Exception('Failed to detach job position from department.');
         }
     }
+    
 
 }

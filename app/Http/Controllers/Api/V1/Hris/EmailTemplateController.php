@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\V1;
+namespace App\Http\Controllers\Api\V1\Hris;
 
 
 use App\Models\EmailTemplate;
@@ -33,6 +33,18 @@ class EmailTemplateController extends Controller
             : $this->errorResponse('No email templates found', [], 404);
     }
 
+    public function show(int $id): JsonResponse
+    {
+        try {
+            $emailTemplate = $this->emailTemplateService->getEmailTemplateById($id);
+            return $this->successResponse('Email template retrieved successfully!', $emailTemplate);
+        } catch (ModelNotFoundException $e) {
+            return $this->errorResponse($e->getMessage(), [], 404);
+        } catch (Exception $e) {
+            return $this->errorResponse('Failed to retrieve email template!', ['error' => $e->getMessage()], 500);
+        }
+    }
+
     public function store(EmailTemplateRequest $request): JsonResponse
     {
         try {
@@ -59,14 +71,14 @@ class EmailTemplateController extends Controller
     {
         try {
             // Find the email template by ID
-            EmailTemplate::findOrFail($id)->delete();
+            $this->emailTemplateService->deleteEmailTemplate($id);
 
             // Return success response
-            return response()->json(['message' => 'Email template deleted successfully!'], 200);
+            return $this->successResponse('Email template deleted successfully!', []);
         } catch (ModelNotFoundException $e) {
-            return response()->json(['message' => 'Email template not found!'], 404);
+            return $this->errorResponse($e->getMessage(), [], 404);
         } catch (Exception $e) {
-            return response()->json(['message' => 'Failed to delete email template!'], 500);
+            return $this->errorResponse('Failed to delete department!', ['error' => $e->getMessage()], 500);
         }
     }
 }

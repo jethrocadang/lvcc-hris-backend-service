@@ -5,7 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\Department;
-use App\Models\Position;
+use App\Models\JobPosition;
 use Illuminate\Support\Facades\DB;
 
 class DepartmentPositionSeeder extends Seeder
@@ -15,21 +15,22 @@ class DepartmentPositionSeeder extends Seeder
      */
     public function run(): void
     {
-        // Retrieve department and position IDs
         $departments = Department::all();
-        $positions = Position::all();
-
+        $positions = JobPosition::all();
+    
         $data = [];
-
+    
         foreach ($departments as $department) {
             foreach ($positions as $position) {
                 $data[] = [
                     'department_id' => $department->id,
-                    'position_id' => $position->id,
+                    'job_position_id' => $position->id,
+                    'created_at' => now(),
+                    'updated_at' => now(),
                 ];
             }
         }
-
-        DB::table('department_position')->insert($data);
+    
+        DB::table('department_positions')->insert($data);
     }
 }

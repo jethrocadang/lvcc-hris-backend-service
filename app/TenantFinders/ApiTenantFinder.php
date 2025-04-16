@@ -4,6 +4,7 @@ namespace App\TenantFinders;
 
 use App\Models\NewTenantModel;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Spatie\Multitenancy\TenantFinder\TenantFinder;
 use Spatie\Multitenancy\Contracts\IsTenant;
 
@@ -11,10 +12,12 @@ class ApiTenantFinder extends TenantFinder
 {
     public function findForRequest(Request $request): ?IsTenant
     {
+        Log::info('App\TenantFinders: Hit');
         // Get tenant ID from request headers
         $tenantId = $request->header('X-Tenant-ID');
 
         if (!$tenantId) {
+            Log::warning('No X-Tenant-ID header provided.');
             return null; // No tenant provided
         }
 

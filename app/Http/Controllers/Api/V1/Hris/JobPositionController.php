@@ -47,6 +47,28 @@ class JobPositionController extends Controller
     }
 
     /**
+     * Retrieve a specific job position by ID.
+     *
+     * @param int $id - ID of the job position to retrieve.
+     * @return JsonResponse - JSON response with job position data or error message.
+     */
+    public function show(int $id): JsonResponse
+    {
+        try {
+            // Fetch job position by ID from the service
+            $jobPosition = $this->jobPositionService->getJobPositionById($id);
+
+            return $this->successResponse('Job position retrieved successfully!', $jobPosition);
+        } catch (ModelNotFoundException $e) {
+            // Handle case where job position is not found
+            return $this->errorResponse($e->getMessage(), [], 404);
+        } catch (Exception $e) {
+            // Handle any other errors during retrieval
+            return $this->errorResponse('Failed to retrieve job position!', ['error' => $e->getMessage()], 500);
+        }
+    }
+
+    /**
      * Create a new job position.
      *
      * @param JobPositionRequest $request - Validated request data for job position creation.
