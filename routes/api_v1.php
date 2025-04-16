@@ -17,8 +17,6 @@ use App\Http\Controllers\Api\V1\Hris\EmployeeController;
 use App\Http\Controllers\Api\V1\Ats\JobPostingController;
 use App\Http\Controllers\Api\V1\Hris\DepartmentController;
 use App\Http\Controllers\Api\V1\Hris\JobPositionController;
-use App\Http\Controllers\Api\V1\Ats\JobApplicationController;
-use App\Http\Controllers\Api\V1\Hris\EmailTemplateController;
 use App\Http\Controllers\Api\V1\Hris\UserPolicyAgreementController;
 use App\Http\Controllers\Api\V1\Hris\InterviewScheduleSlotController;
 
