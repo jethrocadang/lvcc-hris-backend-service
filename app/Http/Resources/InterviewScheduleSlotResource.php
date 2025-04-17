@@ -17,11 +17,11 @@ class InterviewScheduleSlotResource extends JsonResource
         return [
             'id' => $this->id,
             // 'admin' => $this->admin ? new UserResource($this->admin) : null,
-            'scheduled_date' => $this->scheduled_date,
-            'start_time' => $this->start_time,
-            'slot_status' => $this->slot_status,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'scheduledDate' => $this->scheduled_date,
+            'startTime' => $this->start_time,
+            'slotStatus' => $this->slot_status,
+            'createdAt' => $this->created_at,
+            'updatedAt' => $this->updated_at,
         ];
     }
 }
