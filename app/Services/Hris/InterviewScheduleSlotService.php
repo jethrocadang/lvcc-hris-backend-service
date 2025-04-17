@@ -1,4 +1,4 @@
-<?php 
+<?php
 namespace App\Services\Hris;
 
 use App\Http\Requests\InterviewScheduleSlotRequest;
@@ -52,7 +52,7 @@ class InterviewScheduleSlotService
             throw $e;
         }
     }
-    
+
 
     /**
      * Create a new interview schedule slot.

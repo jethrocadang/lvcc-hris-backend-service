@@ -20,17 +20,24 @@ use App\Http\Controllers\Api\V1\Hris\JobPositionController;
 use App\Http\Controllers\Api\V1\Hris\UserPolicyAgreementController;
 use App\Http\Controllers\Api\V1\Hris\InterviewScheduleSlotController;
 
-
-/**
- * ==============================
- *  Test Routes - For API checking
- * ==============================
- */
+// /**
+//  * ==============================
+//  *  Test Routes - For API checking
+//  * ==============================
+//  */
 
 // Route::get('test', function () {
 //     return 'test - API v1';
 // });
+// Route::get('test', function () {
+//     return 'test - API v1';
+// });
 
+// /**
+//  * ==============================
+//  *  Authentication Routes (JWT + OAuth)
+//  * ==============================
+//  */
 // /**
 //  * ==============================
 //  *  Authentication Routes (JWT + OAuth)
@@ -57,7 +64,26 @@ Route::controller(AuthController::class)->group(function () {
 //         Route::delete('/delete/department/{id}', 'deleteDepartment');
 //     });
 // });
+// /**
+//  * ==============================
+//  *  For protected routes, you need to group them inside JwtMiddleware and RoleMiddleware
+//  * ==============================
+//  */
+// Route::middleware(JwtMiddleware::class)->group(function () {
+//     Route::controller(DepartmentController::class)->group(function () {
+//         Route::post('/create/department', 'createDepartment');
+//         Route::get('/get/departments', 'getDepartments');
+//         Route::put('/update/department/{id}', 'updateDepartment');
+//         Route::delete('/delete/department/{id}', 'deleteDepartment');
+//     });
+// });
 
+// /**
+//  * ==============================
+//  *  Activity Log Routes
+//  * ==============================
+//  */
+// Route::get('/get/activity-logs', [ActivityLogController::class, 'getActivityLogs']);
 // /**
 //  * ==============================
 //  *  Activity Log Routes
@@ -91,6 +117,7 @@ Route::apiResource('job-positions', JobPositionController::class);
  */
 
 Route::apiResource('policies', PolicyController::class);
+Route::apiResource('policies', PolicyController::class);
 Route::controller('user-policy', UserPolicyAgreementController::class);
 
 // /**
@@ -108,12 +135,25 @@ Route::controller('user-policy', UserPolicyAgreementController::class);
 //  */
 // Route::apiResource('email-templates', EmailTemplateController::class);
 
+// /**
+//  * ==============================
+//  *  Applicant Registration Routes
+//  * ==============================
+//  */
+
+// Route::middleware('tenant')->group(function () {
+//     Route::post('/pre-register', [JobApplicationController::class, 'createApplication']);
+//     Route::get('/test-api', [JobApplicationController::class, 'test']);
+//     Route::get('/verify-email/{token}', [JobApplicationController::class, 'verifyEmail'])->name('email.verify');
+//     // routes
+// });
+
 /**
  * ==============================
  *  Email Template Routes
  * ==============================
  */
-
+Route::apiResource('email-templates', EmailTemplateController::class);
 
 /**
  * ==============================
@@ -121,7 +161,6 @@ Route::controller('user-policy', UserPolicyAgreementController::class);
  * ==============================
  */
 Route::apiResource('interview-slots', InterviewScheduleSlotController::class);
-
 
 
 /**

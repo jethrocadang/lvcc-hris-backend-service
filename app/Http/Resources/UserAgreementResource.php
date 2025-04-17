@@ -16,9 +16,9 @@ class UserAgreementResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'policy_accepted_at' => $this->policy_accepted_at,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'policyAceeptedAt' => $this->policy_accepted_at,
+            'createdAt' => $this->created_at,
+            'updatedAt' => $this->updated_at,
         ];
     }
 }
