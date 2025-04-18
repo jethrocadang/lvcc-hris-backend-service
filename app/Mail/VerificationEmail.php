@@ -14,14 +14,20 @@ class VerificationEmail extends Mailable
 
     public JobApplicant $applicant;
 
-    public function __construct(JobApplicant $applicant)
+    public int $jobId;
+
+
+    public function __construct(JobApplicant $applicant, int $jobId)
     {
         $this->applicant = $applicant;
+        $this->jobId = $jobId;
     }
 
     public function build()
     {
-        $verifyEmailUrl = 'frontend.com' . '/verify-email?token='. $this->applicant->verification_token;
+        $verifyEmailUrl = 'frontend.com' . '/verify-email?token='
+        . $this->applicant->verification_token
+        . '&job_id=' . $this->jobId;
 
         return $this->from(config('mail.from.address'), config('mail.from.name'))
             ->subject('Verify Your Email')

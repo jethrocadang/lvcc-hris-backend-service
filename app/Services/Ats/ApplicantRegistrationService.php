@@ -2,7 +2,7 @@
 
 namespace App\Services\Ats;
 
-use App\Http\Requests\Ats\JobApplicationRequest;
+use App\Http\Requests\Ats\JobApplicationCreateRequest;
 use App\Http\Resources\JobApplicantResource;
 use App\Http\Resources\JobApplicationResource;
 use App\Models\JobApplicant;
@@ -20,11 +20,11 @@ class ApplicantRegistrationService
      * Handle creation of a new job applicant.
      * Sends a verification email after creating the applicant record.
      *
-     * @param JobApplicationRequest $request
+     * @param JobApplicationCreateRequest $request
      * @return JobApplicantResource
      * @throws Exception
      */
-    public function create(JobApplicationRequest $request): JobApplicantResource
+    public function create(JobApplicationCreateRequest $request): JobApplicantResource
     {
         try {
             // Validate the incoming request data
@@ -36,12 +36,14 @@ class ApplicantRegistrationService
             // Create a new job applicant record
             $jobApplicant = JobApplicant::create($data);
 
+            //selected job
+            $jobId = $data['job_id'];
+
             // Send verification email to applicant
-            Mail::to($jobApplicant->email)->send(new VerificationEmail($jobApplicant));
+            Mail::to($jobApplicant->email)->send(new VerificationEmail($jobApplicant, $jobId));
 
             // Return a resource representation of the job applicant
             return new JobApplicantResource($jobApplicant);
-
         } catch (Exception $e) {
             // Log the error and rethrow for handling by the controller
             Log::error('Job application creation failed', ['error' => $e->getMessage()]);
@@ -57,7 +59,7 @@ class ApplicantRegistrationService
      * @return JobApplicantResource
      * @throws ModelNotFoundException|Exception
      */
-    public function verifyEmail(string $token): JobApplicantResource
+    public function verifyEmail(string $token, ?int $jobId = null): JobApplicantResource
     {
         try {
             // Find applicant using the verification token
@@ -69,15 +71,26 @@ class ApplicantRegistrationService
                 'verification_token' => null,
             ]);
 
+            Log::info("Job ID {$jobId}");
+
             // If no portal access record exists, create one and send portal token
             if (!$jobApplicant->jobApplication) {
                 // Generate a secure random portal access token
                 $portalToken = Str::random(40);
 
                 // Create the job application record linked to this applicant
-                $jobApplicant->jobApplication()->create([
+                $jobApplication = $jobApplicant->jobApplication()->create([
                     'portal_token' => $portalToken,
                 ]);
+
+                // If job_id is passed, create initial selection
+                if ($jobId) {
+                    $jobApplication->jobSelectionOptions()->create([
+                        'job_id' => $jobId,
+                        'priority' => 1,
+                        'status' => null,
+                    ]);
+                }
 
                 // Send portal access email to applicant
                 Mail::to($jobApplicant->email)->send(new PortalAccessEmail($jobApplicant, $portalToken));
@@ -90,7 +103,6 @@ class ApplicantRegistrationService
 
             // Return applicant resource including the portal access token
             return new JobApplicantResource($jobApplicant);
-
         } catch (ModelNotFoundException $e) {
             // Log and rethrow specific error if token is not found
             Log::warning("Invalid verification token used: {$token}");
@@ -101,6 +113,4 @@ class ApplicantRegistrationService
             throw $e;
         }
     }
-
-
 }

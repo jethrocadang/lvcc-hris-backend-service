@@ -52,4 +52,9 @@ class JobApplication extends Authenticatable implements JWTSubject
             'id'                    // Local key on JobApplicant
         );
     }
+
+    public function jobSelectionOptions()
+    {
+        return $this->hasMany(JobSelectionOption::class, 'job_application_id');
+    }
 }
