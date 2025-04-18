@@ -2,7 +2,7 @@
 
 namespace App\Services\Ats;
 
-use App\Http\Requests\Job\JobPostRequest;
+use App\Http\Requests\Ats\JobPostRequest;
 use App\Http\Resources\JobPostResource;
 use App\Models\JobPost;
 use Illuminate\Support\Collection;
