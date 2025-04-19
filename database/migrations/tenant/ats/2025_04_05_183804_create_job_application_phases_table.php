@@ -17,7 +17,7 @@ return new class extends Migration {
         Schema::create('job_application_phases', function (Blueprint $table) {
             $table->id(); // Primary key
 
-            $table->unsignedBigInteger('email_template_id'); // Link to email_templates (not FK for flexibility)
+            $table->unsignedBigInteger('email_template_id')->nullable(); // Link to email_templates (not FK for flexibility)
 
             $table->string('name'); // Phase name (e.g., "Initial Screening")
             $table->text('description')->nullable(); // Phase description
