@@ -16,4 +16,9 @@ class JobApplicationPhases extends Model
         'description',
         'sequence_order',
     ];
+
+    public function jobApplicationProgress()
+    {
+        return $this->hasMany(JobApplicationProgress::class, 'job_application_phase_id');
+    }
 }

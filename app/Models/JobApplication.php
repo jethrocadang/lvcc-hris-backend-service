@@ -57,4 +57,9 @@ class JobApplication extends Authenticatable implements JWTSubject
     {
         return $this->hasMany(JobSelectionOption::class, 'job_application_id');
     }
+
+    public function jobApplicationProgress()
+    {
+        return $this->hasMany(JobApplicationProgress::class, 'job_application_id');
+    }
 }

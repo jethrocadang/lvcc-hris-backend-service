@@ -2,17 +2,23 @@
 
 namespace App\Services\Ats;
 
-use App\Http\Requests\Ats\JobApplicationCreateRequest;
-use App\Http\Resources\JobApplicantResource;
-use App\Http\Resources\JobApplicationResource;
+// Models
 use App\Models\JobApplicant;
+use App\Models\JobApplicationProgress;
+
+// Mails
+use Illuminate\Support\Facades\Mail;
 use App\Mail\VerificationEmail;
 use App\Mail\PortalAccessEmail;
-use Illuminate\Support\Facades\Mail;
+
+// Helpers
+use App\Http\Requests\Ats\JobApplicationCreateRequest;
+use App\Http\Resources\JobApplicantResource;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
-use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Exception;
+use Illuminate\Support\Facades\DB;
 
 class ApplicantRegistrationService
 {
@@ -65,13 +71,15 @@ class ApplicantRegistrationService
             // Find applicant using the verification token
             $jobApplicant = JobApplicant::where('verification_token', $token)->firstOrFail();
 
+            // Begin transaction with the database for failure rollback, so no orphaned data created.
+            DB::beginTransaction();
+
             // Mark the email as verified and clear the token
             $jobApplicant->update([
                 'email_verified_at' => now(),
                 'verification_token' => null,
             ]);
 
-            Log::info("Job ID {$jobId}");
 
             // If no portal access record exists, create one and send portal token
             if (!$jobApplicant->jobApplication) {
@@ -83,6 +91,24 @@ class ApplicantRegistrationService
                     'portal_token' => $portalToken,
                 ]);
 
+                // Start job application progress by setting JobApplicationProgress to phase 1 completed.
+                JobApplicationProgress::create([
+                    'job_application_id' => $jobApplication->id,
+                    'job_application_phase_id' => 1,
+                    'status' => 'accepted',
+                    'start_date' => now(),
+                    'end_date' => now()
+                ]);
+
+                // Set the job application progress to phase pending
+                JobApplicationProgress::create([
+                    'job_application_id' => $jobApplication->id,
+                    'job_application_phase_id' => 2,
+                    'status' => 'accepted',
+                    'start_date' => now(),
+                ]);
+
+            
                 // If job_id is passed, create initial selection
                 if ($jobId) {
                     $jobApplication->jobSelectionOptions()->create([
@@ -94,9 +120,11 @@ class ApplicantRegistrationService
 
                 // Send portal access email to applicant
                 Mail::to($jobApplicant->email)->send(new PortalAccessEmail($jobApplicant, $portalToken));
-
-                Log::info("Portal access email queued for {$jobApplicant->email}");
+            } else {
+                // Commit transaction if all success
+                DB::commit();
             }
+
 
             // Eager load the job application for resource response
             $jobApplicant->load(['jobApplication']);
@@ -108,6 +136,8 @@ class ApplicantRegistrationService
             Log::warning("Invalid verification token used: {$token}");
             throw new ModelNotFoundException('Token not found!');
         } catch (Exception $e) {
+            // Roll back the transaction for failed attempt.
+            DB::rollBack();
             // Log any other unexpected errors
             Log::error('Email verification process failed', ['error' => $e->getMessage()]);
             throw $e;
