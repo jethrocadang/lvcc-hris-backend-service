@@ -3,9 +3,8 @@
 namespace App\Http\Requests\Ats;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Validation\Rule;
-
+use Illuminate\Support\Facades\DB;
+use Spatie\Multitenancy\Models\Tenant;
 
 class JobApplicationCreateRequest extends FormRequest
 {
@@ -15,6 +14,18 @@ class JobApplicationCreateRequest extends FormRequest
     public function authorize(): bool
     {
         return true;
+    }
+
+    /**
+     * Determine the tenant first before running the request.
+     * @return void
+     */
+    protected function prepareForValidation()
+    {
+        // This checks if the requests comes from a tenant, then sets the database to select the tenant database.
+        if (Tenant::class) {
+            DB::setDefaultConnection('tenant');
+        }
     }
 
     /**
@@ -29,17 +40,10 @@ class JobApplicationCreateRequest extends FormRequest
             'first_name' => 'required|string|max:255',
             'middle_name' => 'nullable|string|max:255',
             'last_name' => 'required|string|max:255',
-            'email' => [
-                'required',
-                'email',
-                'max:255',
-                // Rule::unique('job_applicants')->where(function ($query) {
-                //     return $query->where('tenant_id', request()->get('tenant_id'));
-                // }),
-            ],
+            'email' => ['required', 'email', 'unique:job_applicants,email'],
 
             // job_selection_options table
-            'job_id' => 'required|integer',
+            'job_id' => 'required|integer|exists:job_posts,id',
         ];
     }
 }
