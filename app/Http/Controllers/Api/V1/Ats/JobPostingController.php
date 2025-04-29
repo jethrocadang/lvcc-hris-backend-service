@@ -28,7 +28,7 @@ class JobPostingController extends Controller
             : $this->errorResponse('Failed to create job posting!', [], 500);
     }
 
-    public function getAllJobPosts(): JsonResponse
+    public function index(): JsonResponse
     {
         $jobPosts = $this->jobPostingService->getJobPosts();
 

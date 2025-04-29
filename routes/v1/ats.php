@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\V1\Ats\JobApplicationFormController;
+use App\Http\Controllers\Api\V1\Ats\JobApplicationProgressController;
 use App\Http\Controllers\Api\V1\Ats\JobPostingController;
 use App\Http\Controllers\Api\V1\Ats\JobPreApplicationController;
 use App\Http\Controllers\Api\V1\Ats\PortalAuthController;
@@ -17,11 +18,14 @@ Route::middleware('tenant')->group(function () {
     Route::post('/portal-auth', [PortalAuthController::class, 'authenticate']);
 
 
-    // Protected API endpoints
-    Route::middleware(['tenant', 'auth.jwt.tenant', 'auth.jwt'])->group(function () {
+    // ** PORTAL ENDPOINTS
+    Route::middleware(['auth.jwt.tenant', 'auth.jwt'])->group(function () {
         Route::match(['put', 'patch'], '/portal/profile', [JobApplicationFormController::class, 'updateOrCreate']);
+        Route::get('/job-application-progress', [JobApplicationProgressController::class, 'getAllProgress']);
     });
 
-    // TODO: ADD THIS INSIDE A MIDDLEWARE
-    Route::apiResource('job-posts', JobPostingController::class);
+    // ** ADMIN & REVIEWER ENDPOINTS
+    Route::middleware(['auth.jwt'])->group(function () {
+        Route::apiResource('job-posts', JobPostingController::class);
+    });
 });
