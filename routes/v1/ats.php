@@ -8,8 +8,9 @@ use App\Http\Controllers\Api\V1\Ats\PortalAuthController;
 
 Route::middleware('tenant')->group(function () {
 
-    // Get all Job POstings
-    Route::get('/get/job-posts', [JobPostingController::class, 'getAllJobPosts']);
+    //Public Route for Job Postings
+    Route::get('ats/job-posts', [JobPostingController::class, 'index']);
+
     // Public API endpoint for pre-application [Input Data: Name, Email]
     Route::post('/pre-application', [JobPreApplicationController::class, 'jobPreApplication']);
     // Public API endpoint for email verification [Input Data: verification_token]
@@ -26,6 +27,6 @@ Route::middleware('tenant')->group(function () {
 
     // ** ADMIN & REVIEWER ENDPOINTS
     Route::middleware(['auth.jwt'])->group(function () {
-        Route::apiResource('job-posts', JobPostingController::class);
+        Route::apiResource('ats/job-posts', JobPostingController::class)->except(['index']);
     });
 });

@@ -29,8 +29,7 @@ use App\Http\Controllers\Api\V1\Hris\InterviewScheduleSlotController;
 // App\Http\Controllers\Api\V1\Ats
 use App\Http\Controllers\Api\V1\Ats\JobPostingController;
 
-//Public Route for Job Postings
-Route::get('ats/job-posts', JobPostingController::class);
+
 
 // Authentication routes: Public routes
 Route::controller(AuthController::class)->group(function () {
@@ -51,9 +50,6 @@ Route::controller(AuthController::class)->group(function () {
 
 // Protected routes for Main Users (requires auth.jwt)
 Route::middleware(['auth.jwt'])->group(function () {
-
-    // Job Postings management
-   Route::apiResource('ats/job-posts', JobPostingController::class)->except(['index']);
 
     // Department management (CRUD)
     Route::apiResource('hris/departments', DepartmentController::class);
@@ -79,6 +75,6 @@ Route::middleware(['auth.jwt'])->group(function () {
     // Update only the employee's additional information (without affecting core fields)
     Route::patch('hris/employees/{id}/information', [EmployeeController::class, 'updateInformationOnly']);
 
-    // Update only the main/core employee fields (e.g., name, email, position)
+    // Update only the main/core employee fields
     Route::patch('hris/employees/{id}/main', [EmployeeController::class, 'updateEmployeeOnly']);
 });
