@@ -7,17 +7,45 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Log;
 use Exception;
+use Illuminate\Http\JsonResponse;
 
 class JwtService
 {
-    public function generateTokens(User $user): array
+    public function generateTokens(User $user): JsonResponse
     {
-        return [
+        // Generate access token with default TTL
+        $accessToken = JWTAuth::claims(['type' => 'access'])->fromUser($user);
+
+        // Temporarily set a longer TTL for refresh token
+        $refreshTTL = 60 * 24 * 7; // 7 days
+        $factory = JWTAuth::factory();
+        $defaultTTL = $factory->getTTL(); // Save current TTL
+        $factory->setTTL($refreshTTL);
+
+        // Generate refresh token
+        $refreshToken = JWTAuth::claims(['type' => 'refresh'])->fromUser($user);
+
+        // Reset TTL to default (optional)
+        $factory->setTTL($defaultTTL);
+
+        return response()->json([
             'user' => $user,
-            'access_token' => JWTAuth::fromUser($user),
-            'token_type' => 'Bearer'
-        ];
+            'access_token' => $accessToken,
+            'token_type' => 'Bearer',
+            'expires_in' => JWTAuth::factory()->getTTL() * 60,
+        ])->cookie(
+            'refresh_token',
+            $refreshToken,
+            $refreshTTL,   // in minutes
+            '/',           // path
+            null,          // domain
+            false,          // secure
+            true,          // httpOnly
+            false,         // raw
+            'Strict'       // SameSite
+        );
     }
+
 
     public function refreshToken(Request $request)
     {
