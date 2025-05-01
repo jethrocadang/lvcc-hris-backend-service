@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\Api\V1\Ats;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Ats\JobApplicationRequest;
+use App\Http\Requests\Ats\JobApplicationCreateRequest;
+use App\Http\Requests\TokenRequest;
 use App\Services\Ats\ApplicantRegistrationService;
 use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
@@ -35,10 +36,10 @@ class JobPreApplicationController extends Controller
      * Handles pre-application registration for a job applicant.
      * This stores initial applicant info and sends a verification email.
      *
-     * @param JobApplicationRequest $request
+     * @param JobApplicationCreateRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function jobPreApplication(JobApplicationRequest $request)
+    public function jobPreApplication(JobApplicationCreateRequest $request)
     {
         try {
             $jobApplicant = $this->registrations->create($request);
@@ -63,14 +64,12 @@ class JobPreApplicationController extends Controller
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function verifyEmail(Request $request)
+    public function verifyEmail(TokenRequest $request)
     {
         try {
-            $token = $request->validate([
-                'token' => 'required|string',
-            ]);
+            $data = $request->validated();
 
-            $result = $this->registrations->verifyEmail($token['token']);
+            $result = $this->registrations->verifyEmail($data['token'], $data['job_id']);
 
             return $this->successResponse(
                 'Email successfully verified',

@@ -16,7 +16,8 @@ class InterviewScheduleSlotResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            // 'admin' => $this->admin ? new UserResource($this->admin) : null,
+            // TODO: ADD User Resource
+            'admin' => $this->admin,
             'scheduledDate' => $this->scheduled_date,
             'startTime' => $this->start_time,
             'slotStatus' => $this->slot_status,

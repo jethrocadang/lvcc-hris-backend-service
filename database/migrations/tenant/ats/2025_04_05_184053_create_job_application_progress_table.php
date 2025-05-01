@@ -16,7 +16,7 @@ return new class extends Migration {
         Schema::create('job_application_progress', function (Blueprint $table) {
             $table->id(); // Primary key
 
-            $table->foreignId('application_id')
+            $table->foreignId('job_application_id')
                 ->constrained('job_applications')
                 ->onDelete('cascade'); // Remove progress if application is deleted
 
@@ -24,7 +24,7 @@ return new class extends Migration {
                 ->constrained('job_application_phases')
                 ->onDelete('cascade'); // Remove progress if phase is deleted
 
-            $table->unsignedBigInteger('reviewed_by')->index(); // Employee ID (from landlord database)
+            $table->unsignedBigInteger('reviewed_by')->index()->nullable(); // Employee ID (from landlord database)
 
             $table->enum('status', ['accepted', 'rejected'])->nullable(); // Phase result
 

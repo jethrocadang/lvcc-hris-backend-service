@@ -4,19 +4,26 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 class JobPost extends Model
 {
-    use HasFactory;
+    use HasFactory, UsesTenantConnection;
 
     protected $fillable = [
-        'work_type', 'job_type', 'title', 'description',
-        'icon_url', 'status', 'location', 'schedule'
+        'work_type',
+        'job_type',
+        'title',
+        'description',
+        'icon_url',
+        'status',
+        'location',
+        'schedule'
     ];
 
-    public function user(): BelongsTo
+
+    public function jobSelectionOption()
     {
-        return $this->belongsTo(User::class);
+        $this->hasMany(JobSelectionOption::class, 'job_id');
     }
 }

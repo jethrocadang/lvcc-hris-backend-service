@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api\V1\Ats;
 
 use App\Http\Controllers\Controller;
 use App\Traits\ApiResponse;
-use App\Http\Requests\Job\JobPostRequest;
+use App\Http\Requests\Ats\JobPostRequest;
 use App\Services\Ats\JobPostingService;
 use Illuminate\Http\JsonResponse;
 
@@ -19,7 +19,7 @@ class JobPostingController extends Controller
         $this->jobPostingService = $jobPostingService;
     }
 
-    public function createJobPost(JobPostRequest $request): JsonResponse
+    public function store(JobPostRequest $request): JsonResponse
     {
         $jobPost = $this->jobPostingService->createJobPost($request);
 
@@ -28,7 +28,7 @@ class JobPostingController extends Controller
             : $this->errorResponse('Failed to create job posting!', [], 500);
     }
 
-    public function getJobPost(): JsonResponse
+    public function index(): JsonResponse
     {
         $jobPosts = $this->jobPostingService->getJobPosts();
 
@@ -37,7 +37,7 @@ class JobPostingController extends Controller
             : $this->errorResponse('No job postings found', [], 404);
     }
 
-    public function updateJobPost(JobPostRequest $request, int $id): JsonResponse
+    public function update(JobPostRequest $request, int $id): JsonResponse
     {
         $jobPost = $this->jobPostingService->updateJobPost($request, $id);
 
@@ -46,7 +46,7 @@ class JobPostingController extends Controller
             : $this->errorResponse('Failed to update job posting!', [], 500);
     }
 
-    public function deleteJobPost(int $id): JsonResponse
+    public function delete(int $id): JsonResponse
     {
         $deleted = $this->jobPostingService->deleteJobPost($id);
 

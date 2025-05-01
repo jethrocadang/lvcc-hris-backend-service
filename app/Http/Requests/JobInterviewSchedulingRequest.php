@@ -1,12 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Ats;
+namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
-
-class JobApplicationRequest extends FormRequest
+class JobInterviewSchedulingRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,13 +22,10 @@ class JobApplicationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'first_name' => 'required|string|max:255',
-            'middle_name' => 'nullable|string|max:255',
-            'last_name' => 'required|string|max:255',
-            'email' => [
-                'required',
-                'email',
-            ],
+            'interview_schedule_slot_id' => 'required|integer|exists:interview_schedule_slots,id',
+            'selected_date' => 'required|date',
+            'selected_time' => 'required|date_format:H:i:s',
+            'schedule_status' => 'required|string|in:booked',
         ];
     }
 }
