@@ -16,20 +16,22 @@ class EmployeeInformationResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'first_name' => $this->first_name,
-            'middle_name' => $this->middle_name,
-            'last_name' => $this->last_name,
-            'date_hired' => $this->date_hired,
-            'contact_number' => $this->contact_number,
-            'current_address' => $this->current_address,
-            'permanent_address' => $this->permanent_address,
-            'birth_date' => $this->birth_date,
-            'baptism_date' => $this->baptism_date,
+            'firstName' => $this->first_name,
+            'middleName' => $this->middle_name,
+            'lastName' => $this->last_name,
+            'dateHired' => $this->date_hired,
+            'contactNumber' => $this->contact_number,
+            'currentAddress' => $this->current_address,
+            'permanentAddress' => $this->permanent_address,
+            'birthDate' => $this->birth_date,
+            'baptismDate' => $this->baptism_date,
             'religion' => $this->religion,
             'gender' => $this->gender,
-            'marital_status' => $this->marital_status,
-            'work_email' => $this->work_email,
+            'maritalStatus' => $this->marital_status,
+            'workEmail' => $this->work_email,
             'personal_email' => $this->personal_email,
+            'createdAt' => $this->created_at,
+            'updatedAt' => $this->updated_at,
         ];
     }
 }

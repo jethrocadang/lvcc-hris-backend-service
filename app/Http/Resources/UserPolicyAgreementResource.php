@@ -16,11 +16,11 @@ class UserPolicyAgreementResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'policy_accepted_at' => $this->policy_accepted_at,
+            'policyAcceptedAt' => $this->policy_accepted_at,
             'policy' => new PolicyResource($this->whenLoaded('policy')),
-            'user_agreement' => new UserAgreementResource($this->whenLoaded('user_agreement')),
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'userAgreement' => new UserAgreementResource($this->whenLoaded('user_agreement')),
+            'createdAt' => $this->created_at,
+            'updatedAt' => $this->updated_at,
         ];
     }
 }

@@ -18,9 +18,9 @@ class PolicyResource extends JsonResource
             'id' => $this->id,
             'version' => $this->version,
             'content' => $this->content,
-            'effective_at' => $this->effective_at,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at
+            'effectiveAt' => $this->effective_at,
+            'createdAt' => $this->created_at,
+            'updatedAt' => $this->updated_at
         ];
     }
 }

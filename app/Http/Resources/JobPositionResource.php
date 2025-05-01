@@ -18,8 +18,8 @@ class JobPositionResource extends JsonResource
             'id' => $this->id,
             'title' => $this->title,
             'description' => $this->description,
-            'created_at' => $this->created_at->toDateTimeString(),
-            'updated_at' => $this->updated_at->toDateTimeString(),
+            'createdAt' => $this->created_at->toDateTimeString(),
+            'updatedAt' => $this->updated_at->toDateTimeString(),
         ];
     }
 }

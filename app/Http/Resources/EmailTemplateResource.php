@@ -17,11 +17,11 @@ class EmailTemplateResource extends JsonResource
         return [
             'id' => $this->id,
             'version' => $this->version,
-            'template_type' => $this->template_type,
-            'email_title' => $this->email_title,
-            'email_body' => $this->email_body,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at
+            'templateType' => $this->template_type,
+            'emailTitle' => $this->email_title,
+            'emailBody' => $this->email_body,
+            'createdAt' => $this->created_at,
+            'updatedAt' => $this->updated_at
         ];
     }
 }
