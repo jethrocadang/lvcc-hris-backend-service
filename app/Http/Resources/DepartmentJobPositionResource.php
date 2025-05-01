@@ -18,8 +18,8 @@ class DepartmentJobPositionResource extends JsonResource
             'id' => $this->id,
             'departmentId' => new DepartmentResource ($this->whenLoaded('department')),
             'positionId' => new JobPositionResource ($this->whenLoaded('position')),
-            'createdAt' => $this->created_at->toDateTimeString(),
-            'updatedAt' => $this->updated_at->toDateTimeString(),
+            'createdAt' => $this->created_at,
+            'updatedAt' => $this->updated_at
         ];
     }
 }

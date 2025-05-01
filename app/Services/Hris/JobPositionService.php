@@ -90,10 +90,8 @@ class JobPositionService
             // Check if data exists
             $jobPosition = JobPosition::findOrFail($id);
 
-            // Throw error for silent fails (No data mutated, model errors[fillables] & timestamps)
-            if ($jobPosition->update($request->validated())) {
-                throw new Exception("Failed to update Job Position.");
-            }
+            $jobPosition->update($request->validated());
+
             // Return new Job position
             return new JobPositionResource($jobPosition);
         } catch (ModelNotFoundException $e) {
@@ -119,7 +117,7 @@ class JobPositionService
         try {
             $jobPosition = JobPosition::findOrFail($id);
 
-            if (!$jobPosition->delete()){
+            if (!$jobPosition->delete()) {
                 throw new Exception("Failed to delete job position.");
             }
             return true;

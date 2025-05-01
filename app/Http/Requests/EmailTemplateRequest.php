@@ -22,6 +22,7 @@ class EmailTemplateRequest extends FormRequest
     public function rules(): array
     {
         return [
+            
             "version" => "required|string",
             "template_type" => "required|string",
             "email_title" => "required|string",

@@ -29,7 +29,7 @@ class EmployeeInformationResource extends JsonResource
             'gender' => $this->gender,
             'maritalStatus' => $this->marital_status,
             'workEmail' => $this->work_email,
-            'personal_email' => $this->personal_email,
+            'personalEmail' => $this->personal_email,
             'createdAt' => $this->created_at,
             'updatedAt' => $this->updated_at,
         ];
