@@ -67,21 +67,9 @@ class ApplicantRegistrationService
      */
     public function verifyEmail(string $token, ?int $jobId = null): JobApplicantResource
     {
-        // Start listening to all SQL queries for debugging
-        DB::listen(function ($query) {
-            Log::info('SQL Executed', [
-                'sql' => $query->sql,
-                'bindings' => $query->bindings,
-                'time' => $query->time,
-            ]);
-        });
-
         try {
-            Log::info('Starting email verification process', ['token' => $token]);
-
             // Find applicant using the verification token
             $jobApplicant = JobApplicant::where('verification_token', $token)->firstOrFail();
-            Log::info('Applicant found', ['applicant_id' => $jobApplicant->id]);
 
             // Begin transaction with the database
             DB::beginTransaction();

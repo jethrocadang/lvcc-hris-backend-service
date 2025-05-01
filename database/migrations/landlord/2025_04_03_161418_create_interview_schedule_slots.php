@@ -38,6 +38,7 @@ return new class extends Migration
             // - 'available': Slot is free and can be booked.
             // - 'booked': Slot is booked by a user.
             // - 'completed': Interview has been completed.
+            // TODO: make this nullable.
             $table->enum('slot_status', ['available', 'booked', 'completed']);
 
             $table->timestamps(); // Created_at and updated_at timestamps

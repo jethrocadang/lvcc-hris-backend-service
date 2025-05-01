@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\V1\Ats\JobApplicationFormController;
 use App\Http\Controllers\Api\V1\Ats\JobApplicationProgressController;
+use App\Http\Controllers\Api\V1\Ats\JobInterviewSchedulingController;
 use App\Http\Controllers\Api\V1\Ats\JobPostingController;
 use App\Http\Controllers\Api\V1\Ats\JobPreApplicationController;
 use App\Http\Controllers\Api\V1\Ats\PortalAuthController;
@@ -23,6 +24,7 @@ Route::middleware('tenant')->group(function () {
     Route::middleware(['auth.jwt.tenant', 'auth.jwt'])->group(function () {
         Route::match(['put', 'patch'], '/portal/profile', [JobApplicationFormController::class, 'updateOrCreate']);
         Route::get('/job-application-progress', [JobApplicationProgressController::class, 'getAllProgress']);
+        Route::post('ats/select-interview-schedule',[JobInterviewSchedulingController::class, 'store']);
     });
 
     // ** ADMIN & REVIEWER ENDPOINTS

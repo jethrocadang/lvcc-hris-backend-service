@@ -22,6 +22,10 @@ return new class extends Migration
             // Slot ID from landlord database (date_sched_slots)
             // No foreign key constraint due to cross-database limitations
 
+            $table->foreignId('job_application_id')
+                ->constrained('job_applications')
+                ->onDelete('cascade'); // Cascade if application progress is removed
+
             $table->foreignId('application_progress_id')
                 ->constrained('job_application_progress')
                 ->onDelete('cascade'); // Cascade if application progress is removed

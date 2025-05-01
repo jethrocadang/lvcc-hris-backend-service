@@ -26,9 +26,6 @@ use App\Http\Controllers\Api\V1\Hris\JobPositionController;
 use App\Http\Controllers\Api\V1\Hris\UserPolicyAgreementController;
 use App\Http\Controllers\Api\V1\Hris\InterviewScheduleSlotController;
 
-// App\Http\Controllers\Api\V1\Ats
-use App\Http\Controllers\Api\V1\Ats\JobPostingController;
-
 
 
 // Authentication routes: Public routes
