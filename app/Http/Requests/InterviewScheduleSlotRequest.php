@@ -22,10 +22,10 @@ class InterviewScheduleSlotRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'admin' => 'exists:users,id', 
+            'admin' => 'required|integer|exists:users,id', 
             'scheduled_date' => 'required|date',
             'start_time' => 'required|date_format:H:i',
-            'slot_status' => 'required|in:available,booked,cancelled',
+            'slot_status' => 'required|in:available,booked,completed',
         ];
     }
 }

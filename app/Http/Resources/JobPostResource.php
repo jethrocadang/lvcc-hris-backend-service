@@ -24,8 +24,8 @@ class JobPostResource extends JsonResource
             'status' => $this->status,
             'location' => $this->location,
             'schedule' => $this->schedule,
-            'updatedAt' => $this->updated_at->toDateTimeString(),
-            'createdAt' => $this->created_at->toDateTimeString(),
+            'updatedAt' => $this->updated_at,
+            'createdAt' => $this->created_at
         ];
     }
 }

@@ -104,4 +104,14 @@ class DepartmentController extends Controller
             return $this->errorResponse('Failed to detach job position from department.', ['error' => $e->getMessage()], 500);
         }
     }
+
+    public function getAllWithJobPositions(): JsonResponse
+    {
+        try {
+            $data = $this->departmentService->getAll();
+            return $this->successResponse('Departments with job positions retrieved successfully.', $data);
+        } catch (\Exception $e) {
+            return $this->errorResponse('Failed to retrieve department-job position records.', ['error' => $e->getMessage()], 500);
+        }
+    }
 }

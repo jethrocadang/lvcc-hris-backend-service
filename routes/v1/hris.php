@@ -48,30 +48,34 @@ Route::controller(AuthController::class)->group(function () {
 // Protected routes for Main Users (requires auth.jwt)
 Route::middleware(['auth.jwt'])->group(function () {
 
+    // Custom routes for getting, assigning/removing job positions to departments
+    Route::get('hris/departments/with-job-positions', [DepartmentController::class, 'getAllWithJobPositions']);
+    Route::post('hris/departments/attach-job-position', [DepartmentController::class, 'attachDepartmentJobPosition']);
+    Route::delete('hris/departments/{departmentId}/job-position/{jobPositionId}', [DepartmentController::class, 'detachDepartmentJobPosition']);
+
     // Department management (CRUD)
-    Route::apiResource('hris/departments', DepartmentController::class);
+    Route::apiResource('hris/departments', DepartmentController::class); //done
 
     // Job Position management (CRUD)
-    Route::apiResource('hris/job-positions', JobPositionController::class);
+    Route::apiResource('hris/job-positions', JobPositionController::class); //done
 
     // Data Privacy Policies management (CRUD)
-    Route::apiResource('hris/policies', PolicyController::class);
+    Route::apiResource('hris/policies', PolicyController::class); //done
 
     // User Policy Agreements management (CRUD)
-    Route::apiResource('hris/user-policy', UserPolicyAgreementController::class);
+    Route::apiResource('hris/user-policy', UserPolicyAgreementController::class); 
 
     // Email Templates management (CRUD)
-    Route::apiResource('hris/email-templates', EmailTemplateController::class);
+    Route::apiResource('hris/email-templates', EmailTemplateController::class); //done
 
     // Interview Schedule Slots management (CRUD)
-    Route::apiResource('hris/interview-slots', InterviewScheduleSlotController::class);
+    Route::apiResource('hris/interview-slots', InterviewScheduleSlotController::class); //done
+
+    // Update only the employee's additional information or the core
+    Route::patch('hris/employees/{id}/information', [EmployeeController::class, 'updateInformationOnly']);
+    Route::patch('hris/employees/{id}/core', [EmployeeController::class, 'updateEmployeeOnly']);
 
     // Employees management (CRUD)
-    Route::apiResource('hris/employees', EmployeeController::class);
+    Route::apiResource('hris/employees', EmployeeController::class); //done
 
-    // Update only the employee's additional information (without affecting core fields)
-    Route::patch('hris/employees/{id}/information', [EmployeeController::class, 'updateInformationOnly']);
-
-    // Update only the main/core employee fields
-    Route::patch('hris/employees/{id}/main', [EmployeeController::class, 'updateEmployeeOnly']);
 });

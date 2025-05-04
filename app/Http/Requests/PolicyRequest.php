@@ -22,6 +22,7 @@ class PolicyRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'user_id' => 'required|integer|exists:users,id',
             "version" => "required|string",
             "content" => "required|string",
             "effective_at" => "nullable|date"
