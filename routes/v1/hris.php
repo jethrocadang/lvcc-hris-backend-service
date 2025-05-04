@@ -63,7 +63,7 @@ Route::middleware(['auth.jwt'])->group(function () {
     Route::apiResource('hris/policies', PolicyController::class); //done
 
     // User Policy Agreements management (CRUD)
-    Route::apiResource('hris/user-policy', UserPolicyAgreementController::class);
+    Route::apiResource('hris/user-policy', UserPolicyAgreementController::class); 
 
     // Email Templates management (CRUD)
     Route::apiResource('hris/email-templates', EmailTemplateController::class); //done

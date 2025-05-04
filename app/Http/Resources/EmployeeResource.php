@@ -23,7 +23,17 @@ class EmployeeResource extends JsonResource
                 'name' => $this->user?->name,
                 'avatarUrl' => $this->user?->avatar_url,
             ],
-            'departmentPositionId' => new DepartmentJobPositionResource($this->departmentJobPosition),
+            'departmentPosition' => [
+                'id' => $this->departmentJobPosition?->id,
+                'department' => [
+                    'id' => $this->departmentJobPosition?->department?->id,
+                    'department' => $this->departmentJobPosition?->department?->name,
+                ],
+                'position' => [
+                    'id' => $this->departmentJobPosition?->position?->id,
+                    'title' => $this->departmentJobPosition?->position?->title,
+                ]
+            ],
             'employeeInformation' => new EmployeeInformationResource($this->employeeInformation),
             'employeeId' => $this->employee_id,
             'employeeType' => $this->employee_type,

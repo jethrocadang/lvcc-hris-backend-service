@@ -1,0 +1,41 @@
+<?php
+
+namespace App\Http\Resources\Eth;
+
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
+
+class TrainingRequestResource extends JsonResource
+{
+    /**
+     * Transform the resource into an array.
+     *
+     * @return array<string, mixed>
+     */
+    public function toArray(Request $request): array
+    {
+        return [
+            'id' => $this->id,
+            'employeeId' => [
+                'id' => $this->employee?->employee_id,
+            ],
+            'supervisorId' => [
+                'id' => $this->supervisor?->id,
+                'name' => $this->supervisor?->name,
+            ],
+            'officerId' => [
+                'id' => $this->officer?->id,
+                'name' => $this->officer?->name,
+            ],
+            'subject'=> $this->subject,
+            'body'=> $this->body,
+            'supervisorStatus'=> $this->supervisor_status,
+            'supervisorReviewedAt'=> $this->supervisor_reviewed_at,
+            'officerStatus'=> $this->officer_status,
+            'officerReviewedAt'=> $this->officer_reviewed_at,
+            'requestStatus' => $this->request_status,
+            'createdAt' => $this->created_at,
+            'updatedAt' => $this->updated_at,
+        ];
+    }
+}

@@ -24,7 +24,7 @@ class DepartmentJobPosition extends Model
 
     public function position()
     {
-        return $this->belongsTo(JobPosition::class);
+        return $this->belongsTo(JobPosition::class, 'job_position_id');
     }
 }
 
