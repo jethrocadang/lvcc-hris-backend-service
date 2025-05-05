@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\EmailTemplate;
-use App\Models\JobApplicationPhases;
+use App\Models\JobApplicationPhase;
 
 class LinkEmailTemplatesToPhasesSeeder extends Seeder
 {
@@ -30,7 +30,7 @@ class LinkEmailTemplatesToPhasesSeeder extends Seeder
                 continue;
             }
 
-            JobApplicationPhases::where('name', $phaseName)->update([
+            JobApplicationPhase::where('name', $phaseName)->update([
                 'email_template_id' => $template->id
             ]);
         }
