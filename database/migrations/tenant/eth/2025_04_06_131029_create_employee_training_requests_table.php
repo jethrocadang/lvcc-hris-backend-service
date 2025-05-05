@@ -30,9 +30,9 @@ return new class extends Migration
             $table->id(); // Primary key
 
             // Foreign keys
-            $table->foreignId('employee_id')->index(); // Refers to employees table (hris_db)
-            $table->foreignId('supervisor_id')->index(); // Refers to users table (hris_db)
-            $table->foreignId('officer_id')->index(); // Refers to users table (hris_db)
+            $table->unsignedBigInteger('employee_id')->index()->nullable(); // Refers to employees table (hris_db)
+            $table->unsignedBigInteger('supervisor_id')->index()->nullable(); // Refers to users table (hris_db)
+            $table->unsignedBigInteger('officer_id')->index()->nullable(); // Refers to users table (hris_db)
 
             // Request content
             $table->string('subject'); // Brief request title

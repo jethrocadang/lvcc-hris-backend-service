@@ -23,8 +23,8 @@ class TrainingRequestRequest extends FormRequest
     {
         return [
             'employee_id' => 'required|exists:employees,id',
-            'supervisor_id' => 'required|exists:users,id',
-            'officer_id' => 'required|exists:users,id',
+            'supervisor_id' => 'nullable|exists:users,id',
+            'officer_id' => 'nullable|exists:users,id',
             'subject' => 'required|string|max:255',
             'body' => 'required|string',
             'supervisor_status' => 'in:pending,approved,rejected',

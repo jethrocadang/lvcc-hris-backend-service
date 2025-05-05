@@ -5,14 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class TrainingRequest extends Model
 {
-    use HasFactory, UsesTenantConnection;
+    use HasFactory, UsesTenantConnection, LogsActivity;
 
     protected $table = 'employee_training_requests';
 
-    protected $fillables = [
+    protected $fillable = [
         'employee_id',
         'supervisor_id',
         'officer_id',
@@ -25,18 +27,31 @@ class TrainingRequest extends Model
         'request_status',
     ];
 
-    public function  employeeId()
+    public function  employee()
     {
         return $this->belongsTo(Employee::class, 'employee_id');
     }
 
-    public function  supervisorId()
+    public function  supervisor()
     {
         return $this->belongsTo(User::class, 'supervisor_id');
     }
 
-    public function  officerId()
+    public function  officer()
     {
         return $this->belongsTo(User::class, 'officer_id');
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly($this->getFillable()) // Log all fillable, but only if changed
+            ->logOnlyDirty()
+            ->useLogName('training request')
+            ->setDescriptionForEvent(function (string $eventName) {
+                $dirty = collect($this->getDirty())->except('updated_at')->toJson();
+    
+                return ucfirst($eventName) . " training request: {$dirty}";
+            });
     }
 }
