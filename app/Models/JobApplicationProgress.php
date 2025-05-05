@@ -17,9 +17,15 @@ class JobApplicationProgress extends Model
         'job_application_id',
         'job_application_phase_id',
         'reviewed_by',
+        'reviewer_remarks',
         'status',
         'start_date',
         'end_date'
+    ];
+
+    protected $casts = [
+        'start_date' => 'datetime',
+        'end_date' => 'datetime',
     ];
 
     public function jobApplication()
@@ -29,7 +35,7 @@ class JobApplicationProgress extends Model
 
     public function jobApplicationPhases()
     {
-        return $this->belongsTo(JobApplicationPhases::class, 'job_application_phase_id');
+        return $this->belongsTo(JobApplicationPhase::class, 'job_application_phase_id');
     }
 
     public function getActivitylogOptions(): LogOptions
@@ -40,7 +46,7 @@ class JobApplicationProgress extends Model
             ->useLogName('job application progress')
             ->setDescriptionForEvent(function (string $eventName) {
                 $dirty = collect($this->getDirty())->except('updated_at')->toJson();
-    
+
                 return ucfirst($eventName) . " job application progress: {$dirty}";
             });
     }
