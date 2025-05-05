@@ -68,7 +68,7 @@ class AuthController extends Controller
             $user = $this->googleAuthService->authenticate($validatedData['code']);
 
             // Generate JWT tokens for the authenticated user.
-            return $this->successResponse('Authentication successful', $this->jwtService->generateTokens($user));
+            return $this->jwtService->generateTokens($user);
         } catch (\Exception $e) {
             // Log authentication failure and return an error response.
             Log::error('Google authentication failed', ['error' => $e->getMessage()]);

@@ -2,23 +2,26 @@
 
 namespace App\Mail;
 
+use App\Models\AtsEmailTemplate;
 use App\Models\JobApplicant;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class PortalAccessEmail extends Mailable
+class JobApplicationEmail extends Mailable
 {
     use Queueable, SerializesModels;
 
     public $portalToken;
     public JobApplicant $jobApplicant;
+    public AtsEmailTemplate $email;
 
 
-    public function __construct(JobApplicant $jobApplicant, $portalToken)
+    public function __construct(JobApplicant $jobApplicant, AtsEmailTemplate $email, $portalToken)
     {
-        $this->portalToken = $portalToken;
         $this->jobApplicant = $jobApplicant;
+        $this->email = $email;
+        $this->portalToken = $portalToken;
     }
     public function build()
     {
@@ -26,12 +29,14 @@ class PortalAccessEmail extends Mailable
         $portalAccessUrl = 'frontend.com' . '/applicant/portal?token=' . $this->portalToken;
 
         return $this->from(config('mail.from.address'), config('mail.from.name'))
-            ->subject('Email Verification')
-            ->view('mail.verify-email')
+            ->subject('Your Portal Access Token')
+            ->view('mail.portal-email')
             ->with([
                 'portalToken' => $this->portalToken,
                 'applicant' => $this->jobApplicant,
+                'email' => $this->email,
                 'portalAccessUrl' => $portalAccessUrl,
             ]);
     }
 }
+

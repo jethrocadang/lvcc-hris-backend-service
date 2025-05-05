@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\TokenRequest;
 use App\Models\JobApplication;
 use App\Traits\ApiResponse;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
@@ -30,10 +31,8 @@ class PortalAuthController extends Controller
         $application = JobApplication::where('portal_token', $token['token'])->firstOrFail();
 
         // Token is valid; return JWT and applicant data
-        return $this->successResponse(
-            'Authentication Successful',
-            $this->generateTokens($application)
-        );
+        return $this->generateTokens($application);
+
     }
 
     /**
@@ -42,12 +41,39 @@ class PortalAuthController extends Controller
      * @param JobApplication $application
      * @return array
      */
-    private function generateTokens(JobApplication $application): array
+    public function generateTokens(JobApplication $application): JsonResponse
     {
-        return [
+        // Generate access token with default TTL
+        $accessToken = JWTAuth::claims(['type' => 'access'])->fromUser($application);
+
+        // Temporarily set a longer TTL for refresh token
+        $refreshTTL = 60 * 24 * 7; // 7 days
+        $factory = JWTAuth::factory();
+        $defaultTTL = $factory->getTTL(); // Save current TTL
+        $factory->setTTL($refreshTTL);
+
+        // Generate refresh token
+        $refreshToken = JWTAuth::claims(['type' => 'refresh'])->fromUser($application);
+
+        // Reset TTL to default (optional)
+        $factory->setTTL($defaultTTL);
+
+        return response()->json([
             'job_applicant' => $application,
-            'access_token' => JWTAuth::fromUser($application),
+            'access_token' => $accessToken,
             'token_type' => 'Bearer',
-        ];
+            'expires_in' => JWTAuth::factory()->getTTL() * 60,
+        ])->cookie(
+            'refresh_token',
+            $refreshToken,
+            $refreshTTL,   // in minutes
+            '/',           // path
+            null,          // domain
+            true,          // secure
+            true,          // httpOnly
+            false,         // raw
+            'Strict'       // SameSite
+        );
     }
+
 }
