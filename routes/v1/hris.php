@@ -42,6 +42,8 @@ Route::controller(AuthController::class)->group(function () {
 
     // Update user password (should be moved under auth.jwt middleware for protection)
     Route::patch('auth/update-password', 'updatePassword');
+
+    Route::post('auth/refresh-token', 'refreshToken');
 });
 
 
@@ -63,7 +65,7 @@ Route::middleware(['auth.jwt'])->group(function () {
     Route::apiResource('hris/policies', PolicyController::class); //done
 
     // User Policy Agreements management (CRUD)
-    Route::apiResource('hris/user-policy', UserPolicyAgreementController::class); 
+    Route::apiResource('hris/user-policy', UserPolicyAgreementController::class);
 
     // Email Templates management (CRUD)
     Route::apiResource('hris/email-templates', EmailTemplateController::class); //done
