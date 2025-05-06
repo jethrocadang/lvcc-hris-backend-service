@@ -7,7 +7,6 @@ use App\Http\Resources\Eth\TrainingRequestResource;
 use App\Models\TrainingRequest;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 
 class TrainingRequestService

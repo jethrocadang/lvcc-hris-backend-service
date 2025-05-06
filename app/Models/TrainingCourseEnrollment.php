@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Models;
-
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
@@ -9,40 +8,39 @@ use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 
-class TrainingCourse extends Model
+class TrainingCourseEnrollment extends Model
 {
     use HasFactory, UsesTenantConnection, LogsActivity;
 
-    protected $table = 'employee_training_courses';
+    protected $table = 'training_course_enrollments';
 
-    protected $connection = 'tenant';
-
-    protected $fillable =[
-        'author_id',
-        'title',
-        'description',
-        'type',
-        'thumbnail_url',
-        'max_participants',
-        'current_participants',
-        'enrollment_deadline'
+    protected $fillable = [
+        'course_id',
+        'employee_id',
+        'enrollment_date',
+        'status'
     ];
 
-    public function author()
+    public function course()
     {
-        return $this->belongsTo(User::class, 'author_id');
+        return $this->belongsTo(TrainingCourse::class, 'course_id');
     }
+    public function employee()
+    {
+        return $this->belongsTo(Employee::class, 'employee_id');
+    }
+
 
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
             ->logOnly($this->getFillable()) // Log all fillable, but only if changed
             ->logOnlyDirty()
-            ->useLogName('training course')
+            ->useLogName('enrollment')
             ->setDescriptionForEvent(function (string $eventName) {
                 $dirty = collect($this->getDirty())->except('updated_at')->toJson();
     
-                return ucfirst($eventName) . " training course: {$dirty}";
+                return ucfirst($eventName) . " enrollment: {$dirty}";
             });
     }
 }
