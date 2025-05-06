@@ -32,7 +32,7 @@ class TrainingRequestService
             Log::error('Training request not found.',['error' => $e->getMessage()]);
             throw $e;
         } catch(Exception $e){
-            Log::error('Training retrieval failed', ['error' => $e->getMessage()]);
+            Log::error('Training request retrieval failed', ['error' => $e->getMessage()]);
             throw $e;
         }
     }
@@ -43,7 +43,10 @@ class TrainingRequestService
 
             $employee = auth('api')->user();
 
-            $trainingRequest = TrainingRequest::create($request->validated());
+            $data = $request->validated();
+            $data['employee_id'] = $employee->id;
+
+            $trainingRequest = TrainingRequest::create($data);
 
             return new TrainingRequestResource($trainingRequest);
         } catch (Exception $e) {

@@ -18,7 +18,6 @@ class User extends Authenticatable implements JWTSubject
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable, HasRoles, UsesLandlordConnection, LogsActivity;
 
-
     public function getJWTIdentifier()
     {
         return $this->getKey();
