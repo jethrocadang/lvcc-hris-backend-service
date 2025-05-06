@@ -38,7 +38,7 @@ class JwtService
             $refreshToken,
             $refreshTTL,   // in minutes
             '/',           // path
-            null,          // domain
+            'localhost',          // domain
             false,          // secure
             true,          // httpOnly
             false,         // raw
