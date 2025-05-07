@@ -50,19 +50,24 @@ class JwtService
     public function refreshToken(Request $request)
     {
         try {
+            // Check the cookie for the request
             $refreshToken = $request->cookie('refresh_token');
             if (!$refreshToken) {
                 return response()->json(['error' => 'Refresh token not found'], 401);
             }
+
+            // Decode the token using tymon JWTAuth
             $decoded = JWTAuth::setToken($refreshToken)->getPayload();
             if (!$decoded || $decoded['type'] !== 'refresh') {
                 return response()->json(['error' => 'Invalid or expired refresh token'], 401);
             }
+
+            // Find the user 
             $user = User::find($decoded['sub']);
             if (!$user) {
                 return response()->json(['error' => 'User not found'], 404);
             }
-            return response()->json($this->generateTokens($user));
+            return $this->generateTokens($user);
         } catch (Exception $e) {
             Log::error('Token refresh failed: ' . $e->getMessage());
             return response()->json(['error' => 'Failed to refresh token'], 500);
