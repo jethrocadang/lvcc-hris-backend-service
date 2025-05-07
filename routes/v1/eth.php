@@ -2,8 +2,9 @@
 
 use App\Http\Controllers\Api\V1\Eth\TrainingCoursesController;
 use App\Http\Controllers\Api\V1\Eth\TrainingRequestController;
-use App\Http\Controllers\Api\V1\Eth\TrainingCourseEnrollmentController;
 use App\Http\Controllers\Api\V1\Eth\TrainingCourseModuleController;
+use App\Http\Controllers\Api\V1\Eth\EmployeeCourseProgressController;
+use App\Http\Controllers\Api\V1\Eth\TrainingCourseEnrollmentController;
 
 Route::middleware('tenant')->group(function () {
 
@@ -26,6 +27,9 @@ Route::middleware('tenant')->group(function () {
 
         //TRAINING COURSE MODULE
         Route::apiResource('eth/course-modules', TrainingCourseModuleController::class);
+
+        //EMPLOYEE COURSE PROGRESS
+        Route::apiResource('eth/course-progress', EmployeeCourseProgressController::class);
 
     });
 

@@ -8,33 +8,35 @@ use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
-class TrainingCourseModule extends Model
+class EmployeeCourseProgress extends Model
 {
     use HasFactory, UsesTenantConnection, LogsActivity;
 
-    protected $table = 'training_course_modules';
+    protected $table = 'employee_course_progress';
 
     protected $fillable = [
+        'employee_id',
         'course_id',
-        'title',
-        'description',
-        'type',
-        'video_url',
-        'thumbnail_url',
-        'sequence_order',
-        'file_content',
-        'text_content',
-        'image_content',
+        'module_id',
+        'status',
+        'watched_seconds',
+        'last_position',
+        'completion_date',
     ];
+
+    public function employee()
+    {
+        return $this->belongsTo(Employee::class, 'employee_id');
+    }
 
     public function course()
     {
         return $this->belongsTo(TrainingCourse::class, 'course_id');
     }
 
-    public function  user()
+    public function module()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(TrainingCourseModule::class, 'module_id');
     }
 
     public function getActivitylogOptions(): LogOptions
@@ -42,11 +44,11 @@ class TrainingCourseModule extends Model
         return LogOptions::defaults()
             ->logOnly($this->getFillable()) // Log all fillable, but only if changed
             ->logOnlyDirty()
-            ->useLogName('module')
+            ->useLogName('course progress')
             ->setDescriptionForEvent(function (string $eventName) {
                 $dirty = collect($this->getDirty())->except('updated_at')->toJson();
     
-                return ucfirst($eventName) . " module: {$dirty}";
+                return ucfirst($eventName) . " course progress: {$dirty}";
             });
     }
 }
