@@ -22,8 +22,8 @@ return new class extends Migration
         Schema::create('training_course_feedbacks', function (Blueprint $table) {
             $table->id(); // Primary key
 
-            $table->foreignId('course_id')->constrained('employee_training_courses')->onDelete('cascade'); // Course rated
-            $table->foreignId('employee_id')->index(); // Employee reviewer
+            $table->unsignedBigInteger('course_id')->index()->nullable();
+            $table->unsignedBigInteger('employee_id')->index()->nullable();
 
             $table->integer('rating'); // Numeric score
             $table->string('comment')->nullable(); // Optional comment

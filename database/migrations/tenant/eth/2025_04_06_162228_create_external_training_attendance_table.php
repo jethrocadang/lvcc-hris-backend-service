@@ -23,7 +23,7 @@ return new class extends Migration
         Schema::create('external_training_attendance', function (Blueprint $table) {
             $table->id(); // Primary key
 
-            $table->foreignId('employee_id')->index(); // Who attended
+            $table->unsignedBigInteger('employee_id')->index(); // Who attended
             // TODO ADD TABLE FOR TRAINING TYPE
             $table->enum('training_type', ['onboarding', 'compliance', 'external', 'other']); // Add relevant types
             $table->string('certificate_url')->nullable(); // Proof/certificate
