@@ -3,7 +3,7 @@
 use App\Http\Controllers\Api\V1\Eth\TrainingCoursesController;
 use App\Http\Controllers\Api\V1\Eth\TrainingRequestController;
 use App\Http\Controllers\Api\V1\Eth\TrainingCourseEnrollmentController;
-
+use App\Http\Controllers\Api\V1\Eth\TrainingCourseModuleController;
 
 Route::middleware('tenant')->group(function () {
 
@@ -21,9 +21,11 @@ Route::middleware('tenant')->group(function () {
 
         //CANCELLING ENROLLMENT
         Route::patch('eth/course-enrollment/{id}/cancel', [TrainingCourseEnrollmentController::class, 'cancel']);
-
         //TRAINING COURSE ENROLLMENT
         Route::apiResource('eth/course-enrollment', TrainingCourseEnrollmentController::class);
+
+        //TRAINING COURSE MODULE
+        Route::apiResource('eth/course-modules', TrainingCourseModuleController::class);
 
     });
 
