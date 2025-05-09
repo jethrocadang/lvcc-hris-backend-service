@@ -8,13 +8,24 @@ use Illuminate\Support\Facades\Log;
 
 trait ApiResponse
 {
-    protected function successResponse(string $message, $data, int $status = 200): JsonResponse
+    protected function successResponse(string $message, $data, int $status = 200, ?array $meta = null): JsonResponse
     {
-        return response()->json([
+        $response = [
             'success' => true,
             'message' => $message,
-            ...($data ? ['data' => $data] : [])], $status);
+        ];
+
+        if ($data !== null) {
+            $response['data'] = $data;
+        }
+
+        if ($meta !== null) {
+            $response['meta'] = $meta;
+        }
+
+        return response()->json($response, $status);
     }
+
 
     protected function errorResponse(string $message, array $errors = [], int $status = 400, ?Exception $exception = null): JsonResponse
     {
@@ -23,13 +34,13 @@ trait ApiResponse
             'message' => $message,
             'errors' => $errors,
         ];
-    
+
         if ($exception) {
             Log::error("API Error: {$message} - {$exception->getMessage()}", [
                 'exception' => $exception,
                 'trace' => $exception->getTrace(),
             ]);
-    
+
             if (config('app.debug')) {
                 $response['debug'] = [
                     'exception' => get_class($exception),
@@ -40,7 +51,7 @@ trait ApiResponse
                 ];
             }
         }
-    
+
         return response()->json($response, $status);
     }
 }
