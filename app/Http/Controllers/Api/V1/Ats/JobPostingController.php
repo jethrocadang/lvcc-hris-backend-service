@@ -3,10 +3,13 @@
 namespace App\Http\Controllers\Api\V1\Ats;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Ats\JobPostGetRequest;
 use App\Traits\ApiResponse;
 use App\Http\Requests\Ats\JobPostRequest;
+use App\Http\Resources\JobPostResource;
 use App\Services\Ats\JobPostingService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Log;
 
 class JobPostingController extends Controller
 {
@@ -28,14 +31,30 @@ class JobPostingController extends Controller
             : $this->errorResponse('Failed to create job posting!', [], 500);
     }
 
-    public function index(): JsonResponse
+    public function index(JobPostGetRequest $request): JsonResponse
     {
-        $jobPosts = $this->jobPostingService->getJobPosts();
+        $filters = $request->validated();
+        $perPage = (int) ($filters['per_page'] ?? 10);
 
-        return $jobPosts->isNotEmpty()
-            ? $this->successResponse('Job postings retrieved successfully!', $jobPosts)
-            : $this->errorResponse('No job postings found', [], 404);
+        $jobPosts = $this->jobPostingService->getJobPosts($filters, $perPage);
+
+        // Pagination info
+        $meta = [
+            'current_page' => $jobPosts->currentPage(),
+            'last_page' => $jobPosts->lastPage(),
+            'total' => $jobPosts->total(),
+        ];
+
+        // Return data with meta
+        return $this->successResponse(
+            'Job postings retrieved successfully!',
+            JobPostResource::collection($jobPosts),
+            200,
+            $meta
+        );
     }
+
+
 
     public function update(JobPostRequest $request, int $id): JsonResponse
     {
@@ -51,7 +70,7 @@ class JobPostingController extends Controller
         $deleted = $this->jobPostingService->deleteJobPost($id);
 
         return $deleted
-            ? $this->successResponse('Job posting deleted successfully!',[])
+            ? $this->successResponse('Job posting deleted successfully!', [])
             : $this->errorResponse('Failed to delete job posting!', [], 500);
     }
 }
