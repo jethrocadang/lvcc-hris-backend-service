@@ -2,23 +2,48 @@
 
 namespace App\Services\Hris;
 
-use App\Http\Requests\EmployeeRequest;
-use App\Http\Requests\EmployeeInformationRequest;
-use App\Http\Resources\EmployeeResource;
-use App\Models\Employee;
-use App\Models\EmployeeInformation;
 use Exception;
+use App\Models\Employee;
 use Illuminate\Support\Facades\DB;
+use App\Models\EmployeeInformation;
 use Illuminate\Support\Facades\Log;
+use Spatie\QueryBuilder\QueryBuilder;
+use App\Http\Requests\EmployeeRequest;
+use Spatie\QueryBuilder\AllowedFilter;
+use App\Http\Resources\EmployeeResource;
+use Illuminate\Pagination\LengthAwarePaginator;
+use App\Http\Requests\EmployeeInformationRequest;
 
 class EmployeeService
 {
-    public function getEmployees(){
-        $employees = Employee::all();
+    // public function getEmployees(){
+    //     $employees = Employee::all();
 
-        return $employees->isNotEmpty()
-        ? EmployeeResource::collection($employees)->collection
-        : collect();
+    //     return $employees->isNotEmpty()
+    //     ? EmployeeResource::collection($employees)->collection
+    //     : collect();
+    // }
+
+        public function getEmployees(array $filters = [], int $perPage = 10): LengthAwarePaginator
+    {
+        try {
+            return QueryBuilder::for(Employee::class)
+                ->allowedFilters([
+                    AllowedFilter::partial('name'),
+                    AllowedFilter::exact('department_id'),
+                    AllowedFilter::exact('job_position_id'),
+                    AllowedFilter::exact('contact_number'),
+                    AllowedFilter::exact('date_hired'),
+                    AllowedFilter::exact('status'),
+                    AllowedFilter::exact('employment_end_date'),
+                ])
+                ->allowedSorts(['created_at', 'title'])
+                ->paginate($perPage)
+                ->appends($filters);
+        } catch (Exception $e) {
+            Log::error('Failed to retrieve employees', ['error' => $e->getMessage()]);
+            return new LengthAwarePaginator([], 0, $perPage);
+        }
     }
 
     public function getEmployeeById(int $id): EmployeeResource

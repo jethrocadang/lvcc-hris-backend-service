@@ -67,7 +67,7 @@ return [
             'database' => null,
             'host' => '127.0.0.1',
             'username' => 'root',
-            'password' => '',
+            'password' => 'laravel',
         ],
 
         'landlord' => [
@@ -75,7 +75,7 @@ return [
             'database' => 'hris',
             'host' => '127.0.0.1',
             'username' => 'root',
-            'password' => '',
+            'password' => 'laravel',
         ],
 
         'mariadb' => [
