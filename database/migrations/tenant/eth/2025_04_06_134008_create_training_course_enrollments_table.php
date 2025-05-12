@@ -22,12 +22,14 @@ return new class extends Migration
         Schema::create('training_course_enrollments', function (Blueprint $table) {
             $table->id(); // Primary key
 
-            $table->foreignId('course_id')->constrained('employee_training_courses')->onDelete('cascade'); // Linked course
-            $table->foreignId('employee_id')->index(); // Refers to hris_db (landlord) employees table
+            $table->unsignedBigInteger('course_id')->index()->nullable(); // Linked course
+            $table->unsignedBigInteger('employee_id')->index()->nullable(); // Refers to hris_db (landlord) employees table
 
             $table->timestamp('enrollment_date')->useCurrent(); // When enrolled
 
             $table->enum('status', ['active', 'cancelled'])->default('active'); // Enrollment state
+
+            $table->timestamps(); // Add created_at and updated_at columns
         });
     }
 

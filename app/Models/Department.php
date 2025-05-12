@@ -27,9 +27,13 @@ class Department extends Model
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-            ->logOnly(['name', 'description']) // Log only these attributes
-            ->logOnlyDirty() // Log only changed attributes
-            ->useLogName('department') // Set custom log name
-            ->setDescriptionForEvent(fn(string $eventName) => ucfirst($eventName) . " department: {$this->name}");
+            ->logOnly($this->getFillable()) // Log all fillable, but only if changed
+            ->logOnlyDirty()
+            ->useLogName('department')
+            ->setDescriptionForEvent(function (string $eventName) {
+                $dirty = collect($this->getDirty())->except('updated_at')->toJson();
+    
+                return ucfirst($eventName) . " department: {$dirty}";
+            });
     }
 }

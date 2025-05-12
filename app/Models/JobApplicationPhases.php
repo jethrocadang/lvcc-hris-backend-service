@@ -2,31 +2,27 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
+use App\Models\JobApplicationProgress;
 
-class JobPost extends Model
+class JobApplicationPhases extends Model
 {
-    use HasFactory, UsesTenantConnection, LogsActivity;
+    use UsesTenantConnection, LogsActivity;
 
+    protected $table = 'job_application_phases';
     protected $fillable = [
-        'work_type',
-        'job_type',
-        'title',
+        'email_template_id',
+        'name',
         'description',
-        'icon_url',
-        'status',
-        'location',
-        'schedule' // updated schedule to category [teaching, non-teaching]
+        'sequence_order',
     ];
 
-
-    public function jobSelectionOption()
+    public function jobApplicationProgress()
     {
-        $this->hasMany(JobSelectionOption::class, 'job_id');
+        return $this->hasMany(JobApplicationProgress::class, 'job_application_phase_id');
     }
 
     public function getActivitylogOptions(): LogOptions
@@ -34,11 +30,11 @@ class JobPost extends Model
         return LogOptions::defaults()
             ->logOnly($this->getFillable()) // Log all fillable, but only if changed
             ->logOnlyDirty()
-            ->useLogName('job post')
+            ->useLogName('job applicant phase')
             ->setDescriptionForEvent(function (string $eventName) {
                 $dirty = collect($this->getDirty())->except('updated_at')->toJson();
     
-                return ucfirst($eventName) . " job post: {$dirty}";
+                return ucfirst($eventName) . " job applicant phase: {$dirty}";
             });
     }
 }

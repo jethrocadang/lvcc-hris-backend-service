@@ -25,16 +25,21 @@ return new class extends Migration
         Schema::create('training_course_modules', function (Blueprint $table) {
             $table->id(); // Primary key
 
-            $table->foreignId('course_id')->constrained('employee_training_courses')->onDelete('cascade'); // Parent course
+            $table->unsignedBigInteger('course_id')->index()->nullable(); // Linked course
 
             $table->string('title'); // Name of module
-            $table->text('description'); // Overview of module
+            $table->longText('description'); // Overview of module
 
             $table->enum('type', ['video series', 'text module']); // Content type
             $table->integer('sequence_order'); // Display order
 
             $table->string('video_url')->nullable(); // Video resource (optional)
             $table->string('thumbnail_url')->nullable(); // Image (optional)
+
+            $table->string('file_content')->nullable();// module file upload (Optional)
+            $table->longText('text_content')->nullable();// text course (Optional)
+            $table->string('image_content')->nullable();// iamge upload (Optional)
+
 
             $table->timestamps(); // created_at & updated_at
         });

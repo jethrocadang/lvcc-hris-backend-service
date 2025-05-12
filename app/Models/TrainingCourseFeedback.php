@@ -2,31 +2,33 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
-class JobPost extends Model
+class TrainingCourseFeedback extends Model
 {
     use HasFactory, UsesTenantConnection, LogsActivity;
 
+    protected $table = 'training_course_feedbacks';
+
     protected $fillable = [
-        'work_type',
-        'job_type',
-        'title',
-        'description',
-        'icon_url',
-        'status',
-        'location',
-        'schedule' // updated schedule to category [teaching, non-teaching]
+        'course_id',
+        'employee_id',
+        'rating',
+        'comment',
     ];
 
-
-    public function jobSelectionOption()
+    public function course()
     {
-        $this->hasMany(JobSelectionOption::class, 'job_id');
+        return $this->belongsTo(TrainingCourse::class, 'course_id');
+    }
+
+    public function employee()
+    {
+        return $this->belongsTo(Employee::class, 'employee_id');
     }
 
     public function getActivitylogOptions(): LogOptions
@@ -34,11 +36,11 @@ class JobPost extends Model
         return LogOptions::defaults()
             ->logOnly($this->getFillable()) // Log all fillable, but only if changed
             ->logOnlyDirty()
-            ->useLogName('job post')
+            ->useLogName('module')
             ->setDescriptionForEvent(function (string $eventName) {
                 $dirty = collect($this->getDirty())->except('updated_at')->toJson();
     
-                return ucfirst($eventName) . " job post: {$dirty}";
+                return ucfirst($eventName) . " module: {$dirty}";
             });
     }
 }

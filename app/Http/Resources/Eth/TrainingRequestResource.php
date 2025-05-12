@@ -17,7 +17,8 @@ class TrainingRequestResource extends JsonResource
         return [
             'id' => $this->id,
             'employeeId' => [
-                'id' => $this->employee?->employee_id,
+                'id' => $this->employee?->id,
+                'employeeId' => $this->employee?->employee_id
             ],
             'supervisorId' => [
                 'id' => $this->supervisor?->id,

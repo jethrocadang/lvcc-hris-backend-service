@@ -5,10 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class JobApplicantInformation extends Model
 {
-    use HasFactory, UsesTenantConnection;
+    use HasFactory, UsesTenantConnection, LogsActivity;
 
     protected $table = 'job_applicant_informations';
 
@@ -48,5 +50,18 @@ class JobApplicantInformation extends Model
     public function applicant()
     {
         return $this->belongsTo(JobApplicant::class, 'job_applicant_id');
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly($this->getFillable()) // Log all fillable, but only if changed
+            ->logOnlyDirty()
+            ->useLogName('job applicant information')
+            ->setDescriptionForEvent(function (string $eventName) {
+                $dirty = collect($this->getDirty())->except('updated_at')->toJson();
+    
+                return ucfirst($eventName) . " job applicant information: {$dirty}";
+            });
     }
 }

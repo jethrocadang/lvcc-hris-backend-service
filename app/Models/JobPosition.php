@@ -21,15 +21,19 @@ class JobPosition extends Model
         return $this->belongsToMany(Department::class, 'department_positions');
     }
 
-        /**
+    /**
      * Define Spatie's logging options.
      */
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-            ->logOnly(['title', 'description']) // Log only these attributes
-            ->logOnlyDirty() // Log only changed attributes
-            ->useLogName('job position') // Set custom log name
-            ->setDescriptionForEvent(fn(string $eventName) => ucfirst($eventName) . " job position: {$this->title}");
+            ->logOnly($this->getFillable()) // Log all fillable, but only if changed
+            ->logOnlyDirty()
+            ->useLogName('job position')
+            ->setDescriptionForEvent(function (string $eventName) {
+                $dirty = collect($this->getDirty())->except('updated_at')->toJson();
+    
+                return ucfirst($eventName) . " job position: {$dirty}";
+            });
     }
 }

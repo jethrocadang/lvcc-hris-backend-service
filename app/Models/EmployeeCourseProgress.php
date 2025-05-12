@@ -8,38 +8,35 @@ use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
-class TrainingRequest extends Model
+class EmployeeCourseProgress extends Model
 {
     use HasFactory, UsesTenantConnection, LogsActivity;
 
-    protected $table = 'employee_training_requests';
+    protected $table = 'employee_course_progress';
 
     protected $fillable = [
         'employee_id',
-        'supervisor_id',
-        'officer_id',
-        'subject',
-        'body',
-        'supervisor_status',
-        'supervisor_reviewed_at',
-        'officer_status',
-        'officer_reviewed_at',
-        'request_status',
+        'course_id',
+        'module_id',
+        'status',
+        'watched_seconds',
+        'last_position',
+        'completion_date',
     ];
 
-    public function  employee()
+    public function employee()
     {
         return $this->belongsTo(Employee::class, 'employee_id');
     }
 
-    public function  supervisor()
+    public function course()
     {
-        return $this->belongsTo(User::class, 'supervisor_id');
+        return $this->belongsTo(TrainingCourse::class, 'course_id');
     }
 
-    public function  officer()
+    public function module()
     {
-        return $this->belongsTo(User::class, 'officer_id');
+        return $this->belongsTo(TrainingCourseModule::class, 'module_id');
     }
 
     public function getActivitylogOptions(): LogOptions
@@ -47,11 +44,11 @@ class TrainingRequest extends Model
         return LogOptions::defaults()
             ->logOnly($this->getFillable()) // Log all fillable, but only if changed
             ->logOnlyDirty()
-            ->useLogName('training request')
+            ->useLogName('course progress')
             ->setDescriptionForEvent(function (string $eventName) {
                 $dirty = collect($this->getDirty())->except('updated_at')->toJson();
     
-                return ucfirst($eventName) . " training request: {$dirty}";
+                return ucfirst($eventName) . " course progress: {$dirty}";
             });
     }
 }

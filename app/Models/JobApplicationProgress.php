@@ -3,13 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-// use Spatie\Activitylog\LogOptions;
-// use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class JobApplicationProgress extends Model
 {
-    use UsesTenantConnection;
+    use UsesTenantConnection, LogsActivity;
 
     protected $table = 'job_application_progress';
 
@@ -38,13 +38,16 @@ class JobApplicationProgress extends Model
         return $this->belongsTo(JobApplicationPhase::class, 'job_application_phase_id');
     }
 
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly($this->getFillable()) // Log all fillable, but only if changed
+            ->logOnlyDirty()
+            ->useLogName('job application progress')
+            ->setDescriptionForEvent(function (string $eventName) {
+                $dirty = collect($this->getDirty())->except('updated_at')->toJson();
 
-    // public function getActivitylogOptions(): LogOptions
-    // {
-    //     return LogOptions::defaults()
-    //         ->logOnly(['job_application_id', 'job_application_phase_id', 'status', 'reviewer_remarks'])
-    //         ->logOnlyDirty()
-    //         ->useLogName('job_application_progress')
-    //         ->setDescriptionForEvent(fn(string $eventName) => ucfirst($eventName) . " job application progress with status: {$this->status}");
-    // }
+                return ucfirst($eventName) . " job application progress: {$dirty}";
+            });
+    }
 }

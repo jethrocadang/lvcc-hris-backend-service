@@ -28,6 +28,8 @@ return new class extends Migration
         Schema::create('employee_training_courses', function (Blueprint $table) {
             $table->id(); // Primary key
 
+            $table->unsignedBigInteger('author_id')->index()->nullable(); //refers to users table (hris)
+
             $table->string('title'); // Name of the course
             $table->text('description'); // Course summary or objectives
             // TODO CREATE A TRAINING CATEGORY TABLE

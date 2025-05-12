@@ -4,11 +4,15 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class Employee extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsActivity;
     protected $table = 'employees';
+
+    protected $connection = 'landlord';
 
     protected $fillable = [
         'user_id',
@@ -37,5 +41,21 @@ class Employee extends Model
     public function departmentJobPosition()
     {
         return $this->belongsTo(DepartmentJobPosition::class, 'department_position_id');
+    }
+
+    /**
+     * Define Spatie's logging options.
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly($this->getFillable()) // Log all fillable, but only if changed
+            ->logOnlyDirty()
+            ->useLogName('employee')
+            ->setDescriptionForEvent(function (string $eventName) {
+                $dirty = collect($this->getDirty())->except('updated_at')->toJson();
+    
+                return ucfirst($eventName) . " employee: {$dirty}";
+            });
     }
 }

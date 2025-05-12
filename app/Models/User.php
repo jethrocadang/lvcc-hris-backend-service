@@ -10,12 +10,13 @@ use Illuminate\Notifications\Notifiable;
 use Spatie\Multitenancy\Models\Concerns\UsesLandlordConnection;
 use Spatie\Permission\Traits\HasRoles;
 use Tymon\JWTAuth\Contracts\JWTSubject;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class User extends Authenticatable implements JWTSubject
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, HasRoles, UsesLandlordConnection;
-
+    use HasFactory, Notifiable, HasRoles, UsesLandlordConnection, LogsActivity;
 
     public function getJWTIdentifier()
     {
@@ -26,6 +27,8 @@ class User extends Authenticatable implements JWTSubject
     {
         return [];
     }
+
+    protected $connection = 'landlord';
 
     /**
      * The attributes that are mass assignable.
@@ -63,9 +66,17 @@ class User extends Authenticatable implements JWTSubject
         ];
     }
 
-    public function activityLogs(): HasMany
+    public function getActivitylogOptions(): LogOptions
     {
-        return $this->hasMany(ActivityLog::class);
+        return LogOptions::defaults()
+            ->logOnly($this->getFillable()) // Log all fillable, but only if changed
+            ->logOnlyDirty()
+            ->useLogName('user')
+            ->setDescriptionForEvent(function (string $eventName) {
+                $dirty = collect($this->getDirty())->except('updated_at')->toJson();
+
+                return ucfirst($eventName) . " user: {$dirty}";
+            });
     }
 
 
