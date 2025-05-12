@@ -25,7 +25,7 @@ class VerificationEmail extends Mailable
 
     public function build()
     {
-        $verifyEmailUrl = 'frontend.com' . '/verify-email?token='
+        $verifyEmailUrl = config('app.frontend_url') . '/verify-email?token='
         . $this->applicant->verification_token
         . '&job_id=' . $this->jobId;
 
