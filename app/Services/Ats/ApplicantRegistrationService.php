@@ -80,7 +80,7 @@ class ApplicantRegistrationService
             // Mark the email as verified and clear the token
             $jobApplicant->update([
                 'email_verified_at' => now(),
-                'verification_token' => null,
+                // 'verification_token' => null,
             ]);
             Log::info('Email verified and token cleared', ['applicant_id' => $jobApplicant->id]);
 
