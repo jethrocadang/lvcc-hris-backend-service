@@ -25,7 +25,7 @@ return new class extends Migration
 
             $table->unsignedBigInteger('employee_id')->index(); // Who attended
             // TODO ADD TABLE FOR TRAINING TYPE
-            $table->enum('training_type', ['onboarding', 'compliance', 'external', 'other']); // Add relevant types
+            $table->enum('training_type', ['compliance', 'external', 'other']); // Add relevant types
             $table->string('certificate_url')->nullable(); // Proof/certificate
 
             $table->date('date_started'); // Start of training

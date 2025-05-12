@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\V1\Eth\TrainingCourseModuleController;
 use App\Http\Controllers\Api\V1\Eth\EmployeeCourseProgressController;
 use App\Http\Controllers\Api\V1\Eth\TrainingCourseFeedbackController;
 use App\Http\Controllers\Api\V1\Eth\TrainingCourseEnrollmentController;
+use App\Http\Controllers\Api\V1\Eth\ExternalTrainingAttendanceController;
 
 Route::middleware('tenant')->group(function () {
 
@@ -34,6 +35,9 @@ Route::middleware('tenant')->group(function () {
 
         //TRAINING COURSE FEEDBACK
         Route::apiResource('eth/course-feedback', TrainingCourseFeedbackController::class);
+
+        //EXTERNAL TRAINING ATTENDANCE
+        Route::apiResource('eth/external-training', ExternalTrainingAttendanceController::class);
 
     });
 
