@@ -30,5 +30,6 @@ Route::middleware('tenant')->group(function () {
     // ** ADMIN & REVIEWER ENDPOINTS
     Route::middleware(['auth.jwt'])->group(function () {
         Route::apiResource('ats/job-posts', JobPostingController::class)->except(['index']);
+        Route::post('admin/update-phase-two',[JobApplicationProgressController::class, 'updatePhaseTwo']);
     });
 });

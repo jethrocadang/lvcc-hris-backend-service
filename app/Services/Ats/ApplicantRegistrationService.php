@@ -14,6 +14,8 @@ use App\Mail\PortalAccessEmail;
 // Helpers
 use App\Http\Requests\Ats\JobApplicationCreateRequest;
 use App\Http\Resources\JobApplicantResource;
+use App\Mail\JobApplicationEmail;
+use App\Models\JobApplicationPhase;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -78,7 +80,7 @@ class ApplicantRegistrationService
             // Mark the email as verified and clear the token
             $jobApplicant->update([
                 'email_verified_at' => now(),
-                'verification_token' => null,
+                // 'verification_token' => null,
             ]);
             Log::info('Email verified and token cleared', ['applicant_id' => $jobApplicant->id]);
 
@@ -109,7 +111,7 @@ class ApplicantRegistrationService
                 JobApplicationProgress::create([
                     'job_application_id' => $jobApplication->id,
                     'job_application_phase_id' => 2,
-                    'status' => 'accepted',
+                    'status' => 'pending',
                     'start_date' => now(),
                 ]);
                 Log::info('Job application progress phase 2 started', ['job_application_id' => $jobApplication->id]);
@@ -124,8 +126,12 @@ class ApplicantRegistrationService
                     Log::info('Job selection option created', ['job_id' => $jobId]);
                 }
 
+                $phaseOne = JobApplicationPhase::where('title', 'Verified Email')->first();
+                $acceptanceTemplate = $phaseOne?->acceptanceTemplate;
+
+
                 // Send portal access email to applicant
-                Mail::to($jobApplicant->email)->send(new PortalAccessEmail($jobApplicant, $portalToken));
+                Mail::to($jobApplicant->email)->send(new JobApplicationEmail($jobApplicant, $acceptanceTemplate, $portalToken));
                 Log::info('Portal access email sent', ['email' => $jobApplicant->email]);
             }
 
@@ -138,7 +144,6 @@ class ApplicantRegistrationService
 
             // Return the applicant resource with portal token if created
             return new JobApplicantResource($jobApplicant);
-
         } catch (ModelNotFoundException $e) {
             Log::warning('Invalid verification token used', ['token' => $token]);
             throw new ModelNotFoundException('Token not found!');
@@ -149,5 +154,4 @@ class ApplicantRegistrationService
             throw $e;
         }
     }
-
 }

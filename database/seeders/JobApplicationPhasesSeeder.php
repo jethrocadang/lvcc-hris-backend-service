@@ -3,64 +3,56 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\JobApplicationPhases;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class JobApplicationPhasesSeeder extends Seeder
 {
     public function run(): void
     {
+        $now = Carbon::now();
+
+        // Define the application phases in order
         $phases = [
-            [
-                'name' => 'Email Verification',
-                'sequence_order' => 1,
-                'description' => 'The applicant must verify their email address before proceeding with the application.'
-            ],
-            [
-                'name' => 'Applicant Information',
-                'sequence_order' => 2,
-                'description' => 'The applicant is required to complete personal and background information.'
-            ],
-            [
-                'name' => 'Initial Screening',
-                'sequence_order' => 3,
-                'description' => 'The applicant selects an available time slot for the initial interview screening.'
-            ],
-            [
-                'name' => 'Behavioral Interview',
-                'sequence_order' => 4,
-                'description' => 'The applicant undergoes a behavioral interview to assess personality and cultural fit.'
-            ],
-            [
-                'name' => 'Technical Interview (Non-Teaching)',
-                'sequence_order' => 5,
-                'description' => 'The applicant will undergo a technical interview to evaluate skills relevant to a non-teaching role.'
-            ],
-            [
-                'name' => 'Teaching Demo (Teaching)',
-                'sequence_order' => 5,
-                'description' => 'The applicant will conduct a teaching demo to assess their instructional ability and subject knowledge.'
-            ],
-            [
-                'name' => 'Management Interview',
-                'sequence_order' => 6,
-                'description' => 'The final interview with management to determine overall suitability and alignment.'
-            ],
-            [
-                'name' => 'Onboarding',
-                'sequence_order' => 7,
-                'description' => 'Successful applicants begin the onboarding process for integration into the organization.'
-            ],
+            'Verified Email',
+            'Applicant Information',
+            'Initial Screening',
+            'Behavioral Interview',
+            'Demo or Technical',
+            'Management Interview',
         ];
 
-        foreach ($phases as $phase) {
-            JobApplicationPhases::updateOrCreate(
-                ['name' => $phase['name']],
-                [
-                    'description' => $phase['description'],
-                    'email_template_id' => null,
-                    'sequence_order' => $phase['sequence_order'],
-                ]
-            );
+        foreach ($phases as $index => $phaseName) {
+            // Create acceptance email template
+            $acceptanceId = DB::table('ats_email_templates')->insertGetId([
+                'user_id' => null,
+                'type' => 'acceptance',
+                'subject' => "You're moving forward: {$phaseName}",
+                'body' => "Congratulations! You’ve advanced to the {$phaseName} phase.",
+                'created_at' => $now,
+                'updated_at' => $now,
+            ]);
+
+            // Create rejection email template
+            $rejectionId = DB::table('ats_email_templates')->insertGetId([
+                'user_id' => null,
+                'type' => 'rejection',
+                'subject' => "Application Update: {$phaseName}",
+                'body' => "Thank you for applying. Unfortunately, you will not proceed past the {$phaseName} phase.",
+                'created_at' => $now,
+                'updated_at' => $now,
+            ]);
+
+            // Create the application phase
+            DB::table('job_application_phases')->insert([
+                'acceptance_email_template_id' => $acceptanceId,
+                'rejection_email_template_id' => $rejectionId,
+                'title' => $phaseName, // previously "title"
+                'description' => "This is the {$phaseName} phase of the hiring process.",
+                'sequence_order' => $index + 1,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ]);
         }
     }
 }

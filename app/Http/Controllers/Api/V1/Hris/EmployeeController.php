@@ -1,14 +1,17 @@
 <?php
 
 namespace App\Http\Controllers\Api\V1\Hris;
+use Exception;
+use App\Models\Employee;
+use App\Traits\ApiResponse;
+use Illuminate\Http\Request;
+use App\Models\EmailTemplate;
+use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\EmployeeInformationRequest;
 use App\Http\Requests\EmployeeRequest;
 use App\Services\Hris\EmployeeService;
-use Illuminate\Http\JsonResponse;
-use App\Traits\ApiResponse;
-use Exception;
-use Illuminate\Http\Request;
+use App\Http\Resources\EmployeeResource;
+use App\Http\Requests\EmployeeInformationRequest;
 
 class EmployeeController extends Controller
 {
@@ -24,14 +27,28 @@ class EmployeeController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
-        try {
-            $employees = $this->employeeService->getEmployees();
-            return $this->successResponse('Employees retrieved successfully!', $employees);
-        } catch (Exception $e) {
-            return $this->errorResponse('Failed to retrieve employees.', ['error' => $e->getMessage()], 500);
-        }
+        // Validate the request
+        $filters = $request->all();
+        $perPage = (int) ($filters['per_page'] ?? 10);
+
+        $employees = $this->employeeService->getEmployees($filters, $perPage);
+
+        // Pagination info
+        $meta = [
+            'current_page' => $employees->currentPage(),
+            'last_page' => $employees->lastPage(),
+            'total' => $employees->total(),
+        ];
+
+        // Return data with meta
+        return $this->successResponse(
+            'Employees retrieved successfully!',
+            EmployeeResource::collection($employees),
+            200,
+            $meta
+        );
     }
 
     /**

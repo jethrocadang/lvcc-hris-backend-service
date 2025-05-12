@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Log;
 class TrainingRequestService
 {
     public function getTrainingRequest()
-    {    
+    {
         $trainingRequest = TrainingRequest::all();
 
         return $trainingRequest->isNotEmpty()
@@ -58,16 +58,16 @@ class TrainingRequestService
     {
         try {
             $trainingRequest = TrainingRequest::findOrFail($id);
-    
+
             $supervisor = auth('api')->user();
-    
+
             $trainingRequest->update([
                 'supervisor_id' => $supervisor->id,
                 'supervisor_status' => 'approved',
                 'supervisor_reviewed_at' => now(),
                 'request_status' => 'pending', // still pending, waiting for officer
             ]);
-    
+
             return new TrainingRequestResource($trainingRequest);
         } catch (ModelNotFoundException $e) {
             Log::error("Training request not found.", ['id' => $id]);

@@ -4,7 +4,7 @@ namespace App\Http\Requests\Ats;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class JobPostRequest extends FormRequest
+class JobPostGetRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,14 +22,12 @@ class JobPostRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'workType' => 'required|in:full-time,part-time,internship',
-            'jobType' => 'required|in:onsite,remote,hybrid',
-            'title' => 'required|string|max:40',
-            'description' => 'required|string',
-            'iconName' => 'nullable|string',
-            'status' => 'required|in:open,closed',
-            'location' => 'nullable|string',
-            'category' => 'required|in:teaching,non-teaching',
+            'filter.title' => ['sometimes', 'string', 'max:100'],
+            'filter.work_type' => ['sometimes', 'in:full-time,part-time,internship'],
+            'filter.job_type' => ['sometimes', 'in:onsite,remote,hybrid'],
+            'filter.status' => ['sometimes', 'in:open,closed'],
+            'sort' => ['sometimes', 'in:created_at,title,-created_at,-title'],
+            'per_page' => ['sometimes', 'integer', 'min:1', 'max:50'],
         ];
     }
 }

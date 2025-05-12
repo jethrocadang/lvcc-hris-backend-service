@@ -8,6 +8,9 @@ use App\Models\JobPost;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 use Exception;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class JobPostingService
 {
@@ -33,15 +36,25 @@ class JobPostingService
      *
      * @return Collection
      */
-    public function getJobPosts(): Collection
+    public function getJobPosts(array $filters = [], int $perPage = 10): LengthAwarePaginator
     {
         try {
-            return JobPostResource::collection(JobPost::all())->collection;
+            return QueryBuilder::for(JobPost::class)
+                ->allowedFilters([
+                    AllowedFilter::partial('title'),
+                    AllowedFilter::exact('status'),
+                    AllowedFilter::exact('work_type'),
+                    AllowedFilter::exact('job_type'),
+                ])
+                ->allowedSorts(['created_at', 'title'])
+                ->paginate($perPage)
+                ->appends($filters);
         } catch (Exception $e) {
             Log::error('Failed to retrieve job postings', ['error' => $e->getMessage()]);
-            return collect(); // Return empty collection if error occurs
+            return new LengthAwarePaginator([], 0, $perPage);
         }
     }
+
 
     /**
      * Update a specific job post.

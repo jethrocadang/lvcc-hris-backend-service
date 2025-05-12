@@ -74,7 +74,7 @@ class User extends Authenticatable implements JWTSubject
             ->useLogName('user')
             ->setDescriptionForEvent(function (string $eventName) {
                 $dirty = collect($this->getDirty())->except('updated_at')->toJson();
-    
+
                 return ucfirst($eventName) . " user: {$dirty}";
             });
     }
