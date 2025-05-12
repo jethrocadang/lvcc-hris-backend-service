@@ -22,11 +22,11 @@ class JobPostRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'workType' => 'required|in:full-time,part-time,internship',
+            'work_type' => 'required|in:full-time,part-time,internship',
             'jobType' => 'required|in:onsite,remote,hybrid',
             'title' => 'required|string|max:40',
             'description' => 'required|string',
-            'iconName' => 'nullable|string',
+            'icon_name' => 'nullable|string',
             'status' => 'required|in:open,closed',
             'location' => 'nullable|string',
             'category' => 'required|in:teaching,non-teaching',
