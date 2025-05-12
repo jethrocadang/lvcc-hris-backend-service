@@ -33,6 +33,9 @@ return new class extends Migration
             $table->enum('type', ['video series', 'text module']); // Content type
             $table->integer('sequence_order'); // Display order
 
+            $table->string('certificate_url')->nullable();
+             // Certificate URL (optional)
+
             $table->string('video_url')->nullable(); // Video resource (optional)
             $table->string('thumbnail_url')->nullable(); // Image (optional)
 
@@ -40,6 +43,7 @@ return new class extends Migration
             $table->longText('text_content')->nullable();// text course (Optional)
             $table->string('image_content')->nullable();// iamge upload (Optional)
 
+            $table->date('expiration_date')->nullable(); // Expiration date (optional)
 
             $table->timestamps(); // created_at & updated_at
         });

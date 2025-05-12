@@ -19,12 +19,14 @@ class TrainingCourseModule extends Model
         'title',
         'description',
         'type',
+        'certificate_url',
         'video_url',
         'thumbnail_url',
         'sequence_order',
         'file_content',
         'text_content',
         'image_content',
+        'expiration_date',
     ];
 
     public function course()
