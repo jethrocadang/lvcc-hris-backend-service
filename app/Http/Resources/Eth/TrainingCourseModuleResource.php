@@ -23,12 +23,14 @@ class TrainingCourseModuleResource extends JsonResource
             'title' => $this->title,
             'description' => $this->description,
             'type' => $this->type,
+            'certificateUrl' => $this->certificate_url,
             'videoUrl' => $this->video_url,
             'thumbnailUrl' => $this->thumbnail_url,
             'sequenceOrder' => $this->sequence_order,
             'fileContent' => $this->file_content,
             'textContent' => $this->text_content,
             'imageContent' => $this->image_content,
+            'expirationDate' => $this->expiration_date,
             'createdAt' => $this->created_at,
             'updatedAt' => $this->updated_at
         ];

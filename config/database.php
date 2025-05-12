@@ -67,7 +67,7 @@ return [
             'port' => env('TENANT_DB_PORT', '3306'),
             'database' => env('TENANT_DB_DATABASE', null),
             'username' => env('TENANT_DB_USERNAME', 'root'),
-            'password' => env('TENANT_DB_PASSWORD', ''),
+            'password' => env('TENANT_DB_PASSWORD', 'laravel'),
         ],
 
         'landlord' => [
@@ -76,7 +76,7 @@ return [
             'port' => env('LANDLORD_DB_PORT', '3306'),
             'database' => env('LANDLORD_DB_DATABASE', 'hris'),
             'username' => env('LANDLORD_DB_USERNAME', 'root'),
-            'password' => env('LANDLORD_DB_PASSWORD', ''),
+            'password' => env('LANDLORD_DB_PASSWORD', 'laravel'),
         ],
 
 

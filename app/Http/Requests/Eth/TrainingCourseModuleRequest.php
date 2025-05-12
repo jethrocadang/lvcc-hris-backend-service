@@ -26,11 +26,14 @@ class TrainingCourseModuleRequest extends FormRequest
             'title' => 'required|string',
             'description' => 'required|string',
             'type' => 'required|in:video series,text module',
+            'certificate_url' => 'nullable|url',
             'video_url' => 'nullable|url',
+            'thumbnail_url' => 'nullable|url',
             'sequence_order' => 'required|integer',
             'file_content' => 'nullable|mimes:pdf|max:20480',
             'text_content' => 'nullable|string',    
             'image_content' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'expiration_date' => 'nullable|date',
         ];
     }
     
