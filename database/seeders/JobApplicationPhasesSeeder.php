@@ -14,6 +14,7 @@ class JobApplicationPhasesSeeder extends Seeder
 
         // Define the application phases in order
         $phases = [
+            'Verified Email',
             'Applicant Information',
             'Initial Screening',
             'Behavioral Interview',
