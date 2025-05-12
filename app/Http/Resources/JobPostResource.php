@@ -23,7 +23,7 @@ class JobPostResource extends JsonResource
             'iconUrl' => $this->icon_url,
             'status' => $this->status,
             'location' => $this->location,
-            'schedule' => $this->schedule,
+            'category' => $this->category,
             'updatedAt' => $this->updated_at,
             'createdAt' => $this->created_at
         ];

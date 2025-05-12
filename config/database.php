@@ -61,22 +61,24 @@ return [
                 PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
             ]) : [],
         ],
-        //TODO set database variables to .env file
         'tenant' => [
-            'driver' => 'mysql',
-            'database' => null,
-            'host' => '127.0.0.1',
-            'username' => 'root',
-            'password' => 'laravel',
+            'driver' => env('TENANT_DB_CONNECTION', 'mysql'),
+            'host' => env('TENANT_DB_HOST', '127.0.0.1'),
+            'port' => env('TENANT_DB_PORT', '3306'),
+            'database' => env('TENANT_DB_DATABASE', null),
+            'username' => env('TENANT_DB_USERNAME', 'root'),
+            'password' => env('TENANT_DB_PASSWORD', ''),
         ],
 
         'landlord' => [
-            'driver' => 'mysql',
-            'database' => 'hris',
-            'host' => '127.0.0.1',
-            'username' => 'root',
-            'password' => 'laravel',
+            'driver' => env('LANDLORD_DB_CONNECTION', 'mysql'),
+            'host' => env('LANDLORD_DB_HOST', '127.0.0.1'),
+            'port' => env('LANDLORD_DB_PORT', '3306'),
+            'database' => env('LANDLORD_DB_DATABASE', 'hris'),
+            'username' => env('LANDLORD_DB_USERNAME', 'root'),
+            'password' => env('LANDLORD_DB_PASSWORD', ''),
         ],
+
 
         'mariadb' => [
             'driver' => 'mariadb',
