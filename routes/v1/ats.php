@@ -11,6 +11,7 @@ Route::middleware('tenant')->group(function () {
 
     //Public Route for Job Postings
     Route::get('ats/job-posts', [JobPostingController::class, 'index']);
+    Route::get('ats/job-posts/{id}', [JobPostingController::class, 'show']);
 
     // Public API endpoint for pre-application [Input Data: Name, Email]
     Route::post('ats/pre-application', [JobPreApplicationController::class, 'jobPreApplication']);
@@ -29,7 +30,7 @@ Route::middleware('tenant')->group(function () {
 
     // ** ADMIN & REVIEWER ENDPOINTS
     Route::middleware(['auth.jwt'])->group(function () {
-        Route::apiResource('ats/job-posts', JobPostingController::class)->except(['index']);
+        Route::apiResource('ats/job-posts', JobPostingController::class)->except(['index', 'show']);
         Route::post('admin/update-phase-two',[JobApplicationProgressController::class, 'updatePhaseTwo']);
     });
 });

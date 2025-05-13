@@ -8,6 +8,7 @@ use App\Models\JobPost;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 use Exception;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
@@ -89,6 +90,21 @@ class JobPostingService
         } catch (Exception $e) {
             Log::error('Job posting deletion failed', ['error' => $e->getMessage()]);
             return false;
+        }
+    }
+
+    public function getJobPostById(int $id)
+    {
+        try {
+            $jobPost = JobPost::findOrFail($id);
+
+            return new JobPostResource($jobPost);
+        } catch (ModelNotFoundException $e) {
+            Log::error('Job Post not found', ['error' => $e->getMessage()]);
+            throw $e;
+        } catch (Exception $e) {
+            Log::error('Job Post retrieval failed', ['error' => $e->getMessage()]);
+            throw $e;
         }
     }
 }

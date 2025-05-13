@@ -12,7 +12,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
 
 class JobApplication extends Authenticatable implements JWTSubject
 {
-    use HasFactory, UsesTenantConnection, LogsActivity;
+    use HasFactory, UsesTenantConnection;
 
     // public function __construct(array $attributes = [])
     // {
@@ -65,16 +65,16 @@ class JobApplication extends Authenticatable implements JWTSubject
         return $this->hasMany(JobApplicationProgress::class, 'job_application_id');
     }
 
-    public function getActivitylogOptions(): LogOptions
-    {
-        return LogOptions::defaults()
-            ->logOnly($this->getFillable()) // Log all fillable, but only if changed
-            ->logOnlyDirty()
-            ->useLogName('job application')
-            ->setDescriptionForEvent(function (string $eventName) {
-                $dirty = collect($this->getDirty())->except('updated_at')->toJson();
-    
-                return ucfirst($eventName) . " job application: {$dirty}";
-            });
-    }
+    // public function getActivitylogOptions(): LogOptions
+    // {
+    //     return LogOptions::defaults()
+    //         ->logOnly($this->getFillable()) // Log all fillable, but only if changed
+    //         ->logOnlyDirty()
+    //         ->useLogName('job application')
+    //         ->setDescriptionForEvent(function (string $eventName) {
+    //             $dirty = collect($this->getDirty())->except('updated_at')->toJson();
+
+    //             return ucfirst($eventName) . " job application: {$dirty}";
+    //         });
+    // }
 }
