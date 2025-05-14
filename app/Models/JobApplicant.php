@@ -10,7 +10,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
 
 class JobApplicant extends Model
 {
-    use HasFactory, UsesTenantConnection, LogsActivity;
+    use HasFactory, UsesTenantConnection;
     protected $table = 'job_applicants';
 
     protected $fillable = [
@@ -38,17 +38,17 @@ class JobApplicant extends Model
         return $this->hasOne(JobApplicantInformation::class, 'job_applicant_id');
     }
 
-    public function getActivitylogOptions(): LogOptions
-    {
-        return LogOptions::defaults()
-            ->logOnly($this->getFillable()) // Log all fillable, but only if changed
-            ->logOnlyDirty()
-            ->useLogName('job applicant')
-            ->setDescriptionForEvent(function (string $eventName) {
-                $dirty = collect($this->getDirty())->except('updated_at')->toJson();
-    
-                return ucfirst($eventName) . " job applicant: {$dirty}";
-            });
-    }
+    // public function getActivitylogOptions(): LogOptions
+    // {
+    //     return LogOptions::defaults()
+    //         ->logOnly($this->getFillable()) // Log all fillable, but only if changed
+    //         ->logOnlyDirty()
+    //         ->useLogName('job applicant')
+    //         ->setDescriptionForEvent(function (string $eventName) {
+    //             $dirty = collect($this->getDirty())->except('updated_at')->toJson();
+
+    //             return ucfirst($eventName) . " job applicant: {$dirty}";
+    //         });
+    // }
 
 }

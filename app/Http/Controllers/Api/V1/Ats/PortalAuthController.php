@@ -6,8 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\TokenRequest;
 use App\Models\JobApplication;
 use App\Traits\ApiResponse;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Log;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 /**
@@ -32,7 +34,33 @@ class PortalAuthController extends Controller
 
         // Token is valid; return JWT and applicant data
         return $this->generateTokens($application);
+    }
 
+    public function refreshToken(Request $request)
+    {
+        try {
+            // Check the cookie for the request
+            $refreshToken = $request->cookie('refresh_token');
+            if (!$refreshToken) {
+                return response()->json(['error' => 'Refresh token not found'], 401);
+            }
+
+            // Decode the token using tymon JWTAuth
+            $decoded = JWTAuth::setToken($refreshToken)->getPayload();
+            if (!$decoded || $decoded['type'] !== 'refresh') {
+                return response()->json(['error' => 'Invalid or expired refresh token'], 401);
+            }
+
+            // Find the user
+            $applicant = JobApplication::find($decoded['sub']);
+            if (!$applicant) {
+                return response()->json(['error' => 'applicant not found'], 404);
+            }
+            return $this->generateTokens($applicant);
+        } catch (Exception $e) {
+            Log::error('Token refresh failed: ' . $e->getMessage());
+            return response()->json(['error' => 'Failed to refresh token'], 500);
+        }
     }
 
     /**
@@ -75,5 +103,4 @@ class PortalAuthController extends Controller
             'Strict'       // SameSite
         );
     }
-
 }

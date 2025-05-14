@@ -35,13 +35,13 @@ class JobApplicationPhase extends Model
 
     /**
      * Define Spatie's logging options.
-     */
-    public function getActivitylogOptions(): LogOptions
-    {
-        return LogOptions::defaults()
-            ->logOnly(['title', 'description']) // Log only these attributes
-            ->logOnlyDirty() // Log only changed attributes
-            ->useLogName('email') // Set custom log name
-            ->setDescriptionForEvent(fn(string $eventName) => ucfirst($eventName) . " email: {$this->title}");
-    }
+    //  */
+    // public function getActivitylogOptions(): LogOptions
+    // {
+    //     return LogOptions::defaults()
+    //         ->logOnly(['title', 'description']) // Log only these attributes
+    //         ->logOnlyDirty() // Log only changed attributes
+    //         ->useLogName('email') // Set custom log name
+    //         ->setDescriptionForEvent(fn(string $eventName) => ucfirst($eventName) . " email: {$this->title}");
+    // }
 }

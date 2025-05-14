@@ -8,6 +8,8 @@ use App\Traits\ApiResponse;
 use App\Http\Requests\Ats\JobPostRequest;
 use App\Http\Resources\JobPostResource;
 use App\Services\Ats\JobPostingService;
+use Exception;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
 
@@ -52,6 +54,19 @@ class JobPostingController extends Controller
             200,
             $meta
         );
+    }
+
+    public function show(int $id): JsonResponse
+    {
+        try {
+
+            $jobPost = $this->jobPostingService->getJobPostById($id);
+            return $this->successResponse('Job Post retrieved successfully!', $jobPost);
+        } catch (ModelNotFoundException $e) {
+            return $this->errorResponse($e->getMessage(), [], 404);
+        } catch (Exception $e) {
+            return $this->errorResponse('Failed to retrieve Job Posts!', ['error' => $e->getMessage()], 500);
+        }
     }
 
 
