@@ -20,17 +20,19 @@ Route::middleware('tenant')->group(function () {
     // Public API enpoint for application portal [Input Data: portal_token]
     Route::post('ats/portal-auth', [PortalAuthController::class, 'authenticate']);
 
+    Route::post('ats/portal-auth/refresh-token', [PortalAuthController::class, 'refreshToken']);
+
 
     // ** PORTAL ENDPOINTS
     Route::middleware(['auth.jwt.tenant', 'auth.jwt'])->group(function () {
         Route::match(['put', 'patch'], 'ats/portal/profile', [JobApplicationFormController::class, 'updateOrCreate']);
         Route::get('ats/job-application-progress', [JobApplicationProgressController::class, 'getAllProgressByUser']);
-        Route::post('ats/select-interview-schedule',[JobInterviewSchedulingController::class, 'store']);
+        Route::post('ats/select-interview-schedule', [JobInterviewSchedulingController::class, 'store']);
     });
 
     // ** ADMIN & REVIEWER ENDPOINTS
     Route::middleware(['auth.jwt'])->group(function () {
         Route::apiResource('ats/job-posts', JobPostingController::class)->except(['index', 'show']);
-        Route::post('admin/update-phase-two',[JobApplicationProgressController::class, 'updatePhaseTwo']);
+        Route::post('admin/update-phase-two', [JobApplicationProgressController::class, 'updatePhaseTwo']);
     });
 });

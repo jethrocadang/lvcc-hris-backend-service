@@ -14,13 +14,7 @@ class JobApplication extends Authenticatable implements JWTSubject
 {
     use HasFactory, UsesTenantConnection;
 
-    // public function __construct(array $attributes = [])
-    // {
-    //     parent::__construct($attributes);
 
-    //     // Ensure tenant connection is always set
-    //     $this->setConnection(config('multitenancy.tenant_database_connection_name'));
-    // }
 
     public function getJWTIdentifier()
     {
