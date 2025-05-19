@@ -5,6 +5,7 @@ namespace App\Services\Ats;
 use App\Http\Requests\Ats\UpdateJobApplicationPhaseTwoRequest;
 use App\Http\Resources\JobApplicationProgressResource;
 use App\Mail\JobApplicationEmail;
+use App\Models\JobApplication;
 use App\Models\JobApplicationProgress;
 use Illuminate\Support\Facades\Log;
 
@@ -13,15 +14,11 @@ use Mail;
 
 class JobApplicationProgressService
 {
-    public function getJoApplicationProgressByUser()
+    public function getJoApplicationProgressByUser(int $id)
     {
         try {
             // check authenticated job aplicant
-            $jobApplication = auth('ats')->user();
-
-            if (!$jobApplication) {
-                throw new Exception('Unauthorized', 401);
-            }
+            $jobApplication = JobApplication::findOrFail($id);
 
             // get job application progress of the authenticated job applicant
             $jobApplicationProgress = $jobApplication->jobApplicationProgress;

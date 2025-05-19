@@ -82,6 +82,25 @@ class JobApplicationFormService
         }
     }
 
+    public function submitJobApplicationForm()
+    {
+        try {
+            $jobApplication = auth('ats')->user();
+
+            $jobApplicationProgress = $jobApplication->jobApplicationProgress;
+            $secondPhase = $jobApplicationProgress->firstWhere('job_application_phase_id', 2);
+
+            $secondPhase->status = 'pending';
+            $secondPhase->save();
+
+
+            return $secondPhase;
+        } catch (Exception $e) {
+
+            throw $e;
+        }
+    }
+
     public function getApplicationById(int $applicationId)
     {
         try {

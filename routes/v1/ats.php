@@ -28,7 +28,8 @@ Route::middleware('tenant')->group(function () {
     // ** PORTAL ENDPOINTS
     Route::middleware(['auth.jwt.tenant', 'auth.jwt'])->group(function () {
         Route::match(['put', 'patch'], 'ats/portal/profile', [JobApplicationFormController::class, 'updateOrCreate']);
-        Route::get('ats/job-application-progress', [JobApplicationProgressController::class, 'getAllProgressByUser']);
+        Route::post('ats/job-application-form/final-submit', [JobApplicationFormController::class, 'finalSubmit']);
+        Route::get('ats/job-application-progress/{id}', [JobApplicationProgressController::class, 'getAllProgressByUser']);
         Route::post('ats/select-interview-schedule', [JobInterviewSchedulingController::class, 'store']);
         Route::get('ats/job-applicant/{id}', [JobApplicationFormController::class, 'show']);
     });
@@ -36,7 +37,7 @@ Route::middleware('tenant')->group(function () {
     // ** ADMIN & REVIEWER ENDPOINTS
     Route::middleware(['auth.jwt'])->group(function () {
         Route::apiResource('ats/job-posts', JobPostingController::class)->except(['index', 'show']);
-        Route::post('admin/update-phase-two', [JobApplicationProgressController::class, 'updatePhaseTwo']);
+        Route::post('ats/admin/update-phase-two', [JobApplicationProgressController::class, 'updatePhaseTwo']);
         Route::apiResource('ats/job-application-phases', JobApplicationPhasesController::class)->except(['index']);
     });
 });

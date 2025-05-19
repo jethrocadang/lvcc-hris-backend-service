@@ -39,4 +39,23 @@ class JobApplicationFormController extends Controller
             return $this->errorResponse("Failed to retrieve job applicant", [$e->getMessage()], 500);
         }
     }
+
+    public function finalSubmit()
+    {
+        try {
+            $submitted = $this->jobApplicationForm->submitJobApplicationForm();
+
+            return $this->successResponse(
+                'Application submitted and second phase marked as pending.',
+                [$submitted],
+                200
+            );
+        } catch (Exception $e) {
+            return $this->errorResponse(
+                'Failed to submit job application.',
+                [$e->getMessage()],
+                500
+            );
+        }
+    }
 }
