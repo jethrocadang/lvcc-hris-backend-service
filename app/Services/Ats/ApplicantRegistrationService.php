@@ -111,7 +111,7 @@ class ApplicantRegistrationService
                 JobApplicationProgress::create([
                     'job_application_id' => $jobApplication->id,
                     'job_application_phase_id' => 2,
-                    'status' => 'pending',
+                    'status' => 'in-progress',
                     'start_date' => now(),
                 ]);
                 Log::info('Job application progress phase 2 started', ['job_application_id' => $jobApplication->id]);

@@ -24,11 +24,10 @@ return new class extends Migration
 
             // Religious background (optional fields)
             $table->string('religion')->nullable(); // Religion of the applicant
-            $table->string('locale')->nullable(); // Locale/church affiliation
-            $table->string('division')->nullable(); // Division within the church
+            $table->string('locale_and_division')->nullable(); // Locale/church affiliation
             $table->string('servant_name')->nullable(); // Name of a church servant (e.g., mentor or spiritual guide)
             $table->string('servant_contact_number')->nullable(); // Contact number of the servant
-            $table->date('date_of_baptism')->nullable(); // Date of applicant's baptism
+            $table->string('date_of_baptism')->nullable(); // Date of applicant's baptism
 
             // Church status: active, inactive, or suspended
             $table->enum('church_status', ['active', 'inactive', 'suspended'])->default('active');
@@ -37,20 +36,22 @@ return new class extends Migration
             $table->string('church_commitee')->nullable();
 
             // Educational background
-            $table->enum('educational_attainment', ['high_school', 'bachelor', 'master', 'doctorate'])->nullable(); // Highest education attained
+            $table->string('educational_attainment')->nullable(); // Highest education attained
             $table->string('course_or_program')->nullable(); // Course or program studied
             $table->string('school_graduated')->nullable(); // Name of the school graduated from
-            $table->year('year_graduated')->nullable(); // Graduation year
+            $table->string('year_graduated')->nullable(); // Graduation year
 
             // Employment status
             $table->boolean('is_employed')->default(false); // Indicates if the applicant is currently employed
 
             // Documents (optional file URLs)
-            $table->string('resume_url')->nullable(); // URL of the uploaded resume
-            $table->string('transcript_of_records_url')->nullable(); // URL of the uploaded transcript of records
+            $table->string('current_work')->nullable(); // URL of the uploaded resume
+            $table->string('last_work')->nullable(); // URL of the uploaded resume
+            $table->string('resume')->nullable(); // URL of the uploaded resume
+            $table->string('transcript_of_records')->nullable(); // URL of the uploaded transcript of records
 
             // Relocation preference
-            $table->boolean('can_relocate')->default(false); // Indicates if the applicant is open to relocation
+            $table->boolean('can_relocate')->default(true); // Indicates if the applicant is open to relocation
 
             // Timestamps for record creation and updates
             $table->timestamps();

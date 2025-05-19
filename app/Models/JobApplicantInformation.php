@@ -19,8 +19,7 @@ class JobApplicantInformation extends Model
         'current_address',
         'contact_number',
         'religion',
-        'locale',
-        'division',
+        'locale_and_division',
         'servant_name',
         'servant_contact_number',
         'date_of_baptism',
@@ -31,13 +30,14 @@ class JobApplicantInformation extends Model
         'school_graduated',
         'year_graduated',
         'is_employed',
-        'resume_url',
-        'transcript_of_records_url',
+        'current_work',
+        'last_work',
+        'resume',
+        'transcript_of_records',
         'can_relocate',
     ];
 
     protected $casts = [
-        'date_of_baptism' => 'date',
         'is_employed' => 'boolean',
         'can_relocate' => 'boolean',
     ];

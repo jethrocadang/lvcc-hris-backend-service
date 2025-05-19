@@ -28,7 +28,7 @@ return new class extends Migration {
 
             $table->text('reviewer_remarks')->nullable();
 
-            $table->enum('status', ['accepted', 'pending', 'rejected'])->nullable(); // Phase result
+            $table->enum('status', ['accepted','in-progress', 'pending', 'rejected'])->nullable(); // Phase result
 
             $table->timestamp('start_date')->nullable(); // When the phase started
             $table->timestamp('end_date')->nullable();   // When the phase ended

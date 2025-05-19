@@ -126,7 +126,7 @@ class JobApplicationProgressService
         JobApplicationProgress::create([
             'job_application_id' => $jobApplicationId,
             'job_application_phase_id' => $nextPhaseId,
-            'status' => 'pending',
+            'status' => 'in-progress',
         ]);
     }
 }

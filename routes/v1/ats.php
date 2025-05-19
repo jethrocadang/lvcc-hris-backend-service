@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\V1\Ats\JobApplicationFormController;
+use App\Http\Controllers\Api\V1\Ats\JobApplicationPhasesController;
 use App\Http\Controllers\Api\V1\Ats\JobApplicationProgressController;
 use App\Http\Controllers\Api\V1\Ats\JobInterviewSchedulingController;
 use App\Http\Controllers\Api\V1\Ats\JobPostingController;
@@ -22,17 +23,20 @@ Route::middleware('tenant')->group(function () {
 
     Route::post('ats/portal-auth/refresh-token', [PortalAuthController::class, 'refreshToken']);
 
+    Route::apiResource('ats/job-application-phases', JobApplicationPhasesController::class)->except(['update']);
 
     // ** PORTAL ENDPOINTS
     Route::middleware(['auth.jwt.tenant', 'auth.jwt'])->group(function () {
         Route::match(['put', 'patch'], 'ats/portal/profile', [JobApplicationFormController::class, 'updateOrCreate']);
         Route::get('ats/job-application-progress', [JobApplicationProgressController::class, 'getAllProgressByUser']);
         Route::post('ats/select-interview-schedule', [JobInterviewSchedulingController::class, 'store']);
+        Route::get('ats/job-applicant/{id}', [JobApplicationFormController::class, 'show']);
     });
 
     // ** ADMIN & REVIEWER ENDPOINTS
     Route::middleware(['auth.jwt'])->group(function () {
         Route::apiResource('ats/job-posts', JobPostingController::class)->except(['index', 'show']);
         Route::post('admin/update-phase-two', [JobApplicationProgressController::class, 'updatePhaseTwo']);
+        Route::apiResource('ats/job-application-phases', JobApplicationPhasesController::class)->except(['index']);
     });
 });
