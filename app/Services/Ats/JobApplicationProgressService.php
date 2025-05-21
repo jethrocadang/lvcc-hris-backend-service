@@ -7,6 +7,7 @@ use App\Http\Resources\JobApplicationProgressResource;
 use App\Mail\JobApplicationEmail;
 use App\Models\JobApplication;
 use App\Models\JobApplicationProgress;
+use Date;
 use Illuminate\Support\Facades\Log;
 
 use Exception;
@@ -124,6 +125,7 @@ class JobApplicationProgressService
             'job_application_id' => $jobApplicationId,
             'job_application_phase_id' => $nextPhaseId,
             'status' => 'in-progress',
+            'start_date' => now()
         ]);
     }
 }

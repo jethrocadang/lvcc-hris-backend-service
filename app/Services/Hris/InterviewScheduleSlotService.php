@@ -1,134 +1,119 @@
 <?php
+
 namespace App\Services\Hris;
 
 use App\Http\Requests\InterviewScheduleSlotRequest;
 use App\Http\Resources\InterviewScheduleSlotResource;
 use App\Models\InterviewScheduleSlot;
+use App\Models\InterviewScheduleTimeSlot;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class InterviewScheduleSlotService
 {
-    /**
-     * Retrieve all interview schedule slots.
-     *
-     * @return Collection
-     */
     public function getInterviewScheduleSlots(): Collection
     {
-        // Make query
-        $interviewScheduleSlots = InterviewScheduleSlot::all();
+        $slots = InterviewScheduleSlot::with('timeSlots')->get();
 
-        // Return collection if not empty else return empty collection.
-        return $interviewScheduleSlots->isNotEmpty()
-            ? InterviewScheduleSlotResource::collection($interviewScheduleSlots)->collection
+        return $slots->isNotEmpty()
+            ? InterviewScheduleSlotResource::collection($slots)->collection
             : collect();
     }
 
-    /**
-     * Get interview schedule slot by ID.
-     *
-     * @param int $id
-     * @return InterviewScheduleSlotResource
-     * @throws ModelNotFoundException|Exception
-     */
     public function getInterviewScheduleSlotById(int $id): InterviewScheduleSlotResource
     {
         try {
-            // Find the interview schedule slot by ID
-            $interviewScheduleSlot = InterviewScheduleSlot::findOrFail($id);
+            $slot = InterviewScheduleSlot::with('timeSlots')->findOrFail($id);
 
-            // Return the interview schedule slot
-            return new InterviewScheduleSlotResource($interviewScheduleSlot);
+            return new InterviewScheduleSlotResource($slot);
         } catch (ModelNotFoundException $e) {
-            // Log error if not found
             Log::error('Interview schedule slot not found', ['error' => $e->getMessage()]);
             throw $e;
         } catch (Exception $e) {
-            // Log errors and return the exception
             Log::error('Interview schedule slot retrieval failed', ['error' => $e->getMessage()]);
             throw $e;
         }
     }
 
-
-    /**
-     * Create a new interview schedule slot.
-     *
-     * @param InterviewScheduleSlotRequest $request
-     * @return InterviewScheduleSlotResource
-     * @throws Exception
-     */
     public function createInterviewScheduleSlot(InterviewScheduleSlotRequest $request): InterviewScheduleSlotResource
     {
+        DB::beginTransaction();
         try {
-            //Get currently logged in admin
             $admin = auth('api')->user();
-            // Validate then create new interview schedule slot
-            $interviewScheduleSlot = InterviewScheduleSlot::create($request->validated());
 
-            // Return created interview schedule slot
-            return new InterviewScheduleSlotResource($interviewScheduleSlot);
+            $validated = $request->validated();
+            $timeSlots = $validated['timeSlots'] ?? [];
+
+            $scheduleSlot = InterviewScheduleSlot::create([
+                'user_id' => $admin->id,
+                'scheduled_date' => $validated['scheduled_date'],
+            ]);
+
+            foreach ($timeSlots as $slot) {
+                $scheduleSlot->timeSlots()->create([
+                    'start_time' => $slot['start_time'],
+                    'available' => true,
+                ]);
+            }
+
+            DB::commit();
+
+            return new InterviewScheduleSlotResource($scheduleSlot->load('timeSlots'));
         } catch (Exception $e) {
-            // Log errors and return the exception
+            DB::rollBack();
             Log::error('Interview schedule slot creation failed', ['error' => $e->getMessage()]);
             throw $e;
         }
     }
 
-    /**
-     * Update an interview schedule slot.
-     *
-     * @param InterviewScheduleSlotRequest $request
-     * @param int $id
-     * @return InterviewScheduleSlotResource
-     * @throws ModelNotFoundException|Exception
-     */
-
     public function updateInterviewScheduleSlot(InterviewScheduleSlotRequest $request, int $id): InterviewScheduleSlotResource
     {
+        DB::beginTransaction();
         try {
-            // Find the interview schedule slot by ID
-            $interviewScheduleSlot = InterviewScheduleSlot::findOrFail($id);
+            $scheduleSlot = InterviewScheduleSlot::findOrFail($id);
 
-            // Update the interview schedule slot with validated data
-            $interviewScheduleSlot->update($request->validated());
+            $validated = $request->validated();
+            $timeSlots = $validated['timeSlots'] ?? [];
 
-            // Return updated interview schedule slot
-            return new InterviewScheduleSlotResource($interviewScheduleSlot);
+            $scheduleSlot->update([
+                'scheduled_date' => $validated['scheduled_date'],
+            ]);
+
+            // Optional strategy: delete and recreate time slots
+            $scheduleSlot->timeSlots()->delete();
+            foreach ($timeSlots as $slot) {
+                $scheduleSlot->timeSlots()->create([
+                    'start_time' => $slot['start_time'],
+                    'available' => true,
+                ]);
+            }
+
+            DB::commit();
+
+            return new InterviewScheduleSlotResource($scheduleSlot->load('timeSlots'));
         } catch (ModelNotFoundException $e) {
-            // Log error if not found
+            DB::rollBack();
             Log::error('Interview schedule slot not found', ['error' => $e->getMessage()]);
             throw $e;
         } catch (Exception $e) {
-            // Log errors and return the exception
+            DB::rollBack();
             Log::error('Interview schedule slot update failed', ['error' => $e->getMessage()]);
             throw $e;
         }
     }
-    /**
-     * Delete an interview schedule slot.
-     *
-     * @param int $id
-     * @return bool
-     * @throws ModelNotFoundException|Exception
-     */
+
     public function deleteInterviewScheduleSlot(int $id): bool
     {
         try {
-            // Find the interview schedule slot by ID
-            $interviewScheduleSlot = InterviewScheduleSlot::findOrFail($id);
-
-            // Delete the interview schedule slot
-            return $interviewScheduleSlot->delete();
+            $slot = InterviewScheduleSlot::findOrFail($id);
+            return $slot->delete();
         } catch (ModelNotFoundException $e) {
-            // Log error if not found
             Log::error('Interview schedule slot not found', ['error' => $e->getMessage()]);
             throw $e;
         } catch (Exception $e) {
-            // Log errors and return the exception
             Log::error('Interview schedule slot deletion failed', ['error' => $e->getMessage()]);
             throw $e;
         }

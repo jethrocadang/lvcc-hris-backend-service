@@ -22,10 +22,16 @@ class JobInterviewSchedulingRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'interview_schedule_slot_id' => 'required|integer|exists:interview_schedule_slots,id',
+            'interview_slot_id' => 'required|integer|exists:interview_schedule_slots,id',
+            'interview_time_slot_id' => 'required|integer|exists:interview_schedule_time_slots,id',
+            'job_application_phase_id' => 'required|integer',
+            'job_application_id' => 'sometimes|integer',
             'selected_date' => 'required|date',
             'selected_time' => 'required|date_format:H:i:s',
-            'schedule_status' => 'required|string|in:booked',
+            'schedule_status' => 'required|string',
+            'location' => 'nullable|string|',
+            'what_to_bring' => 'nullable|string',
+
         ];
     }
 }

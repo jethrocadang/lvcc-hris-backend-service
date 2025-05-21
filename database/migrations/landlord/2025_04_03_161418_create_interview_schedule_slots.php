@@ -24,24 +24,12 @@ return new class extends Migration
     public function up()
     {
         Schema::create('interview_schedule_slots', function (Blueprint $table) {
-            $table->id(); // Primary key (auto-increment)
-
-            // Foreign key referencing the 'users' table (admin)
+            $table->id();
             $table->foreignId('admin')  // 'admin' references the 'id' column in the 'users' table
-                  ->constrained('users') // Establishing the foreign key relationship with 'users'
-                  ->onDelete('cascade')->nullable(); // Cascade delete when the user is deleted
-
+                  ->constrained('users')
+                  ->onDelete('cascade')->nullable();
             $table->date('scheduled_date'); // The date of the interview
-            $table->time('start_time'); // The start time of the interview
-
-            // Enum for the slot status:
-            // - 'available': Slot is free and can be booked.
-            // - 'booked': Slot is booked by a user.
-            // - 'completed': Interview has been completed.
-            // TODO: make this nullable.
-            $table->enum('slot_status', ['available', 'booked', 'completed']);
-
-            $table->timestamps(); // Created_at and updated_at timestamps
+            $table->timestamps(); 
         });
     }
 

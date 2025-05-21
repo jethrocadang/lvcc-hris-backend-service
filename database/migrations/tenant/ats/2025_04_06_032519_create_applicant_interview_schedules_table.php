@@ -18,7 +18,8 @@ return new class extends Migration
         Schema::create('applicant_interview_schedules', function (Blueprint $table) {
             $table->id(); // Primary key (auto-incrementing)
 
-            $table->unsignedBigInteger('interview_schedule_slot_id')->index();
+            $table->unsignedBigInteger('interview_slot_id')->index();
+            $table->unsignedBigInteger('interview_time_slot_id')->index();
             // Slot ID from landlord database (date_sched_slots)
             // No foreign key constraint due to cross-database limitations
 
@@ -26,8 +27,8 @@ return new class extends Migration
                 ->constrained('job_applications')
                 ->onDelete('cascade'); // Cascade if application progress is removed
 
-            $table->foreignId('application_progress_id')
-                ->constrained('job_application_progress')
+            $table->foreignId('job_application_phase_id')
+                ->constrained('job_application_phases')
                 ->onDelete('cascade'); // Cascade if application progress is removed
 
             $table->date('selected_date'); // Date selected by the applicant
@@ -36,6 +37,8 @@ return new class extends Migration
             $table->enum('schedule_status', ['booked', 'completed', 'cancelled'])
                 ->default('booked'); // Current state of the schedule
 
+            $table->string('location')->nullable();
+            $table->string('what_to_bring')->nullable();
             $table->timestamps(); // created_at and updated_at
         });
     }

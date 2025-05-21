@@ -2,35 +2,49 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\InterviewScheduleSlot;
-use Carbon\Carbon;
+use App\Models\InterviewScheduleTimeSlot;
+use App\Models\User;
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class InterviewScheduleSlotSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        $adminId = 1; // Replace this with a valid user ID from your landlord DB
+        $admin = User::first(); // Make sure there's at least one admin user
 
-        $baseDate = Carbon::today()->addDays(1); // Start from tomorrow
+        if (!$admin) {
+            throw new \Exception("No admin user found. Please create at least one user.");
+        }
 
-        foreach (range(0, 4) as $dayOffset) {
-            $date = $baseDate->copy()->addDays($dayOffset);
+        $startDate = Carbon::now()->addDay(); // Start from tomorrow
+        $numberOfDays = 7;
+        $daysAdded = 0;
 
-            // Example time slots: 8 AM, 10 AM, 1 PM
-            $times = ['08:00:00', '10:00:00', '13:00:00'];
+        while ($daysAdded < $numberOfDays) {
+            if ($startDate->isWeekday()) {
+                DB::transaction(function () use ($admin, $startDate) {
+                    $slot = InterviewScheduleSlot::create([
+                        'admin' => $admin->id,
+                        'scheduled_date' => $startDate->format('Y-m-d'),
+                    ]);
+                    $timeSlots = collect(range(8, 16))
+                        ->reject(fn($hour) => $hour === 12) // Exclude lunch hour
+                        ->map(fn($hour) => [
+                            'start_time' => sprintf('%02d:00:00', $hour),
+                            'available' => true,
+                        ])
+                        ->toArray();
 
-            foreach ($times as $time) {
-                InterviewScheduleSlot::create([
-                    'admin' => $adminId,
-                    'scheduled_date' => $date->toDateString(),
-                    'start_time' => $time,
-                    'slot_status' => 'available', // or 'booked', 'cancelled' etc.
-                ]);
+                    $slot->timeSlots()->createMany($timeSlots);
+                });
+
+                $daysAdded++;
             }
+
+            $startDate->addDay();
         }
     }
 }

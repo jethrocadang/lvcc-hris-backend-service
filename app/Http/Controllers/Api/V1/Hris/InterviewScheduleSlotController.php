@@ -24,7 +24,7 @@ class InterviewScheduleSlotController extends Controller
         $interviewScheduleSlots = $this->interviewScheduleSlotService->getInterviewScheduleSlots();
 
         return $interviewScheduleSlots->isNotEmpty()
-            ? $this->successResponse('Interview schedule slots retrieved successfully!', $interviewScheduleSlots)
+            ? $this->successResponse('Interview schedule slots retrieved successfully!', $interviewScheduleSlots, 200)
             : $this->errorResponse('No interview schedule slots found', [], 404);
     }
 
@@ -65,7 +65,7 @@ class InterviewScheduleSlotController extends Controller
         try {
 
             $this->interviewScheduleSlotService->deleteInterviewScheduleSlot($id);
-    
+
             return $this->successResponse('Interview schedule slot deleted successfully!', [], 200);
         } catch (ModelNotFoundException $e) {
             return $this->errorResponse($e->getMessage(), [], 404);

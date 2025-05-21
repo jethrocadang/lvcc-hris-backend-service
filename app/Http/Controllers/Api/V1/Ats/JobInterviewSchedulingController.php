@@ -22,7 +22,7 @@ class JobInterviewSchedulingController extends Controller
     public function store(JobInterviewSchedulingRequest $request)
     {
         try {
-            $interviewSchedule = $this->jobInterviewScheduling->createSchedule($request);
+            $interviewSchedule = $this->jobInterviewScheduling->createScheduleByApplicant($request);
 
             return $this->successResponse('Created', [$interviewSchedule], 200);
         } catch (Exception $e) {
