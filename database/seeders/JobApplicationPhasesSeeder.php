@@ -15,11 +15,13 @@ class JobApplicationPhasesSeeder extends Seeder
         // Define the application phases in order
         $phases = [
             'Verified Email',
-            'Applicant Information',
+            'Shortlisted',
             'Initial Screening',
             'Behavioral Interview',
-            'Demo or Technical',
+            'Teaching Demo',
+            'Technical Interview',
             'Management Interview',
+            'Onboarding'
         ];
 
         foreach ($phases as $index => $phaseName) {

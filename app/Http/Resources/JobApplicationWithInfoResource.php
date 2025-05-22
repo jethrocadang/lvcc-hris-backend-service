@@ -19,7 +19,9 @@ class JobApplicationWithInfoResource extends JsonResource
             'portalToken' => $this->portal_token,
             'createdAt'        => $this->created_at,
             'jobApplicant' => new JobApplicantResource($this->whenLoaded('jobApplicant')),
-            'jobSelectionOptions' => JobSelectionOptionsResource::collection($this->whenLoaded(('jobSelectionOptions')))
+            'jobSelectionOptions' => JobSelectionOptionsResource::collection($this->whenLoaded(('jobSelectionOptions'))),
+            'jobApplicationProgress' =>  JobApplicationProgressResource::collection(($this->whenLoaded('jobApplicationProgress'))),
+            'jobInterviewScheduling' => JobInterviewSchedulingResource::collection($this->whenLoaded('jobInterviewScheduling'))
         ];
     }
 }

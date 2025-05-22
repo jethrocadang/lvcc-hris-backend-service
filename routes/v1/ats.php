@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\V1\Ats\JobApplicationAdminController;
 use App\Http\Controllers\Api\V1\Ats\JobApplicationFormController;
 use App\Http\Controllers\Api\V1\Ats\JobApplicationPhasesController;
 use App\Http\Controllers\Api\V1\Ats\JobApplicationProgressController;
@@ -39,5 +40,9 @@ Route::middleware('tenant')->group(function () {
         Route::apiResource('ats/job-posts', JobPostingController::class)->except(['index', 'show']);
         Route::post('ats/admin/update-phase-two', [JobApplicationProgressController::class, 'updatePhaseTwo']);
         Route::apiResource('ats/job-application-phases', JobApplicationPhasesController::class)->except(['index']);
+        Route::controller(JobApplicationAdminController::class)->group(function() {
+            Route::get('ats/admin/view-all-applications', 'getAllJobApplications');
+            Route::get('ats/admin/view-application/{id}', 'getJobApplication');
+        });
     });
 });

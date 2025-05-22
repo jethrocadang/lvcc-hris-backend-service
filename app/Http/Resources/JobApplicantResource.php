@@ -23,6 +23,7 @@ class JobApplicantResource extends JsonResource
             'avatar' => $this->avatar_url,
             'emailVerifiedAt' => $this->email_verified_at,
             'verificationToken' => $this->verification_token,
+            'status' => $this->status,
             'createdAt' => $this->created_at,
             'updatedAt' => $this->updated_at,
             'jobApplication' => new JobApplicationResource($this->whenLoaded('jobApplication')),

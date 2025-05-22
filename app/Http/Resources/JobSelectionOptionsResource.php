@@ -20,6 +20,7 @@ class JobSelectionOptionsResource extends JsonResource
             'jobApplicationId' => $this->job_application_id,
             'priority' => $this->priority,
             'status' => $this->status,
+            'jobPost' => new JobPostResource($this->whenLoaded('jobPost')),
         ];
     }
 }

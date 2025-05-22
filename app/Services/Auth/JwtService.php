@@ -28,8 +28,20 @@ class JwtService
         // Reset TTL to default (optional)
         $factory->setTTL($defaultTTL);
 
+
         return response()->json([
-            'user' => $user,
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'google_id' => $user->google_id,
+                'avatar_url' => $user->avatar_url,
+                'email_verified_at' => $user->email_verified_at,
+                'created_at' => $user->created_at,
+                'updated_at' => $user->updated_at,
+                'role' => $user->getRoleNames()->first(), // Single role
+                'roles' => $user->getRoleNames(), // List of role names
+            ],
             'access_token' => $accessToken,
             'token_type' => 'Bearer',
             'expires_in' => JWTAuth::factory()->getTTL() * 60,
@@ -62,7 +74,7 @@ class JwtService
                 return response()->json(['error' => 'Invalid or expired refresh token'], 401);
             }
 
-            // Find the user 
+            // Find the user
             $user = User::find($decoded['sub']);
             if (!$user) {
                 return response()->json(['error' => 'User not found'], 404);

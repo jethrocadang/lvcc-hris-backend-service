@@ -73,6 +73,10 @@ class GoogleAuthService
             ]
         );
 
+        if (!$user->hasAnyRole()) {
+            $user->assignRole('employee'); // Replace with your default role name
+        }
+
         // Log the user login for audit trails
         ActivityLog::create(['user_id' => $user->id, 'logged_in_at' => now()]);
 

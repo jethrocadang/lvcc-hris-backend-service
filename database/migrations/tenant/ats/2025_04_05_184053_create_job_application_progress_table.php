@@ -27,7 +27,7 @@ return new class extends Migration {
             $table->unsignedBigInteger('reviewed_by')->index()->nullable(); // Employee ID (from landlord database)
 
             $table->text('reviewer_remarks')->nullable();
-
+            $table->string('screening_type')->nullable();
             $table->enum('status', ['accepted','in-progress', 'pending', 'rejected'])->nullable(); // Phase result
 
             $table->timestamp('start_date')->nullable(); // When the phase started

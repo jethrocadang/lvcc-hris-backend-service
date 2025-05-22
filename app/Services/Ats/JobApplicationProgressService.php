@@ -103,7 +103,7 @@ class JobApplicationProgressService
     private function sendStatusEmail(JobApplicationProgress $progress, $applicant, string $portalToken, string $status): void
     {
         Log::info('Status: '. $status);
-        $phase = $progress->jobApplicationPhases;
+        $phase = $progress->phase;
         $emailTemplate = $status === 'accepted'
             ? $phase->acceptanceTemplate
             : $phase->rejectionTemplate;

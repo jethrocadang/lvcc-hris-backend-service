@@ -20,7 +20,7 @@ class JobPost extends Model
         'icon_url',
         'status',
         'location',
-        'schedule' // updated schedule to category [teaching, non-teaching]
+        'category' 
     ];
 
 
