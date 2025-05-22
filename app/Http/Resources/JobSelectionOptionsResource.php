@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class InterviewScheduleSlotResource extends JsonResource
+class JobSelectionOptionsResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -16,12 +16,11 @@ class InterviewScheduleSlotResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'admin' => $this->admin,
-            'scheduledDate' => $this->scheduled_date,
-            'createdAt' => $this->created_at,
-            'updatedAt' => $this->updated_at,
-            'timeSlots' => InterviewScheduleTimeSlotResource::collection($this->whenLoaded('timeSlots'))
-
+            'jobId' => $this->job_id,
+            'jobApplicationId' => $this->job_application_id,
+            'priority' => $this->priority,
+            'status' => $this->status,
+            'jobPost' => new JobPostResource($this->whenLoaded('jobPost')),
         ];
     }
 }

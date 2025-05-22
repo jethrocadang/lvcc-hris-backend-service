@@ -16,8 +16,6 @@ class InterviewScheduleSlot extends Model
         // commented out admin to avoid error as of now.
         'admin',
         'scheduled_date',
-        'start_time',
-        'slot_status',
     ];
 
     /**
@@ -28,6 +26,11 @@ class InterviewScheduleSlot extends Model
         return $this->belongsTo(User::class, 'admin');
     }
 
+    public function timeSlots()
+    {
+        return $this->hasMany(InterviewScheduleTimeSlot::class, 'interview_slot_id');
+    }
+
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
@@ -36,7 +39,7 @@ class InterviewScheduleSlot extends Model
             ->useLogName('interview schedule slot')
             ->setDescriptionForEvent(function (string $eventName) {
                 $dirty = collect($this->getDirty())->except('updated_at')->toJson();
-    
+
                 return ucfirst($eventName) . " interview schedule slot: {$dirty}";
             });
     }

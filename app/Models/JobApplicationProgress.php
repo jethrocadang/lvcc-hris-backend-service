@@ -18,6 +18,7 @@ class JobApplicationProgress extends Model
         'job_application_phase_id',
         'reviewed_by',
         'reviewer_remarks',
+        'screening_type',
         'status',
         'start_date',
         'end_date'
@@ -33,7 +34,7 @@ class JobApplicationProgress extends Model
         return $this->belongsTo(JobApplication::class, 'job_application_id');
     }
 
-    public function jobApplicationPhases()
+    public function phase()
     {
         return $this->belongsTo(JobApplicationPhase::class, 'job_application_phase_id');
     }

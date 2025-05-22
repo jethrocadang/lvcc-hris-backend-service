@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1\Ats;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\TokenRequest;
+use App\Http\Resources\JobApplicationResource;
 use App\Models\JobApplication;
 use App\Traits\ApiResponse;
 use Exception;
@@ -87,10 +88,10 @@ class PortalAuthController extends Controller
         $factory->setTTL($defaultTTL);
 
         return response()->json([
-            'job_applicant' => $application,
-            'access_token' => $accessToken,
-            'token_type' => 'Bearer',
-            'expires_in' => JWTAuth::factory()->getTTL() * 60,
+            'jobApplication' => new JobApplicationResource($application),
+            'accessToken' => $accessToken,
+            'tokenType' => 'Bearer',
+            'expiresIn' => JWTAuth::factory()->getTTL() * 60,
         ])->cookie(
             'refresh_token',
             $refreshToken,

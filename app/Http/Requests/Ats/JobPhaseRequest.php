@@ -1,17 +1,17 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Ats;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class InterviewScheduleSlotRequest extends FormRequest
+class JobPhaseRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return true;
+        return false;
     }
 
     /**
@@ -22,9 +22,8 @@ class InterviewScheduleSlotRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'scheduled_date' => ['required', 'date'],
-            'timeSlots' => ['required', 'array', 'min:1'],
-            'timeSlots.*.start_time' => ['required', 'date_format:H:i:s'],
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string',
         ];
     }
 }

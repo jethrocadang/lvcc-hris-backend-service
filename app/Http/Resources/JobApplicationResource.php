@@ -11,9 +11,9 @@ class JobApplicationResource extends JsonResource
     {
         return [
             'id'                => $this->id,
+            'jobApplicantId' => $this->job_applicant_id,
             'portalToken' => $this->portal_token,
             'createdAt'        => $this->created_at,
         ];
     }
 }
-

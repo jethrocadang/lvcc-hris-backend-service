@@ -5,7 +5,9 @@ namespace App\Services\Ats;
 use App\Http\Requests\Ats\UpdateJobApplicationPhaseTwoRequest;
 use App\Http\Resources\JobApplicationProgressResource;
 use App\Mail\JobApplicationEmail;
+use App\Models\JobApplication;
 use App\Models\JobApplicationProgress;
+use Date;
 use Illuminate\Support\Facades\Log;
 
 use Exception;
@@ -13,15 +15,11 @@ use Mail;
 
 class JobApplicationProgressService
 {
-    public function getJoApplicationProgressByUser()
+    public function getJoApplicationProgressByUser(int $id)
     {
         try {
             // check authenticated job aplicant
-            $jobApplication = auth('ats')->user();
-
-            if (!$jobApplication) {
-                throw new Exception('Unauthorized', 401);
-            }
+            $jobApplication = JobApplication::findOrFail($id);
 
             // get job application progress of the authenticated job applicant
             $jobApplicationProgress = $jobApplication->jobApplicationProgress;
@@ -105,7 +103,7 @@ class JobApplicationProgressService
     private function sendStatusEmail(JobApplicationProgress $progress, $applicant, string $portalToken, string $status): void
     {
         Log::info('Status: '. $status);
-        $phase = $progress->jobApplicationPhases;
+        $phase = $progress->phase;
         $emailTemplate = $status === 'accepted'
             ? $phase->acceptanceTemplate
             : $phase->rejectionTemplate;
@@ -126,7 +124,8 @@ class JobApplicationProgressService
         JobApplicationProgress::create([
             'job_application_id' => $jobApplicationId,
             'job_application_phase_id' => $nextPhaseId,
-            'status' => 'pending',
+            'status' => 'in-progress',
+            'start_date' => now()
         ]);
     }
 }

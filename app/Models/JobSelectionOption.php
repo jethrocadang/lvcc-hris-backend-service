@@ -21,12 +21,12 @@ class JobSelectionOption extends Model
 
     public function jobApplication()
     {
-        $this->belongsTo(JobApplication::class, 'job_application_id');
+        return $this->belongsTo(JobApplication::class, 'job_application_id');
     }
 
     public function jobPost()
     {
-        $this->belongsTo(JobPost::class, 'job_id');
+        return $this->belongsTo(JobPost::class, 'job_id');
     }
 
     // public function getActivitylogOptions(): LogOptions

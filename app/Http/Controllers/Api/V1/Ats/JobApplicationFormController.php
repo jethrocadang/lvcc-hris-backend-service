@@ -23,9 +23,39 @@ class JobApplicationFormController extends Controller
     {
         try {
             $jobApplicant = $this->jobApplicationForm->update($request);
-            return $this->successResponse('Job Applicant Information updated!', [$jobApplicant], 200);
+            return $this->successResponse('Job Applicant Information updated!', [$jobApplicant], 201);
         } catch (Exception $e) {
             return $this->errorResponse('Update Failed', ['error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function show(int $id)
+    {
+        try {
+            $jobApplication = $this->jobApplicationForm->getApplicationById($id);
+
+            return $this->successResponse('Job Applicant retrieved successfully', [$jobApplication], 200);
+        } catch (Exception $e) {
+            return $this->errorResponse("Failed to retrieve job applicant", [$e->getMessage()], 500);
+        }
+    }
+
+    public function finalSubmit()
+    {
+        try {
+            $submitted = $this->jobApplicationForm->submitJobApplicationForm();
+
+            return $this->successResponse(
+                'Application submitted and second phase marked as pending.',
+                [$submitted],
+                200
+            );
+        } catch (Exception $e) {
+            return $this->errorResponse(
+                'Failed to submit job application.',
+                [$e->getMessage()],
+                500
+            );
         }
     }
 }

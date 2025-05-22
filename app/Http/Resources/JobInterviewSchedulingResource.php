@@ -15,10 +15,14 @@ class JobInterviewSchedulingResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'jobApplicationId' => $this->job_application_id,
-            'interviewScheduleSlotId' => $this->interviewScheduleSlotId,
+            'interviewSlotId' => $this->interview_slot_id,
+            'interviewTimeSlotId' => $this->job_application_id,
+            'jobApplicationPhaseId' => $this->job_application_phase_id,
             'selectedDate' => $this->selected_date,
-            'scheduleStatus' => $this->schedule_status
+            'selectedTime' => $this->selected_time,
+            'scheduleStatus' => $this->schedule_status,
+            'location' => $this->location,
+            'whatToBring' => $this->what_to_bring
         ];
     }
 }

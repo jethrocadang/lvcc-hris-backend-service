@@ -16,13 +16,14 @@ class JobApplicantResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'firsName' => $this->first_name,
+            'firstName' => $this->first_name,
             'middleName' => $this->middle_name,
             'lastName' => $this->last_name,
             'email' => $this->email,
             'avatar' => $this->avatar_url,
             'emailVerifiedAt' => $this->email_verified_at,
             'verificationToken' => $this->verification_token,
+            'status' => $this->status,
             'createdAt' => $this->created_at,
             'updatedAt' => $this->updated_at,
             'jobApplication' => new JobApplicationResource($this->whenLoaded('jobApplication')),

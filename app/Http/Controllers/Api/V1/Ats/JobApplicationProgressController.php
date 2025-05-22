@@ -20,11 +20,11 @@ class JobApplicationProgressController extends Controller
         $this->jobApplicationProgress = $applicationProgressService;
     }
 
-    public function getAllProgressByUser()
+    public function getAllProgressByUser(int $id)
     {
         try {
             // Call the service to get job application progress
-            $progress = $this->jobApplicationProgress->getJoApplicationProgressByUser();
+            $progress = $this->jobApplicationProgress->getJoApplicationProgressByUser($id);
 
             // If no progress found, you can return an empty response
             if (!$progress) {

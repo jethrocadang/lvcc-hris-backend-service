@@ -4,7 +4,10 @@ namespace App\Services\Ats;
 
 use App\Http\Requests\JobApplicantInformationRequest;
 use App\Http\Resources\JobApplicantResource;
+use App\Http\Resources\JobApplicationWithInfoResource;
+use App\Models\JobApplication;
 use Exception;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
 
@@ -41,8 +44,7 @@ class JobApplicationFormService
                 'contact_number',
                 'current_address',
                 'religion',
-                'locale',
-                'division',
+                'locale_and_division',
                 'servant_name',
                 'servant_contact_number',
                 'date_of_baptism',
@@ -53,17 +55,19 @@ class JobApplicationFormService
                 'school_graduated',
                 'year_graduated',
                 'is_employed',
+                'current_work',
+                'last_work',
                 'can_relocate',
             ]));
 
             // Upload Resume
             if ($request->hasFile('resume')) {
-                $jobApplicantInfo->resume_url = $request->file('resume')->store('resumes');
+                $jobApplicantInfo->resume = $request->file('resume')->store('resumes', 'public');
             }
 
             // Upload Transcript of Records
             if ($request->hasFile('transcript_of_records')) {
-                $jobApplicantInfo->transcript_of_records_url = $request->file('transcript_of_records');
+                $jobApplicantInfo->transcript_of_records = $request->file('transcript_of_records')->store('transcripts', 'public');
             }
 
             // Save Job Application
@@ -74,6 +78,45 @@ class JobApplicationFormService
             return new JobApplicantResource($jobApplicant);
         } catch (Exception $e) {
             Log::error('Failed to update job applicant form', ['message' => $e->getMessage()]);
+            throw $e;
+        }
+    }
+
+    public function submitJobApplicationForm()
+    {
+        try {
+            $jobApplication = auth('ats')->user();
+
+            $jobApplicationProgress = $jobApplication->jobApplicationProgress;
+            $secondPhase = $jobApplicationProgress->firstWhere('job_application_phase_id', 2);
+
+            $secondPhase->status = 'pending';
+            $secondPhase->save();
+
+
+            return $secondPhase;
+        } catch (Exception $e) {
+
+            throw $e;
+        }
+    }
+
+    public function getApplicationById(int $applicationId)
+    {
+        try {
+            $jobApplication = JobApplication::with([
+                'jobApplicant.jobApplicantInformation',
+                'jobSelectionOptions',
+            ])->findOrFail($applicationId);
+
+            return new JobApplicationWithInfoResource($jobApplication);
+        } catch (ModelNotFoundException $e) {
+            throw new ModelNotFoundException("Job Application NOt found!");
+        } catch (Exception $e) {
+            Log::error('Failed to retrieve job applicant by application ID', [
+                'application_id' => $applicationId,
+                'message' => $e->getMessage(),
+            ]);
             throw $e;
         }
     }

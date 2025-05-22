@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\Api\V1\Ats\JobApplicationAdminController;
 use App\Http\Controllers\Api\V1\Ats\JobApplicationFormController;
+use App\Http\Controllers\Api\V1\Ats\JobApplicationPhasesController;
 use App\Http\Controllers\Api\V1\Ats\JobApplicationProgressController;
 use App\Http\Controllers\Api\V1\Ats\JobInterviewSchedulingController;
 use App\Http\Controllers\Api\V1\Ats\JobPostingController;
@@ -22,17 +24,25 @@ Route::middleware('tenant')->group(function () {
 
     Route::post('ats/portal-auth/refresh-token', [PortalAuthController::class, 'refreshToken']);
 
+    Route::apiResource('ats/job-application-phases', JobApplicationPhasesController::class)->except(['update']);
 
     // ** PORTAL ENDPOINTS
     Route::middleware(['auth.jwt.tenant', 'auth.jwt'])->group(function () {
         Route::match(['put', 'patch'], 'ats/portal/profile', [JobApplicationFormController::class, 'updateOrCreate']);
-        Route::get('ats/job-application-progress', [JobApplicationProgressController::class, 'getAllProgressByUser']);
+        Route::post('ats/job-application-form/final-submit', [JobApplicationFormController::class, 'finalSubmit']);
+        Route::get('ats/job-application-progress/{id}', [JobApplicationProgressController::class, 'getAllProgressByUser']);
         Route::post('ats/select-interview-schedule', [JobInterviewSchedulingController::class, 'store']);
+        Route::get('ats/job-applicant/{id}', [JobApplicationFormController::class, 'show']);
     });
 
     // ** ADMIN & REVIEWER ENDPOINTS
     Route::middleware(['auth.jwt'])->group(function () {
         Route::apiResource('ats/job-posts', JobPostingController::class)->except(['index', 'show']);
-        Route::post('admin/update-phase-two', [JobApplicationProgressController::class, 'updatePhaseTwo']);
+        Route::post('ats/admin/update-phase-two', [JobApplicationProgressController::class, 'updatePhaseTwo']);
+        Route::apiResource('ats/job-application-phases', JobApplicationPhasesController::class)->except(['index']);
+        Route::controller(JobApplicationAdminController::class)->group(function() {
+            Route::get('ats/admin/view-all-applications', 'getAllJobApplications');
+            Route::get('ats/admin/view-application/{id}', 'getJobApplication');
+        });
     });
 });

@@ -25,8 +25,7 @@ use App\Http\Controllers\Api\V1\Hris\DepartmentController;
 use App\Http\Controllers\Api\V1\Hris\JobPositionController;
 use App\Http\Controllers\Api\V1\Hris\UserPolicyAgreementController;
 use App\Http\Controllers\Api\V1\Hris\InterviewScheduleSlotController;
-
-
+use App\Models\InterviewScheduleSlot;
 
 // Authentication routes: Public routes
 Route::controller(AuthController::class)->group(function () {
@@ -45,6 +44,8 @@ Route::controller(AuthController::class)->group(function () {
 
     Route::post('auth/refresh-token', 'refreshToken');
 });
+
+Route::get('hris/interview-slots', [InterviewScheduleSlotController::class, 'index']);
 
 
 // Protected routes for Main Users (requires auth.jwt)
@@ -71,7 +72,7 @@ Route::middleware(['auth.jwt'])->group(function () {
     Route::apiResource('hris/email-templates', EmailTemplateController::class); //done
 
     // Interview Schedule Slots management (CRUD)
-    Route::apiResource('hris/interview-slots', InterviewScheduleSlotController::class); //done
+    Route::apiResource('hris/interview-slots', InterviewScheduleSlotController::class)->except(['index']); //done
 
     // Update only the employee's additional information or the core
     Route::patch('hris/employees/{id}/information', [EmployeeController::class, 'updateInformationOnly']);

@@ -20,9 +20,13 @@ class JobApplicationProgressResource extends JsonResource
             'joApplicationPhaseId' => $this->job_application_phase_id,
             'reviewedBy' => $this->reviewed_by,
             'reviewerRemarks' => $this->reviewer_remarks,
+            'screeningType' => $this->screening_type,
             'status' => $this->status,
             'startDate' => $this->start_date,
-            'endDate' => $this->end_date
+            'endDate' => $this->end_date,
+            'phase' => new JobApplicationPhaseResource($this->whenLoaded('phase')),
+
+
         ];
     }
 }
