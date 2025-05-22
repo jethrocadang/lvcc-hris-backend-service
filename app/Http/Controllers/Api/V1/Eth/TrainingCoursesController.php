@@ -7,9 +7,11 @@ use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Eth\TrainingCourseFilterRequest;
 use App\Services\Eth\TrainingCoursesService;
 
 use App\Http\Requests\Eth\TrainingCoursesRequest;
+use App\Http\Resources\Eth\TrainingCoursesResource;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 
@@ -27,14 +29,26 @@ class TrainingCoursesController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        $trainingCourses = $this->trainingCoursesService->getTrainingCourses();
+public function index(TrainingCourseFilterRequest $request): JsonResponse
+{
+    $filters = $request->validated();
+    $perPage = (int) ($filters['per_page'] ?? 10);
 
-        return $trainingCourses->isNotEmpty()
-            ? $this->successResponse('Email templates retrieved successfully!', $trainingCourses)
-            : $this->errorResponse('No email templates found', [], 404);
-    }
+    $trainingCourses = $this->trainingCoursesService->getTrainingCourses($filters, $perPage);
+
+    $meta = [
+        'current_page' => $trainingCourses->currentPage(),
+        'last_page' => $trainingCourses->lastPage(),
+        'total' => $trainingCourses->total(),
+    ];
+
+    return $this->successResponse(
+        'Training courses retrieved successfully!',
+        TrainingCoursesResource::collection($trainingCourses),
+        200,
+        $meta
+    );
+}
 
     /**
      * Store a newly created resource in storage.
