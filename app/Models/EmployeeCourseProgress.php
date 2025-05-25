@@ -47,7 +47,7 @@ class EmployeeCourseProgress extends Model
             ->useLogName('course progress')
             ->setDescriptionForEvent(function (string $eventName) {
                 $dirty = collect($this->getDirty())->except('updated_at')->toJson();
-    
+
                 return ucfirst($eventName) . " course progress: {$dirty}";
             });
     }

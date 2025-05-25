@@ -16,6 +16,8 @@ class JobApplicationPhaseResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'acceptanceEmailTemplateId' => $this->acceptance_email_template_id,
+            'rejectionEmailTemplateId' => $this->rejection_email_template_id,
             'title' => $this->title,
             'description' => $this->description,
             'sequenceOrder' => $this->sequence_order

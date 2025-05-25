@@ -41,9 +41,9 @@ class JobApplicationProgressController extends Controller
         }
     }
 
-    public function updatePhaseTwo(UpdateJobApplicationPhaseTwoRequest $request)
+    public function updatePhase(UpdateJobApplicationPhaseTwoRequest $request)
     {
-        $result = $this->jobApplicationProgress->updatePhase($request, 2, 3);
+        $result = $this->jobApplicationProgress->updatePhase($request);
 
         return $this->successResponse($result['message'], [$result['resource']], 200);
     }

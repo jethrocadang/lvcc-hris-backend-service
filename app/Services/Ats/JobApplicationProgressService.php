@@ -33,17 +33,20 @@ class JobApplicationProgressService
 
     public function getAllJobApplicationProgress() {}
 
-    public function updatePhase(UpdateJobApplicationPhaseTwoRequest $request, int $currentPhaseId, ?int $nextPhaseId = null): array
+    public function updatePhase(UpdateJobApplicationPhaseTwoRequest $request): array
     {
         try {
             // Get the authenticated evaluator or the admin reviewer
             $admin = auth('api')->user();
-            Log::info("[Update Job Application Phase {$currentPhaseId}] Admin: ", ['id:' => $admin->id, 'name:' => $admin->name]);
 
             // Validate the request [job_application_id, reviewer_remarks, status(accepted, pending, rejected)]
             $validated = $request->validated();
             $status = $validated['status'];
+            $currentPhaseId = $validated['current_phase_id'];
+            $nextPhaseId = $validated['next_phase_id'];
+            $screeningType = $validated['screening_type'];
 
+            Log::info("[Update Job Application Phase {$currentPhaseId}] Admin: ", ['id:' => $admin->id, 'name:' => $admin->name]);
             // Update the current phase either [accepted or rejected]
             $progress = $this->updateCurrentPhase($validated, $currentPhaseId, $admin);
 
@@ -56,7 +59,7 @@ class JobApplicationProgressService
 
             // If and only if the status is accepted, next phase is created
             if ($status === 'accepted' && $nextPhaseId) {
-                $this->createNextPhase($jobApplication->id, $nextPhaseId);
+                $this->createNextPhase($jobApplication->id, $nextPhaseId, $screeningType );
             }
 
             // Update message
@@ -119,11 +122,12 @@ class JobApplicationProgressService
     /**
      * Create the next phase progress record
      */
-    private function createNextPhase(int $jobApplicationId, int $nextPhaseId): void
+    private function createNextPhase(int $jobApplicationId, int $nextPhaseId, string $screeningType): void
     {
         JobApplicationProgress::create([
             'job_application_id' => $jobApplicationId,
             'job_application_phase_id' => $nextPhaseId,
+            'screening_type' => $screeningType,
             'status' => 'in-progress',
             'start_date' => now()
         ]);
