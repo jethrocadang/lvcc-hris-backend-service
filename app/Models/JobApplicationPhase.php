@@ -12,7 +12,8 @@ class JobApplicationPhase extends Model
 
     protected $table = 'job_application_phases';
     protected $fillable = [
-        'email_template_id',
+        'acceptance_email_template_id',
+        'rejection_email_template_id',
         'title',
         'description',
         'sequence_order',

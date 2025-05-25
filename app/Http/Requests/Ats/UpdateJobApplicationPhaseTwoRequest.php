@@ -31,9 +31,12 @@ class UpdateJobApplicationPhaseTwoRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'current_phase_id' => 'required|exists:job_application_phases,id',
+            'next_phase_id' => 'nullable|exists:job_application_phases,id',
             'job_application_id' => 'required|exists:job_applications,id',
             'reviewer_remarks' => 'nullable|string',
-            'status' => 'nullable|in:accepted,rejected'
+            'status' => 'nullable|in:accepted,rejected',
+            'screening_type' => 'nullable|string'
         ];
     }
 }

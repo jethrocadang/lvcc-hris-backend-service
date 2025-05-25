@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\V1\Ats\AtsEmailtemplateController;
 use App\Http\Controllers\Api\V1\Ats\JobApplicationAdminController;
 use App\Http\Controllers\Api\V1\Ats\JobApplicationFormController;
 use App\Http\Controllers\Api\V1\Ats\JobApplicationPhasesController;
@@ -38,11 +39,12 @@ Route::middleware('tenant')->group(function () {
     // ** ADMIN & REVIEWER ENDPOINTS
     Route::middleware(['auth.jwt'])->group(function () {
         Route::apiResource('ats/job-posts', JobPostingController::class)->except(['index', 'show']);
-        Route::post('ats/admin/update-phase-two', [JobApplicationProgressController::class, 'updatePhaseTwo']);
+        Route::post('ats/admin/update-application-progress', [JobApplicationProgressController::class, 'updatePhase']);
         Route::apiResource('ats/job-application-phases', JobApplicationPhasesController::class)->except(['index']);
-        Route::controller(JobApplicationAdminController::class)->group(function() {
+        Route::controller(JobApplicationAdminController::class)->group(function () {
             Route::get('ats/admin/view-all-applications', 'getAllJobApplications');
             Route::get('ats/admin/view-application/{id}', 'getJobApplication');
         });
     });
+    Route::apiResource('ats/ats-email-templates', AtsEmailtemplateController::class);
 });

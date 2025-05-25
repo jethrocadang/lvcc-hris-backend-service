@@ -5,33 +5,43 @@ namespace App\Services\Eth;
 use App\Http\Requests\Eth\TrainingCoursesRequest;
 use App\Http\Resources\Eth\TrainingCoursesResource;
 use App\Models\TrainingCourse;
-use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Support\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Log;
+use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\QueryBuilder;
+use Exception;
 
 class TrainingCoursesService
 {
-    public function getTrainingCourses()
+    public function getTrainingCourses(array $filters = [], int $perPage = 10): LengthAwarePaginator
     {
-        $trainingCourses = TrainingCourse::all();
-
-        return $trainingCourses->isNotEmpty()
-        ? TrainingCoursesResource::collection($trainingCourses)->collection
-        : collect();
+        try {
+            return QueryBuilder::for(TrainingCourse::class)
+                ->allowedFilters([
+                    AllowedFilter::partial('title'),
+                    AllowedFilter::exact('type'),
+                ])
+                ->allowedSorts(['created_at', 'title'])
+                ->paginate($perPage)
+                ->appends($filters);
+        } catch (Exception $e) {
+            Log::error('Failed to retrieve training courses', ['error' => $e->getMessage()]);
+            return new LengthAwarePaginator([], 0, $perPage);
+        }
     }
 
     public function getTrainingCourseById(int $id)
     {
-        try{
+        try {
 
             $trainingCourses = TrainingCourse::findOrFail($id);
 
             return new TrainingCoursesResource($trainingCourses);
-        } catch(ModelNotFoundException $e) {
-            Log::error('Training course not found.',['error' => $e->getMessage()]);
+        } catch (ModelNotFoundException $e) {
+            Log::error('Training course not found.', ['error' => $e->getMessage()]);
             throw $e;
-        } catch(Exception $e){
+        } catch (Exception $e) {
             Log::error('Training course retrieval failed', ['error' => $e->getMessage()]);
             throw $e;
         }
@@ -41,10 +51,10 @@ class TrainingCoursesService
     {
         try {
             $author = auth('api')->user();
-    
+
             $data = $request->validated();
             $data['author_id'] = $author->id; // set the logged-in user as the author
-    
+
             $trainingCourse = TrainingCourse::create($data);
 
             return new TrainingCoursesResource($trainingCourse);
@@ -56,15 +66,12 @@ class TrainingCoursesService
 
     public function deleteTrainingCourse(int $id): bool
     {
-        try{
+        try {
             $trainingCourse = TrainingCourse::findOrFail($id);
             return $trainingCourse->delete();
-        }catch  (Exception $e){
+        } catch (Exception $e) {
             Log::error('Training course deletion failed.', ['error' => $e->getMessage()]);
             return false;
         }
     }
-
-
-    
 }
