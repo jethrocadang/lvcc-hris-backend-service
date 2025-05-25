@@ -101,19 +101,19 @@ class ApplicantRegistrationService
                 JobApplicationProgress::create([
                     'job_application_id' => $jobApplication->id,
                     'job_application_phase_id' => 1,
-                    'status' => 'accepted',
+                    'status' => 'in-progress',
                     'start_date' => now(),
-                    'end_date' => now(),
+                    'end_date' => null,
                 ]);
                 Log::info('Job application progress phase 1 completed', ['job_application_id' => $jobApplication->id]);
 
                 // Start job application progress - Phase 2 pending
-                JobApplicationProgress::create([
-                    'job_application_id' => $jobApplication->id,
-                    'job_application_phase_id' => 2,
-                    'status' => 'in-progress',
-                    'start_date' => now(),
-                ]);
+                // JobApplicationProgress::create([
+                //     'job_application_id' => $jobApplication->id,
+                //     'job_application_phase_id' => 2,
+                //     'status' => 'in-progress',
+                //     'start_date' => now(),
+                // ]);
                 Log::info('Job application progress phase 2 started', ['job_application_id' => $jobApplication->id]);
 
                 // If job_id is passed, create initial job selection option
@@ -126,8 +126,9 @@ class ApplicantRegistrationService
                     Log::info('Job selection option created', ['job_id' => $jobId]);
                 }
 
-                $phaseOne = JobApplicationPhase::where('title', 'Verified Email')->first();
+                $phaseOne = JobApplicationPhase::find(1);
                 $acceptanceTemplate = $phaseOne?->acceptanceTemplate;
+
 
 
                 // Send portal access email to applicant

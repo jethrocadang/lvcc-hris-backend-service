@@ -16,6 +16,7 @@ class JobInterviewScheduling extends Model
     protected $fillable = [
         'interview_slot_id',
         'interview_time_slot_id',
+        'user_id',
         'job_application_id',
         'job_application_phase_id',
         'selected_date',

@@ -22,11 +22,20 @@ class JobApplicationAdminService
                 'jobApplicationProgress.phase',
                 'jobInterviewScheduling'
             ])
-            ->when($request->has('filter.phase_title'), function ($query) use ($request) {
-                $query->whereHas('jobApplicationProgress.phase', function (Builder $query) use ($request) {
-                    $query->where('title', $request->query('filter')['phase_title']);
-                });
-            })
+            ->when(
+                $request->filled('filter.phase_status') && $request->has('filter.phase_title'),
+                function ($query) use ($request) {
+                    $statuses = explode(',', $request->query('filter')['phase_status']);
+                    $phaseTitle = $request->query('filter')['phase_title'];
+
+                    $query->whereHas('jobApplicationProgress', function (Builder $query) use ($statuses, $phaseTitle) {
+                        $query->whereIn('status', $statuses)
+                            ->whereHas('phase', function (Builder $query) use ($phaseTitle) {
+                                $query->where('title', $phaseTitle);
+                            });
+                    });
+                }
+            )
             ->when($request->has('filter.job_category'), function ($query) use ($request) {
                 $query->whereHas('jobSelectionOptions.jobPost', function (Builder $query) use ($request) {
                     $query->where('category', data_get($request->query(), 'filter.job_category'));
@@ -38,6 +47,7 @@ class JobApplicationAdminService
 
         return JobApplicationWithInfoResource::collection($applications);
     }
+
 
     public function getJobApplication(int $id)
     {

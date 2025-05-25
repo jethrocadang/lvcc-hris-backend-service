@@ -23,7 +23,17 @@ class JobInterviewSchedulingController extends Controller
     {
         try {
             $interviewSchedule = $this->jobInterviewScheduling->createScheduleByApplicant($request);
+            return $this->successResponse('Created', [$interviewSchedule], 200);
+        } catch (Exception $e) {
+            return $this->errorResponse('Failed', [$e->getMessage()], 500);
+        }
+    }
 
+    public function scheduleForNextPhase(JobInterviewSchedulingRequest $request)
+    {
+
+        try {
+            $interviewSchedule = $this->jobInterviewScheduling->createScheduleByAdmin($request);
             return $this->successResponse('Created', [$interviewSchedule], 200);
         } catch (Exception $e) {
             return $this->errorResponse('Failed', [$e->getMessage()], 500);
