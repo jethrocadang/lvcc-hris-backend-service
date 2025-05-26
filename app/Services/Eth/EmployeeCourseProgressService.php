@@ -8,27 +8,35 @@ use App\Models\EmployeeCourseProgress;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Log;
+use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class EmployeeCourseProgressService
 {
-    public function getEmployeeCourseProgress()
+    public function getEmployeeCourseProgress(array $filters, int $perPage)
     {
-        $employeeCourseProgress = EmployeeCourseProgress::all();
-
-        return $employeeCourseProgress->isNotEmpty()
-        ? EmployeeCourseProgressResource::collection($employeeCourseProgress)->collection
-        : collect();
+        return QueryBuilder::for(EmployeeCourseProgress::class)
+            ->allowedFilters([
+                AllowedFilter::exact('employee_id'),
+                AllowedFilter::exact('course_id'),
+                AllowedFilter::exact('module_id'),
+                AllowedFilter::partial('status'),
+            ])
+            ->allowedSorts(['completion_date', 'watched_seconds', 'last_position'])
+            ->defaultSort('-completion_date')
+            ->paginate($perPage)
+            ->appends($filters);
     }
     public function getEmployeeCourseProgressById(int $id)
     {
-        try{
+        try {
             $employeeCourseProgress = EmployeeCourseProgress::findOrFail($id);
 
             return new EmployeeCourseProgressResource($employeeCourseProgress);
-        } catch(ModelNotFoundException $e) {
-            Log::error('Employee course progress not found.',['error' => $e->getMessage()]);
+        } catch (ModelNotFoundException $e) {
+            Log::error('Employee course progress not found.', ['error' => $e->getMessage()]);
             throw $e;
-        } catch(Exception $e){
+        } catch (Exception $e) {
             Log::error('Employee course progress retrieval failed', ['error' => $e->getMessage()]);
             throw $e;
         }
@@ -52,39 +60,39 @@ class EmployeeCourseProgressService
             throw $e;
         }
     }
-    // public function updateEmployeeCourseProgress(int $id, EmployeeCourseProgressRequest $request): EmployeeCourseProgressResource
-    // {
-    //     try {
-    //         $employeeCourseProgress = EmployeeCourseProgress::findOrFail($id);
+    public function updateEmployeeCourseProgress(int $id, EmployeeCourseProgressRequest $request): EmployeeCourseProgressResource
+    {
+        try {
+            $employeeCourseProgress = EmployeeCourseProgress::findOrFail($id);
 
-    //         $data = $request->validated();
-    //         $employeeCourseProgress->update($data);
+            $data = $request->validated();
+            $employeeCourseProgress->update($data);
 
-    //         return new EmployeeCourseProgressResource($employeeCourseProgress);
-    //     } catch (ModelNotFoundException $e) {
-    //         Log::error('Employee course progress not found.',['error' => $e->getMessage()]);
-    //         throw $e;
-    //     } catch (Exception $e) {
-    //         Log::error('Employee course progress update failed', ['error' => $e->getMessage()]);
-    //         throw $e;
-    //     }
-    // }
+            return new EmployeeCourseProgressResource($employeeCourseProgress);
+        } catch (ModelNotFoundException $e) {
+            Log::error('Employee course progress not found.', ['error' => $e->getMessage()]);
+            throw $e;
+        } catch (Exception $e) {
+            Log::error('Employee course progress update failed', ['error' => $e->getMessage()]);
+            throw $e;
+        }
+    }
 
-    // public function updateLastPosition($id)
-    // {
-    //     try {
-    //         $employeeCourseProgress = EmployeeCourseProgress::findOrFail($id);
+    public function updateLastPosition($id)
+    {
+        try {
+            $employeeCourseProgress = EmployeeCourseProgress::findOrFail($id);
 
-    //         $employeeCourseProgress->last_position = request('last_position');
-    //         $employeeCourseProgress->save();
+            $employeeCourseProgress->last_position = request('last_position');
+            $employeeCourseProgress->save();
 
-    //         return new EmployeeCourseProgressResource($employeeCourseProgress);
-    //     } catch (ModelNotFoundException $e) {
-    //         Log::error('Employee course progress not found.',['error' => $e->getMessage()]);
-    //         throw $e;
-    //     } catch (Exception $e) {
-    //         Log::error('Employee course progress update failed', ['error' => $e->getMessage()]);
-    //         throw $e;
-    //     }
-    // }
+            return new EmployeeCourseProgressResource($employeeCourseProgress);
+        } catch (ModelNotFoundException $e) {
+            Log::error('Employee course progress not found.', ['error' => $e->getMessage()]);
+            throw $e;
+        } catch (Exception $e) {
+            Log::error('Employee course progress update failed', ['error' => $e->getMessage()]);
+            throw $e;
+        }
+    }
 }

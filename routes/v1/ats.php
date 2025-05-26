@@ -14,6 +14,7 @@ Route::middleware('tenant')->group(function () {
 
     //Public Route for Job Postings
     Route::get('ats/job-posts', [JobPostingController::class, 'index']);
+    Route::get('ats/ats-email-templates', [AtsEmailtemplateController::class, 'index']);
     Route::get('ats/job-posts/{id}', [JobPostingController::class, 'show']);
 
     // Public API endpoint for pre-application [Input Data: Name, Email]
@@ -46,6 +47,6 @@ Route::middleware('tenant')->group(function () {
             Route::get('ats/admin/view-application/{id}', 'getJobApplication');
         });
         Route::post('ats/admin/set-interview-schedule', [JobInterviewSchedulingController::class, 'scheduleForNextPhase']);
+        Route::apiResource('ats/ats-email-templates', AtsEmailtemplateController::class)->except(['index']);
     });
-    Route::apiResource('ats/ats-email-templates', AtsEmailtemplateController::class);
 });

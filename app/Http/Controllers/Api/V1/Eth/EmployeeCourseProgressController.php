@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Eth\EmployeeCourseProgressRequest;
+use App\Http\Resources\Eth\EmployeeCourseProgressResource;
 use App\Models\EmployeeCourseProgress;
 use App\Services\Eth\EmployeeCourseProgressService;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -23,13 +24,29 @@ class EmployeeCourseProgressController extends Controller
         $this->employeeCourseProgressService = $employeeCourseProgressService;
     }
 
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
-        $employeeCourseProgress = $this->employeeCourseProgressService->getEmployeeCourseProgress();
+        $filters = $request->all();
+        $perPage = (int) ($filters['per_page'] ?? 10);
 
-        return $employeeCourseProgress->isNotEmpty()
-            ? $this->successResponse('Employee course progress retrieved successfully!', $employeeCourseProgress)
-            : $this->errorResponse('No employee course progress found', [], 404);
+        $employeeCourseProgress = $this->employeeCourseProgressService->getEmployeeCourseProgress($filters, $perPage);
+
+        if ($employeeCourseProgress->isEmpty()) {
+            return $this->errorResponse('No employee course progress found', [], 404);
+        }
+
+        $meta = [
+            'current_page' => $employeeCourseProgress->currentPage(),
+            'last_page' => $employeeCourseProgress->lastPage(),
+            'total' => $employeeCourseProgress->total(),
+        ];
+
+        return $this->successResponse(
+            'Employee course progress retrieved successfully!',
+            EmployeeCourseProgressResource::collection($employeeCourseProgress),
+            200,
+            $meta
+        );
     }
 
     public function show(int $id): JsonResponse
@@ -54,20 +71,20 @@ class EmployeeCourseProgressController extends Controller
         }
     }
 
-    // public function update(int $id, EmployeeCourseProgressRequest $request): JsonResponse
-    // {
-    //     try {
-    //         $employeeCourseProgress = $this->employeeCourseProgressService->updateEmployeeCourseProgress($id, $request);
-    //         return $this->successResponse('Employee course progress updated successfully!', $employeeCourseProgress);
-    //     } catch (ModelNotFoundException $e) {
-    //         return $this->errorResponse($e->getMessage(), [], 404);
-    //     } catch (Exception $e) {
-    //         return $this->errorResponse('Failed to update employee course progress!', ['error' => $e->getMessage()], 500);
-    //     }
-    // }
+    public function update(int $id, EmployeeCourseProgressRequest $request): JsonResponse
+    {
+        try {
+            $employeeCourseProgress = $this->employeeCourseProgressService->updateEmployeeCourseProgress($id, $request);
+            return $this->successResponse('Employee course progress updated successfully!', $employeeCourseProgress);
+        } catch (ModelNotFoundException $e) {
+            return $this->errorResponse($e->getMessage(), [], 404);
+        } catch (Exception $e) {
+            return $this->errorResponse('Failed to update employee course progress!', ['error' => $e->getMessage()], 500);
+        }
+    }
 
-    // public function updateLastPosition($id) 
-    // {
-    //     return $this->employeeCourseProgressService->updateLastPosition($id);
-    // }
+    public function updateLastPosition($id)
+    {
+        return $this->employeeCourseProgressService->updateLastPosition($id);
+    }
 }

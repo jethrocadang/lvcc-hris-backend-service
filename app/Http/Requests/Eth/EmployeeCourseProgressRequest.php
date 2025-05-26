@@ -23,9 +23,9 @@ class EmployeeCourseProgressRequest extends FormRequest
     {
         return [
             'employee_id' => 'nullable|exists:employees,id',
-            'course_id' => 'required|exists:tenant.employee_training_courses,id',
-            'module_id' => 'required|exists:tenant.training_course_modules,id',
-            'status' => 'required|in:not-started,in-progress,completed',
+            'course_id' => 'sometimes|exists:tenant.employee_training_courses,id',
+            'module_id' => 'sometimes|exists:tenant.training_course_modules,id',
+            'status' => 'sometimes|in:not-started,in-progress,completed',
             'watched_seconds' => 'nullable|integer|min:0',
             'last_position' => 'nullable|integer|min:0',
             'completion_date' => 'nullable|date',
