@@ -88,13 +88,14 @@ class JobApplicationFormService
             $jobApplication = auth('ats')->user();
 
             $jobApplicationProgress = $jobApplication->jobApplicationProgress;
-            $secondPhase = $jobApplicationProgress->firstWhere('job_application_phase_id', 2);
+            $updateFirstPhase = $jobApplicationProgress->firstWhere('job_application_phase_id', 1);
 
-            $secondPhase->status = 'pending';
-            $secondPhase->save();
+            // Set status to pending for shortlisting
+            $updateFirstPhase->status = 'pending';
+            $updateFirstPhase->save();
 
 
-            return $secondPhase;
+            return $updateFirstPhase;
         } catch (Exception $e) {
 
             throw $e;

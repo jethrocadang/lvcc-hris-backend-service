@@ -18,11 +18,9 @@ return new class extends Migration
         Schema::create('applicant_interview_schedules', function (Blueprint $table) {
             $table->id(); // Primary key (auto-incrementing)
 
-            $table->unsignedBigInteger('interview_slot_id')->index();
-            $table->unsignedBigInteger('interview_time_slot_id')->index();
-            // Slot ID from landlord database (date_sched_slots)
-            // No foreign key constraint due to cross-database limitations
-
+            $table->unsignedBigInteger('interview_slot_id')->index()->nullable();
+            $table->unsignedBigInteger('interview_time_slot_id')->index()->nullable();
+            $table->unsignedBigInteger('user_id')->index()->nullable();
             $table->foreignId('job_application_id')
                 ->constrained('job_applications')
                 ->onDelete('cascade'); // Cascade if application progress is removed

@@ -75,6 +75,7 @@ Route::middleware(['auth.jwt'])->group(function () {
     Route::apiResource('hris/interview-slots', InterviewScheduleSlotController::class)->except(['index']); //done
 
     // Update only the employee's additional information or the core
+    Route::get('hris/employees/auth-user', [EmployeeController::class, 'getByAuthenticatedUser']);
     Route::patch('hris/employees/{id}/information', [EmployeeController::class, 'updateInformationOnly']);
     Route::patch('hris/employees/{id}/core', [EmployeeController::class, 'updateEmployeeOnly']);
 

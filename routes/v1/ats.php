@@ -45,6 +45,7 @@ Route::middleware('tenant')->group(function () {
             Route::get('ats/admin/view-all-applications', 'getAllJobApplications');
             Route::get('ats/admin/view-application/{id}', 'getJobApplication');
         });
+        Route::post('ats/admin/set-interview-schedule', [JobInterviewSchedulingController::class, 'scheduleForNextPhase']);
     });
     Route::apiResource('ats/ats-email-templates', AtsEmailtemplateController::class);
 });

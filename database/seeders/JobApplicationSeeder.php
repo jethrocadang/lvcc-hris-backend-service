@@ -10,46 +10,99 @@ use App\Models\JobSelectionOption;
 use App\Models\JobApplicationProgress;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
+use Faker\Factory as Faker;
 
 class JobApplicationSeeder extends Seeder
 {
     public function run(): void
     {
+        $faker = Faker::create('en_PH'); // Use Philippine locale for more realistic data
+
+        $religions = ['MCGI', 'Catholic', 'Other', 'Protestant'];
+        $mcgiLocalesAndDivisions = ['Metro Manila South', 'Metro Manila North', 'Central Luzon', 'Southern Luzon', 'Bicol Region', 'Visayas', 'Mindanao']; // Added more specific MCGI locales
+        $mcgiChurchStatuses = ['Active', 'Inactive', 'Suspended'];
+        $mcgiChurchCommittees = ['MCGI GCOs', 'MCGI Servant', 'MCGI Music Ministry', 'MCGI Teatro Kristyano', 'MCGI Photoville', 'MCGI Productions']; // More specific MCGI committees
+
+        $educationalAttainments = ['Doctorate Degree', 'Masters Degree', 'Bachelors Degree', 'Vocational', 'Vocational', 'Undergraduate'];
+        $coursesOrPrograms = ['Computer Science', 'Information Technology', 'Accountancy', 'Business Administration', 'Marketing', 'Education', 'Nursing', 'Engineering'];
+        $schools = ['University of the Philippines', 'De La Salle University', 'Ateneo de Manila University', 'University of Santo Tomas', 'FEU Institute of Technology', 'Polytechnic University of the Philippines'];
+        $currentWorks = ['Software Engineer', 'Data Analyst', 'Marketing Specialist', 'HR Coordinator', 'Customer Service Representative', 'Accountant', 'Teacher'];
+        $lastWorks = ['Junior Developer', 'Intern', 'Trainee', 'Assistant'];
+        $reviewerRemarksOptions = [
+            'Strong candidate, good potential.',
+            'Needs further assessment on technical skills.',
+            'Excellent communication skills.',
+            'Background aligns well with requirements.',
+            'Consider for the next phase.',
+            'Good foundational knowledge.',
+            'Impressive work experience.',
+            'Very enthusiastic and engaged during interview.',
+            'Potential for leadership role.',
+            'Requires further evaluation on soft skills.',
+        ];
+
+        // Ensure these IDs exist in your database or adjust as needed
+        $jobId = 1; // Assuming a job with ID 1 exists
+        $jobApplicationPhaseId = 1; // Assuming a job application phase with ID 1 exists
+        $reviewerId = 1; // Assuming an admin/user with ID 1 exists
+
         // Create multiple applicants with info and applications
-        for ($i = 1; $i <= 5; $i++) {
+        for ($i = 1; $i <= 10; $i++) {
+            $firstName = $faker->firstName;
+            $lastName = $faker->lastName;
+            $email = strtolower($firstName . '.' . $lastName . $i) . '@example.test';
+            $selectedReligion = $faker->randomElement($religions);
+
             $applicant = JobApplicant::create([
-                'first_name' => "First{$i}",
-                'middle_name' => "M",
-                'last_name' => "Last{$i}",
-                'email' => "applicant{$i}@example.com",
+                'first_name' => $firstName,
+                'middle_name' => $faker->randomLetter,
+                'last_name' => $lastName,
+                'email' => $email,
                 'email_verified_at' => Carbon::now(),
                 'status' => 'active',
-                'avatar_url' => null,
+                'avatar_url' => null, // You might want to use Faker for a dummy avatar URL here if needed
                 'verification_token' => Str::random(32),
             ]);
 
-            $applicantInfo = JobApplicantInformation::create([
+            $isEmployed = $faker->boolean(70); // 70% chance of being currently employed
+            $yearGraduated = $faker->numberBetween(2010, 2023);
+
+            $applicantInfoData = [
                 'job_applicant_id' => $applicant->id,
-                'current_address' => "123 Main St, City {$i}",
-                'contact_number' => "0917123456{$i}",
-                'religion' => 'MCGI',
-                'locale_and_division' => 'Metro',
-                'servant_name' => 'Servant Name',
-                'servant_contact_number' => '09179876543',
-                'date_of_baptism' => Carbon::parse('2015-01-01'),
-                'church_status' => 'Active',
-                'church_commitee' => 'Youth',
-                'educational_attainment' => 'College',
-                'course_or_program' => 'IT',
-                'school_graduated' => 'Example University',
-                'year_graduated' => 2020,
-                'is_employed' => true,
-                'current_work' => 'Developer',
-                'last_work' => 'Intern',
-                'resume' => null,
-                'transcript_of_records' => null,
-                'can_relocate' => true,
-            ]);
+                'current_address' => $faker->address,
+                'contact_number' => $faker->mobileNumber,
+                'religion' => $selectedReligion,
+                'educational_attainment' => $faker->randomElement($educationalAttainments),
+                'course_or_program' => $faker->randomElement($coursesOrPrograms),
+                'school_graduated' => $faker->randomElement($schools),
+                'year_graduated' => $yearGraduated,
+                'is_employed' => $isEmployed,
+                'current_work' => $isEmployed ? $faker->randomElement($currentWorks) : null,
+                'last_work' => $faker->randomElement($lastWorks),
+                'resume' => null, // In a real scenario, you'd generate a path or mock a file upload
+                'transcript_of_records' => null, // Same as above
+                'can_relocate' => $faker->boolean(),
+            ];
+
+            // Conditionally add MCGI specific data
+            if ($selectedReligion === 'MCGI') {
+                $applicantInfoData['locale_and_division'] = $faker->randomElement($mcgiLocalesAndDivisions);
+                $applicantInfoData['servant_name'] = $faker->name;
+                $applicantInfoData['servant_contact_number'] = $faker->mobileNumber;
+                $applicantInfoData['date_of_baptism'] = Carbon::parse($faker->dateTimeBetween('-15 years', '-2 years')->format('Y-m-d'));
+                $applicantInfoData['church_status'] = $faker->randomElement($mcgiChurchStatuses);
+                $applicantInfoData['church_commitee'] = $faker->randomElement($mcgiChurchCommittees);
+            } else {
+                // Set to null or a default empty string for non-MCGI applicants
+                $applicantInfoData['locale_and_division'] = null;
+                $applicantInfoData['servant_name'] = null;
+                $applicantInfoData['servant_contact_number'] = null;
+                $applicantInfoData['date_of_baptism'] = null;
+                $applicantInfoData['church_status'] = null; // Use general statuses for others
+                $applicantInfoData['church_commitee'] = null; // Use general committees for others
+            }
+
+            JobApplicantInformation::create($applicantInfoData);
 
             $application = JobApplication::create([
                 'job_applicant_id' => $applicant->id,
@@ -58,21 +111,19 @@ class JobApplicationSeeder extends Seeder
 
             JobSelectionOption::create([
                 'job_application_id' => $application->id,
-                'job_id' => 1, // assumes job_id = 1 exists
+                'job_id' => $jobId,
                 'priority' => 1,
-                'status' => null,
+                'status' => null, // Null initially, will be updated during selection process
             ]);
-
-            
 
             JobApplicationProgress::create([
                 'job_application_id' => $application->id,
-                'job_application_phase_id' => 1, // assumes job_application_phase_id = 1 exists
-                'reviewed_by' => 1, // assumes admin/user with ID = 1 exists
-                'reviewer_remarks' => 'Looks promising',
-                'status' => 'in-progress',
-                'start_date' => Carbon::now(),
-                'end_date' => Carbon::now()->addDays(7),
+                'job_application_phase_id' => $jobApplicationPhaseId,
+                'reviewed_by' => $reviewerId,
+                'reviewer_remarks' => $faker->randomElement($reviewerRemarksOptions),
+                'status' => $faker->randomElement(['in-progress', 'pending', 'accepted']), // Simulate different statuses
+                'start_date' => Carbon::now()->subDays($faker->numberBetween(1, 21)), // Start date up to 3 weeks ago
+                'end_date' => Carbon::now()->addDays($faker->numberBetween(1, 14)), // End date up to 2 weeks from now
             ]);
         }
     }

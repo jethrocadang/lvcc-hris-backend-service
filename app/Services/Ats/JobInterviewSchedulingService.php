@@ -76,4 +76,50 @@ class JobInterviewSchedulingService
             throw $e;
         }
     }
+
+
+    public function createScheduleByAdmin(JobInterviewSchedulingRequest $request): string
+    {
+        try {
+            // Get the authenticated Job Applicant
+            $user = auth('ats')->user();
+
+            $validated = $request->validated();
+
+            $jobApplication = $validated['job_application_id'];
+
+            // Prevent duplicate scheduling for the same applicant and phase
+            $existingSchedule = JobInterviewScheduling::where('job_application_id', $jobApplication)
+                ->where('job_application_phase_id', $validated['job_application_phase_id'])
+                ->first();
+
+            if ($existingSchedule) {
+                throw new Exception('You have already scheduled an interview for this phase.', 401);
+            }
+
+            DB::transaction(function () use ($jobApplication, $validated) {
+                // Store interview schedule in tenant DB
+                JobInterviewScheduling::create([
+                    'job_application_id' => $jobApplication,
+                    'job_application_phase_id' => $validated['job_application_phase_id'],
+                    'selected_date' => $validated['selected_date'],
+                    'selected_time' => $validated['selected_time'],
+                    'schedule_status' => 'booked',
+                ]);
+
+                $progress = JobApplicationProgress::where('job_application_id', $validated['job_application_id'])
+                    ->where('job_application_phase_id', $validated['job_application_phase_id'])
+                    ->firstOrFail();
+
+                $progress->update([
+                    'status' => 'accepted',
+                ]);
+            });
+
+            return "Interview scheduled successfully.";
+        } catch (Exception $e) {
+            Log::error('[Interview Scheduling] Error: ' . $e->getMessage());
+            throw $e;
+        }
+    }
 }

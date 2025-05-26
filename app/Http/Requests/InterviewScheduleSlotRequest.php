@@ -24,7 +24,7 @@ class InterviewScheduleSlotRequest extends FormRequest
         return [
             'scheduled_date' => ['required', 'date'],
             'timeSlots' => ['required', 'array', 'min:1'],
-            'timeSlots.*.start_time' => ['required', 'date_format:H:i:s'],
+            'timeSlots.*.start_time' => ['required', 'date_format:H:i'],
         ];
     }
 }

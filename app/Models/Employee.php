@@ -42,6 +42,17 @@ class Employee extends Model
     {
         return $this->belongsTo(DepartmentJobPosition::class, 'department_position_id');
     }
+    public static function getByAuthenticatedUser()
+    {
+        $user = auth('api')->user();
+
+        if (!$user) {
+            return null;
+        }
+
+        return self::where('user_id', $user->id)->first();
+    }
+
 
     /**
      * Define Spatie's logging options.
@@ -54,7 +65,7 @@ class Employee extends Model
             ->useLogName('employee')
             ->setDescriptionForEvent(function (string $eventName) {
                 $dirty = collect($this->getDirty())->except('updated_at')->toJson();
-    
+
                 return ucfirst($eventName) . " employee: {$dirty}";
             });
     }

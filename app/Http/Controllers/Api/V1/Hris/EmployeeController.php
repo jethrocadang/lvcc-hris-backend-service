@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\Api\V1\Hris;
+
 use Exception;
 use App\Models\Employee;
 use App\Traits\ApiResponse;
@@ -23,7 +24,7 @@ class EmployeeController extends Controller
     {
         $this->employeeService = $employeeService;
     }
-    
+
     /**
      * Display a listing of the resource.
      */
@@ -49,6 +50,16 @@ class EmployeeController extends Controller
             200,
             $meta
         );
+    }
+
+    public function getByAuthenticatedUser(): JsonResponse
+    {
+        try {
+            $employee = $this->employeeService->getEmployeeByAuthenitcatedUser();
+            return $this->successResponse('Employee retrieved successfully!', $employee);
+        } catch (Exception $e) {
+            return $this->errorResponse('Failed to retrieve employee.', ['error' => $e->getMessage()], 404);
+        }
     }
 
     /**
@@ -113,7 +124,7 @@ class EmployeeController extends Controller
         }
     }
 
-    
+
 
     /**
      * Remove the specified resource from storage.

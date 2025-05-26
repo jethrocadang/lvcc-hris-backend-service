@@ -30,7 +30,7 @@ return new class extends Migration
             $table->string('date_of_baptism')->nullable(); // Date of applicant's baptism
 
             // Church status: active, inactive, or suspended
-            $table->enum('church_status', ['active', 'inactive', 'suspended'])->default('active');
+            $table->enum('church_status', ['active', 'inactive', 'suspended'])->default('active')->nullable();
 
             // Church committee involvement (optional)
             $table->string('church_commitee')->nullable();
