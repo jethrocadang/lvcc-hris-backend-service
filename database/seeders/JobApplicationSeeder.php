@@ -121,7 +121,7 @@ class JobApplicationSeeder extends Seeder
                 'job_application_phase_id' => $jobApplicationPhaseId,
                 'reviewed_by' => $reviewerId,
                 'reviewer_remarks' => $faker->randomElement($reviewerRemarksOptions),
-                'status' => $faker->randomElement(['in-progress', 'pending', 'accepted', 'rejected']), // Simulate different statuses
+                'status' => $faker->randomElement(['in-progress', 'pending', 'accepted']), // Simulate different statuses
                 'start_date' => Carbon::now()->subDays($faker->numberBetween(1, 21)), // Start date up to 3 weeks ago
                 'end_date' => Carbon::now()->addDays($faker->numberBetween(1, 14)), // End date up to 2 weeks from now
             ]);

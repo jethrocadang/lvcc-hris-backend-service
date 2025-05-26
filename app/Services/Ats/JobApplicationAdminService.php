@@ -12,7 +12,6 @@ use Illuminate\Database\Eloquent\Builder;
 
 class JobApplicationAdminService
 {
-
     public function getAllJobApplication(Request $request): AnonymousResourceCollection
     {
         $applications = QueryBuilder::for(JobApplication::class)
@@ -23,10 +22,10 @@ class JobApplicationAdminService
                 'jobInterviewScheduling'
             ])
             ->when(
-                $request->filled('filter.phase_status') && $request->has('filter.phase_title'),
+                $request->filled('filter.phase_status') && $request->filled('filter.phase_title'),
                 function ($query) use ($request) {
-                    $statuses = explode(',', $request->query('filter')['phase_status']);
-                    $phaseTitle = $request->query('filter')['phase_title'];
+                    $statuses = (array) data_get($request->query(), 'filter.phase_status', []);
+                    $phaseTitle = data_get($request->query(), 'filter.phase_title');
 
                     $query->whereHas('jobApplicationProgress', function (Builder $query) use ($statuses, $phaseTitle) {
                         $query->whereIn('status', $statuses)
@@ -36,9 +35,15 @@ class JobApplicationAdminService
                     });
                 }
             )
-            ->when($request->has('filter.job_category'), function ($query) use ($request) {
+            ->when($request->filled('filter.job_category'), function ($query) use ($request) {
                 $query->whereHas('jobSelectionOptions.jobPost', function (Builder $query) use ($request) {
                     $query->where('category', data_get($request->query(), 'filter.job_category'));
+                });
+            })
+            ->when($request->filled('filter.email'), function ($query) use ($request) {
+                $email = data_get($request->query(), 'filter.email');
+                $query->whereHas('jobApplicant', function (Builder $query) use ($email) {
+                    $query->where('email', 'LIKE', "%{$email}%");
                 });
             })
             ->defaultSort('-created_at')

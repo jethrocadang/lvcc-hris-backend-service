@@ -24,7 +24,7 @@ class EmployeeService
     //     : collect();
     // }
 
-        public function getEmployees(array $filters = [], int $perPage = 10): LengthAwarePaginator
+    public function getEmployees(array $filters = [], int $perPage = 10): LengthAwarePaginator
     {
         try {
             return QueryBuilder::for(Employee::class)
@@ -140,5 +140,13 @@ class EmployeeService
         }
     }
 
+    public function getEmployeeByAuthenitcatedUser()
+    {
+        $employee = Employee::getByAuthenticatedUser();
 
+        if (!$employee) {
+            throw new Exception('No employee record found for the authenticated user.');
+        }
+        return new EmployeeResource($employee);
+    }
 }
