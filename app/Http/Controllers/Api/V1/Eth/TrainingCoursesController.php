@@ -78,6 +78,18 @@ public function index(TrainingCourseFilterRequest $request): JsonResponse
         }
     }
 
+    public function update(TrainingCoursesRequest $request, int $id): JsonResponse
+    {
+        try{
+            $trainingCourses = $this->trainingCoursesService->updateTrainingCourse($request, $id);
+            return $this->successResponse('Training course updated successfully!', $trainingCourses);
+        }catch (ModelNotFoundException $e) {
+            return $this->errorResponse($e->getMessage(), [], 404);
+        }catch (Exception $e) {
+            return $this->errorResponse('Failed to update training course.', ['error' => $e->getMessage()], 500);
+        }
+    }
+
     /**
      * Remove the specified resource from storage.
      */

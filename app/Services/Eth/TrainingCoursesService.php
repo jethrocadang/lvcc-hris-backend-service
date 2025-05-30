@@ -64,6 +64,23 @@ class TrainingCoursesService
         }
     }
 
+    public function updateTrainingCourse(TrainingCoursesRequest $request, int $id): TrainingCoursesResource
+    {
+        try{
+            // $author = auth('api')->user();
+            $data = $request->validated();
+
+            $trainingCourse = TrainingCourse::findOrFail($id);
+
+            $trainingCourse->update($data);
+            
+            return new TrainingCoursesResource($trainingCourse);
+        }catch (Exception $e){
+            Log::error('Training course update failed', ['error' => $e->getMessage()]);
+            throw $e;
+        }
+    }
+
     public function deleteTrainingCourse(int $id): bool
     {
         try {
