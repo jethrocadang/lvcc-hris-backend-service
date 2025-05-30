@@ -6,8 +6,9 @@ use Illuminate\Support\Facades\Http;
 use Laravel\Socialite\Facades\Socialite;
 use App\Models\User;
 use App\Models\ActivityLog;
+use Exception;
 use Illuminate\Support\Str;
-
+use Log;
 
 class GoogleAuthService
 {
@@ -19,19 +20,25 @@ class GoogleAuthService
      */
     public function authenticate(string $code): User
     {
-        // Exchange and validate autorization code from google if there is really a google user
-        $tokenData = $this->exchangeAuthCodeForToken($code);
+        try {
 
-        // Throw exception if failed
-        if (!$tokenData) {
-            throw new \Exception('Failed to exchange authorization code');
+            // Exchange and validate autorization code from google if there is really a google user
+            $tokenData = $this->exchangeAuthCodeForToken($code);
+
+            // Throw exception if failed
+            if (!$tokenData) {
+                throw new Exception('Failed to exchange authorization code');
+            }
+
+            // If accepted socialite will handle the google Auth
+            $googleUser = Socialite::driver('google')->stateless()->userFromToken($tokenData['access_token']);
+
+            // Return user for jwt token!
+            return $this->findOrCreateUser($googleUser);
+        } catch (Exception $e) {
+            Log::error("Failed to authenticate", [$e->getMessage()]);
+            throw $e;
         }
-
-        // If accepted socialite will handle the google Auth
-        $googleUser = Socialite::driver('google')->stateless()->userFromToken($tokenData['access_token']);
-
-        // Return user for jwt token!
-        return $this->findOrCreateUser($googleUser);
     }
 
     /**
