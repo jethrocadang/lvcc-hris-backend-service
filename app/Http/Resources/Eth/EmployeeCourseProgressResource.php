@@ -22,11 +22,14 @@ class EmployeeCourseProgressResource extends JsonResource
             ],
             'courseId' => [
                 'id' => $this->course?->id,
-                'title' => $this->course?->title
+                'title' => $this->course?->title,
+                'type' => $this->course?->type,
+
             ],
             'moduleId' => [
                 'id' => $this->module?->id,
-                'title' => $this->module?->title
+                'title' => $this->module?->title,
+                'sequenceOrder' => $this->module?->sequence_order
             ],
             'status' => $this->status,
             'watchedSeconds' => $this->watched_seconds,
