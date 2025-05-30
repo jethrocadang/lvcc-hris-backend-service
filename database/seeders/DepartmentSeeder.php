@@ -14,9 +14,18 @@ class DepartmentSeeder extends Seeder
     public function run(): void
     {
         Department::insert([
-            ['name' => 'HR', 'description' => 'Manages employee inside the company'],
-            ['name' => 'IT', 'description' => 'Manages the company website'],
-            ['name' => 'Marketing', 'description' => 'Promotes the company products'],
+            ['name' => 'Administration'],
+            ['name' => 'Prefect of Student Affairs'], 
+            ['name' => 'Human Resource'],
+            ['name' => 'Finance & Accounting'], 
+            ['name' => 'General Administrative Services'],
+            ['name' => 'Basic Education'],
+            ['name' => 'Higher Education'], 
+            ['name' => 'Quality Assurance & Compliance Office'],
+            ['name' => 'Data Privacy Office'],
+            ['name' => 'Management Information Systems'],
+            ['name' => 'Library'], 
+            ['name' => 'Registration and Admissions'],
         ]);
     }
 }
