@@ -9,12 +9,14 @@ use App\Http\Controllers\Api\V1\Ats\JobInterviewSchedulingController;
 use App\Http\Controllers\Api\V1\Ats\JobPostingController;
 use App\Http\Controllers\Api\V1\Ats\JobPreApplicationController;
 use App\Http\Controllers\Api\V1\Ats\PortalAuthController;
+use App\Http\Controllers\Api\V1\Ats\JobSelectionOptionsController;
 
 Route::middleware('tenant')->group(function () {
 
     //Public Route for Job Postings
     Route::get('ats/job-posts', [JobPostingController::class, 'index']);
     Route::get('ats/ats-email-templates', [AtsEmailtemplateController::class, 'index']);
+    Route::get('ats/ats-email-templates/{id}', [AtsEmailtemplateController::class, 'show']);
     Route::get('ats/job-posts/{id}', [JobPostingController::class, 'show']);
 
     // Public API endpoint for pre-application [Input Data: Name, Email]
@@ -34,7 +36,11 @@ Route::middleware('tenant')->group(function () {
         Route::post('ats/job-application-form/final-submit', [JobApplicationFormController::class, 'finalSubmit']);
         Route::get('ats/job-application-progress/{id}', [JobApplicationProgressController::class, 'getAllProgressByUser']);
         Route::post('ats/select-interview-schedule', [JobInterviewSchedulingController::class, 'store']);
+        Route::get('ats/interview-schedule/{id}', [JobInterviewSchedulingController::class, 'getByJobApplication']);
         Route::get('ats/job-applicant/{id}', [JobApplicationFormController::class, 'show']);
+        Route::get('ats/job-selection-options/by-job-application/{jobApplicationId}', [JobSelectionOptionsController::class, 'showByJobApplicationId']);
+
+
     });
 
     // ** ADMIN & REVIEWER ENDPOINTS
@@ -47,6 +53,9 @@ Route::middleware('tenant')->group(function () {
             Route::get('ats/admin/view-application/{id}', 'getJobApplication');
         });
         Route::post('ats/admin/set-interview-schedule', [JobInterviewSchedulingController::class, 'scheduleForNextPhase']);
-        Route::apiResource('ats/ats-email-templates', AtsEmailtemplateController::class)->except(['index']);
+        Route::apiResource('ats/ats-email-templates', AtsEmailtemplateController::class)->except(['index', 'show']);
+        Route::get('ats/select-interview-schedule', [JobInterviewSchedulingController::class, 'index']);
+
+
     });
 });
