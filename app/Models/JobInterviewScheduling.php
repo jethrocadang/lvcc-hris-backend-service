@@ -37,10 +37,15 @@ class JobInterviewScheduling extends Model
     /**
      * Belongs to the application progress tracker.
      */
-   public function jobApplicationPhase()
-{
-    return $this->belongsTo(JobApplicationPhase::class, 'job_application_phase_id');
-}
+    public function jobApplicationPhase()
+    {
+        return $this->belongsTo(JobApplicationPhase::class, 'job_application_phase_id');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class); // Assuming landlord DB, and you use `UsesLandlordConnection` in User model
+    }
 
 
     /**

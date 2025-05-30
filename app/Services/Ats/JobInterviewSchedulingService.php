@@ -11,6 +11,9 @@ use App\Models\JobApplicationProgress;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\JsonResponse;
 use Exception;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class JobInterviewSchedulingService
 {
@@ -105,6 +108,8 @@ class JobInterviewSchedulingService
                     'selected_date' => $validated['selected_date'],
                     'selected_time' => $validated['selected_time'],
                     'schedule_status' => 'booked',
+                    'location' => $validated['location'],
+                    'what_to_bring' => $validated['what_to_bring']
                 ]);
 
                 $progress = JobApplicationProgress::where('job_application_id', $validated['job_application_id'])
@@ -119,6 +124,52 @@ class JobInterviewSchedulingService
             return "Interview scheduled successfully.";
         } catch (Exception $e) {
             Log::error('[Interview Scheduling] Error: ' . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function getInterviewSchedules(array $filters = [], int $perPage = 10): LengthAwarePaginator
+    {
+        try {
+            return QueryBuilder::for(JobInterviewScheduling::with([
+                'user',
+                'jobApplication.jobApplicant',
+                'jobApplicationPhase',
+            ]))
+                ->allowedFilters([
+                    AllowedFilter::exact('user_id'),
+                    AllowedFilter::exact('job_application_id'),
+                    AllowedFilter::exact('interview_slot_id'),
+                    AllowedFilter::exact('interview_time_slot_id'),
+                    AllowedFilter::exact('job_application_phase_id'),
+                    AllowedFilter::exact('schedule_status'),
+                    AllowedFilter::partial('location'),
+                ])
+                ->allowedSorts(['selected_date', 'selected_time', 'created_at'])
+                ->paginate($perPage)
+                ->appends($filters);
+        } catch (Exception $e) {
+            Log::error('Failed to retrieve interview schedules', ['error' => $e->getMessage()]);
+            return new LengthAwarePaginator([], 0, $perPage);
+        }
+    }
+
+    public function getInterviewSchedulesByJobApplication(int $jobApplicationId)
+    {
+        try {
+            return JobInterviewScheduling::with([
+                'user',
+                'jobApplication.jobApplicant',
+                'jobApplicationPhase',
+            ])
+                ->where('job_application_id', $jobApplicationId)
+                ->get();
+        } catch (Exception $e) {
+            Log::error('Failed to retrieve interview schedules by job application', [
+                'job_application_id' => $jobApplicationId,
+                'error' => $e->getMessage(),
+            ]);
+
             throw $e;
         }
     }
