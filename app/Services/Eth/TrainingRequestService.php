@@ -2,22 +2,38 @@
 
 namespace App\Services\Eth;
 
+use Exception;
+use App\Models\TrainingRequest;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Pagination\LengthAwarePaginator;
 use App\Http\Requests\Eth\TrainingRequestRequest;
 use App\Http\Resources\Eth\TrainingRequestResource;
-use App\Models\TrainingRequest;
-use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Support\Facades\Log;
+use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class TrainingRequestService
 {
-    public function getTrainingRequest()
+    public function getTrainingRequest(array $filters = [], int $perPage = 10): LengthAwarePaginator
     {
-        $trainingRequest = TrainingRequest::all();
-
-        return $trainingRequest->isNotEmpty()
-        ? trainingRequestResource::collection($trainingRequest)->collection
-        : collect();
+        try{
+            return QueryBuilder::for(TrainingRequest::with([
+                'employee',
+                'supervisor',
+                'officer'
+            ]))
+                ->allowedFilters([
+                    AllowedFilter::exact('employee_id'),
+                    AllowedFilter::exact('supervisor_status'),
+                    AllowedFilter::exact('officer_status'),
+                ])
+                ->allowedSorts(['request_status','created_at'])
+                ->paginate($perPage)
+                ->appends($filters);
+        }catch (Exception $e) {
+            Log::error('Failed to retrieve interview schedules', ['error' => $e->getMessage()]);
+            return new LengthAwarePaginator([], 0, $perPage);
+        }
     }
 
     public function getTrainingRequestById(int $id)
