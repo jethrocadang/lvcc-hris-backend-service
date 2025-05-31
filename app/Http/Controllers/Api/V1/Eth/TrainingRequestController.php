@@ -7,6 +7,7 @@ use App\Http\Requests\Eth\TrainingRequestRequest;
 use App\Services\Eth\TrainingRequestService;
 use App\Traits\ApiResponse;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 use Exception;
@@ -24,13 +25,25 @@ class TrainingRequestController extends Controller
     }
 
 
-    public function index()
+    public function index(Request $request)
     {
-        $trainingRequest = $this->trainingRequestService->getTrainingRequest();
+        $filters = $request->all();
+        $perPage = (int) ($filters['per_page'] ?? 10);
 
-        return $trainingRequest->isNotEmpty()
-            ? $this->successResponse('Traning requests retrieved successfully!', $trainingRequest)
-            : $this->errorResponse('No training requests found', [], 404);
+        $trainingRequest = $this->trainingRequestService->getTrainingRequest($filters, $perPage);
+
+        $meta = [
+            'current_page' => $trainingRequest->currentPage(),
+            'last_page' => $trainingRequest->lastPage(),
+            'total' => $trainingRequest->total(),
+        ];
+
+        return $this->successResponse(
+            'Training requests retrieved successfully!',
+            TrainingRequestRequest::collection($trainingRequest),
+            200,
+            $meta
+        );
     }
 
     /**
