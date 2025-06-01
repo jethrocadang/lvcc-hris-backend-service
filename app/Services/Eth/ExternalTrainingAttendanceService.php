@@ -42,6 +42,11 @@ class ExternalTrainingAttendanceService
             $data['employee_id'] = $employee->id; // set the logged-in user as the author
             $data['date_started'] = now(); // set automatically to current date
 
+             if ($request->hasFile('certificate_url')) {
+                $path = $request->file('certificate_url')->store('external-certs', 'public');
+                $data['certificate_url'] = $path; 
+            }
+
             $externalTrainingAttendance = ExternalTrainingAttendance::create($data);
 
             return new ExternalTrainingAttendanceResource($externalTrainingAttendance);
