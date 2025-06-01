@@ -55,6 +55,11 @@ class TrainingCoursesService
             $data = $request->validated();
             $data['author_id'] = $author->id; // set the logged-in user as the author
 
+            if ($request->hasFile('thumbnail_url')) {
+                $path = $request->file('thumbnail_url')->store('modules', 'public');
+                $data['thumbnail_url'] = $path; 
+            }
+
             $trainingCourse = TrainingCourse::create($data);
 
             return new TrainingCoursesResource($trainingCourse);
