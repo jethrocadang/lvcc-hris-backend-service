@@ -15,6 +15,11 @@ Route::middleware('tenant')->group(function () {
         //TRAINING REQUEST APPROVAL ROUTE FOR SUPERVISOR TO OFFICER
         Route::patch('eth/training-requests/{id}/officer-approve', [TrainingRequestController::class, 'officerApprove']);
         Route::patch('eth/training-requests/{id}/supervisor-approve', [TrainingRequestController::class, 'supervisorApprove']);
+
+        //TRAINING REQUEST REJECT ROUTE FOR SUPERVISOR AND OFFICER
+        Route::patch('eth/training-requests/{id}/officer-reject', [TrainingRequestController::class, 'officerReject']);
+        Route::patch('eth/training-requests/{id}/supervisor-reject', [TrainingRequestController::class, 'supervisorReject']);
+
         //TRAINING REQUEST CRUD
         Route::apiResource('eth/training-requests', TrainingRequestController::class);
 

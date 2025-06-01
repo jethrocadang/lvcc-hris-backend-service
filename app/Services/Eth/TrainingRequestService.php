@@ -117,4 +117,54 @@ class TrainingRequestService
             throw $e;
         }
     }
+
+        public function rejectBySupervisor(int $id): TrainingRequestResource
+    {
+        try {
+            $trainingRequest = TrainingRequest::findOrFail($id);
+
+            $supervisor = auth('api')->user();
+
+            $trainingRequest->update([
+                'supervisor_id' => $supervisor->id,
+                'supervisor_status' => 'rejected',
+                'supervisor_reviewed_at' => now(),
+                'request_status' => 'rejected', // still pending, waiting for officer
+            ]);
+
+            return new TrainingRequestResource($trainingRequest);
+        } catch (ModelNotFoundException $e) {
+            Log::error("Training request not found.", ['id' => $id]);
+            throw $e;
+        } catch (Exception $e) {
+            Log::error("Supervisor approval failed", ['error' => $e->getMessage()]);
+            throw $e;
+        }
+    }
+
+    public function rejectByOfficer(int $id): TrainingRequestResource
+    {
+        try {
+            $trainingRequest = TrainingRequest::findOrFail($id);
+
+            $officer = auth('api')->user(); // final approver
+
+            $trainingRequest->update([
+                'officer_id' => $officer->id,
+                'officer_status' => 'rejected',
+                'officer_reviewed_at' => now(),
+                'request_status' => 'rejected', // final approval
+            ]);
+
+            return new TrainingRequestResource($trainingRequest);
+        } catch (ModelNotFoundException $e) {
+            Log::error("Training request not found.", ['id' => $id]);
+            throw $e;
+        } catch (Exception $e) {
+            Log::error("Officer approval failed", ['error' => $e->getMessage()]);
+            throw $e;
+        }
+    }
+
+
 }
