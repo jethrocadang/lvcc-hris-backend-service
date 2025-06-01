@@ -17,7 +17,8 @@ return new class extends Migration
                 ->constrained('interview_schedule_slots')
                 ->onDelete('cascade');
             $table->time('start_time');
-            $table->boolean('available')->default(true);
+            $table->boolean('is_available')->default(true);
+            $table->boolean('is_booked')->default(false);
             $table->timestamps();
         });
     }

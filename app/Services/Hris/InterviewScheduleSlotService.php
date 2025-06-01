@@ -48,14 +48,14 @@ class InterviewScheduleSlotService
             $timeSlots = $validated['timeSlots'] ?? [];
 
             $scheduleSlot = InterviewScheduleSlot::create([
-                'user_id' => $admin->id,
+                'admin' => $admin->id,
                 'scheduled_date' => $validated['scheduled_date'],
             ]);
 
             foreach ($timeSlots as $slot) {
                 $scheduleSlot->timeSlots()->create([
                     'start_time' => $slot['start_time'],
-                    'available' => true,
+                    'is_available' => true,
                 ]);
             }
 
@@ -87,7 +87,7 @@ class InterviewScheduleSlotService
             foreach ($timeSlots as $slot) {
                 $scheduleSlot->timeSlots()->create([
                     'start_time' => $slot['start_time'],
-                    'available' => true,
+                    'is_available' => $slot['is_available'],
                 ]);
             }
 
