@@ -26,7 +26,7 @@ class TrainingCoursesRequest extends FormRequest
             'title' => 'required|string|max:255',
             'description' => 'required|string',
             'type' => 'in:onboarding,general,specialized',
-            'thumbnail_url' => 'nullable|url',
+            'thumbnail_url' => 'nullable|file|image|max:2048',
             'max_participants' => 'nullable|integer|min:1',
             'current_participants' => 'nullable|integer|min:0',
             'enrollment_deadline' => 'nullable|date',

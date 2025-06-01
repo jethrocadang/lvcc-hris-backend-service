@@ -4,6 +4,7 @@ namespace App\Http\Resources\Eth;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Storage;
 
 class TrainingCoursesResource extends JsonResource
 {
@@ -23,7 +24,9 @@ class TrainingCoursesResource extends JsonResource
             'title' => $this->title,
             'description' => $this->description,
             'type' => $this->type,
-            'thumbnailUrl' => $this->thumbnail_url,
+            'thumbnailUrl' => $this->thumbnail_url
+                            ? asset(Storage::url($this->thumbnail_url))
+                            : null,
             'maxParticipants' => $this->max_participants,
             'currentParticipants' => $this->current_participants,
             'enrollmentDeadline' => $this->enrollment_deadline,
