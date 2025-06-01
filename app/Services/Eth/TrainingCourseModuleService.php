@@ -16,21 +16,21 @@ class TrainingCourseModuleService
         $courseModule = TrainingCourseModule::all();
 
         return $courseModule->isNotEmpty()
-        ? TrainingCourseModuleResource::collection($courseModule)->collection
-        : collect();
+            ? TrainingCourseModuleResource::collection($courseModule)->collection
+            : collect();
     }
 
     public function getCourseModuleById(int $id)
     {
-        try{
+        try {
 
             $courseModule = TrainingCourseModule::findOrFail($id);
 
             return new TrainingCourseModuleResource($courseModule);
-        } catch(ModelNotFoundException $e) {
-            Log::error('Module not found.',['error' => $e->getMessage()]);
+        } catch (ModelNotFoundException $e) {
+            Log::error('Module not found.', ['error' => $e->getMessage()]);
             throw $e;
-        } catch(Exception $e){
+        } catch (Exception $e) {
             Log::error('Module retrieval failed', ['error' => $e->getMessage()]);
             throw $e;
         }
@@ -38,24 +38,23 @@ class TrainingCourseModuleService
 
     public function createCourseModule(TrainingCourseModuleRequest $request): TrainingCourseModuleResource
     {
-        try{
+        try {
 
             $data = $request->validated();
 
-            if ($request->hasFile('file_content')) {
-                $path = $request->file('file_content')->store('modules', 'public');
-                $data['file_content'] = $path; // This will be saved in the DB
-            }
+            $uploadFields = ['certificate_url', 'thumbnail_url', 'file_content', 'image_content'];
 
-            if (request()->hasFile('image_content')) {
-                $path = request()->file('image_content')->store('modules', 'public');
-                $data['image_content'] = $path; // This will be saved in the DB
+            foreach ($uploadFields as $field) {
+                if ($request->hasFile($field)) {
+                    $path = $request->file($field)->store('course-assets', 'public');
+                    $data[$field] = $path;
+                }
             }
 
             $courseModule = TrainingCourseModule::create($data);
 
             return new TrainingCourseModuleResource($courseModule);
-        }catch(Exception $e){
+        } catch (Exception $e) {
             Log::error('Module creation failed', ['error' => $e->getMessage()]);
             throw $e;
         }
