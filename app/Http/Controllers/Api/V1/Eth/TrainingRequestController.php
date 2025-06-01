@@ -2,15 +2,17 @@
 
 namespace App\Http\Controllers\Api\V1\Eth;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\Eth\TrainingRequestRequest;
-use App\Services\Eth\TrainingRequestService;
-use App\Traits\ApiResponse;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-
 use Exception;
+use App\Traits\ApiResponse;
+use Illuminate\Http\Request;
+
+use Illuminate\Http\JsonResponse;
+use App\Http\Controllers\Controller;
+use App\Services\Eth\TrainingRequestService;
+use App\Http\Requests\Eth\TrainingRequestRequest;
+
+use App\Http\Resources\Eth\TrainingRequestResource;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 
 class TrainingRequestController extends Controller
@@ -40,7 +42,7 @@ class TrainingRequestController extends Controller
 
         return $this->successResponse(
             'Training requests retrieved successfully!',
-            TrainingRequestRequest::collection($trainingRequest),
+            TrainingRequestResource::collection($trainingRequest),
             200,
             $meta
         );
@@ -79,6 +81,19 @@ class TrainingRequestController extends Controller
     public function supervisorApprove($id)
     {
         return $this->trainingRequestService->approveBySupervisor($id);
+    }
+
+    /**
+     * Rejection of training requests by supervisor and officer
+     */
+        public function officerReject($id)
+    {
+        return $this->trainingRequestService->rejectByOfficer($id);
+    }
+
+    public function supervisorReject($id)
+    {
+        return $this->trainingRequestService->rejectBySupervisor($id);
     }
 
 }
