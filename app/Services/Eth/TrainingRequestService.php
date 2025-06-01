@@ -11,12 +11,14 @@ use App\Http\Resources\Eth\TrainingRequestResource;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
+use Illuminate\Http\Request;
+
 
 class TrainingRequestService
 {
     public function getTrainingRequest(array $filters = [], int $perPage = 10): LengthAwarePaginator
     {
-        try{
+        try {
             return QueryBuilder::for(TrainingRequest::with([
                 'employee',
                 'supervisor',
@@ -28,28 +30,57 @@ class TrainingRequestService
                     AllowedFilter::exact('officer_status'),
                     AllowedFilter::exact('department_position_id')
                 ])
-                ->allowedSorts(['request_status','created_at'])
+                ->allowedSorts(['request_status', 'created_at'])
                 ->paginate($perPage)
                 ->appends($filters);
-        }catch (Exception $e) {
+        } catch (Exception $e) {
             Log::error('Failed to retrieve interview schedules', ['error' => $e->getMessage()]);
             return new LengthAwarePaginator([], 0, $perPage);
         }
     }
 
 
+    public function getByDepartment(int $departmentId, Request $request)
+    {
+        $perPage = $request->get('per_page', 10);
+        $page = \Illuminate\Pagination\Paginator::resolveCurrentPage();
+
+        // Load all requests with employee + department
+        $requests = TrainingRequest::with([
+            'employee.departmentJobPosition.department',
+            'supervisor',
+            'officer',
+        ])->get();
+
+        // Filter by department ID
+        $filtered = $requests->filter(function ($req) use ($departmentId) {
+            return optional($req->employee?->departmentJobPosition?->department)->id === $departmentId;
+        });
+
+        // Manual pagination
+        return new \Illuminate\Pagination\LengthAwarePaginator(
+            $filtered->forPage($page, $perPage),
+            $filtered->count(),
+            $perPage,
+            $page,
+            ['path' => request()->url(), 'query' => request()->query()]
+        );
+    }
+
+
+
 
     public function getTrainingRequestById(int $id)
     {
-        try{
+        try {
 
             $trainingRequest = TrainingRequest::findOrFail($id);
 
             return new TrainingRequestResource($trainingRequest);
-        } catch(ModelNotFoundException $e) {
-            Log::error('Training request not found.',['error' => $e->getMessage()]);
+        } catch (ModelNotFoundException $e) {
+            Log::error('Training request not found.', ['error' => $e->getMessage()]);
             throw $e;
-        } catch(Exception $e){
+        } catch (Exception $e) {
             Log::error('Training request retrieval failed', ['error' => $e->getMessage()]);
             throw $e;
         }
@@ -121,7 +152,7 @@ class TrainingRequestService
         }
     }
 
-        public function rejectBySupervisor(int $id): TrainingRequestResource
+    public function rejectBySupervisor(int $id): TrainingRequestResource
     {
         try {
             $trainingRequest = TrainingRequest::findOrFail($id);
@@ -169,6 +200,4 @@ class TrainingRequestService
             throw $e;
         }
     }
-
-
 }

@@ -4,12 +4,13 @@ namespace App\Http\Controllers\Api\V1\Eth;
 
 use Exception;
 use App\Traits\ApiResponse;
-use Illuminate\Http\Request;
+
 
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use App\Services\Eth\TrainingRequestService;
 use App\Http\Requests\Eth\TrainingRequestRequest;
+use Illuminate\Http\Request;
 
 use App\Http\Resources\Eth\TrainingRequestResource;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -48,23 +49,39 @@ class TrainingRequestController extends Controller
         );
     }
 
+
+    public function getByDepartment($departmentId, Request $request)
+    {
+        $requests = $this->trainingRequestService->getByDepartment($departmentId, $request);
+
+        return $this->successResponse(
+            'Training requests retrieved successfully!',
+            TrainingRequestResource::collection($requests),
+            200,
+            [
+                'current_page' => $requests->currentPage(),
+                'last_page' => $requests->lastPage(),
+                'total' => $requests->total(),
+            ]
+        );
+    }
+
+
+
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
-    {
-
-    }
+    public function show(string $id) {}
 
     /**
      * Store a newly created resource in storage.
      */
     public function store(TrainingRequestRequest $request): JsonResponse
     {
-        try{
+        try {
             $trainingRequest = $this->trainingRequestService->createTrainingRequest($request);
             return $this->successResponse('Training request created successfully!', $trainingRequest, 201);
-        }catch (Exception $e){
+        } catch (Exception $e) {
             return $this->errorResponse('An error occured while creating the training request.', ['error' => $e->getMessage()], 500);
         }
     }
@@ -86,7 +103,7 @@ class TrainingRequestController extends Controller
     /**
      * Rejection of training requests by supervisor and officer
      */
-        public function officerReject($id)
+    public function officerReject($id)
     {
         return $this->trainingRequestService->rejectByOfficer($id);
     }
@@ -95,5 +112,4 @@ class TrainingRequestController extends Controller
     {
         return $this->trainingRequestService->rejectBySupervisor($id);
     }
-
 }
