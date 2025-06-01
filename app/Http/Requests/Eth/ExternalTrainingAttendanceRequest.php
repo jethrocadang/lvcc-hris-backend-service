@@ -24,7 +24,7 @@ class ExternalTrainingAttendanceRequest extends FormRequest
         return [
             'employee_id' => 'nullable|exists:employees,id',
             'training_type' => 'required|in:compliance,external,other',
-            'certificate_url' => 'required|url|max:255',
+            'certificate_url' => 'required|file|image|mimes:jpeg,jpg,png|max:2048',
             'date_started' => 'required|date',
             'date_completed' => 'required|date',
         ];

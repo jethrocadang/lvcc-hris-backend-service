@@ -4,6 +4,8 @@ namespace App\Http\Resources\Eth;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Storage;
+
 
 class ExternalTrainingAttendanceResource extends JsonResource
 {
@@ -21,7 +23,9 @@ class ExternalTrainingAttendanceResource extends JsonResource
                 'employeeId' => $this->employee?->employee_id
             ],
             'trainingType' => $this->training_type,
-            'certificateUrl' => $this->certificate_url,
+            'certificateUrl' => $this->certificate_url
+                            ? asset(Storage::url($this->certificate_url))
+                            : null,
             'dateStarted' => $this->date_started,
             'dateCompleted' => $this->date_completed,
             'createdAt' => $this->created_at,
