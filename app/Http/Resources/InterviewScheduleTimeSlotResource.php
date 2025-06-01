@@ -17,8 +17,10 @@ class InterviewScheduleTimeSlotResource extends JsonResource
         return [
             'id' => $this->id,
             'startTime' => $this->start_time,
+            'isAvailable' => $this->is_available,
+            'isBooked' => $this->is_booked,
             'createdAt' => $this->created_at,
             'updatedAt' => $this->updated_at,
-         ];
+        ];
     }
 }

@@ -14,7 +14,8 @@ class InterviewScheduleTimeSlot extends Model
     protected $fillable = [
         'interview_slot_id',
         'start_time',
-        'available',
+        'is_available',
+        'is_booked'
     ];
 
     // Relationships
