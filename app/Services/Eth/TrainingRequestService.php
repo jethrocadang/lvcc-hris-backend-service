@@ -26,6 +26,7 @@ class TrainingRequestService
                     AllowedFilter::exact('employee_id'),
                     AllowedFilter::exact('supervisor_status'),
                     AllowedFilter::exact('officer_status'),
+                    AllowedFilter::exact('department_position_id')
                 ])
                 ->allowedSorts(['request_status','created_at'])
                 ->paginate($perPage)
@@ -35,6 +36,8 @@ class TrainingRequestService
             return new LengthAwarePaginator([], 0, $perPage);
         }
     }
+
+
 
     public function getTrainingRequestById(int $id)
     {
@@ -129,6 +132,7 @@ class TrainingRequestService
                 'supervisor_id' => $supervisor->id,
                 'supervisor_status' => 'rejected',
                 'supervisor_reviewed_at' => now(),
+                'officer_status' => 'rejected',
                 'request_status' => 'rejected', // still pending, waiting for officer
             ]);
 
