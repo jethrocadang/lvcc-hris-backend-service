@@ -20,9 +20,11 @@ Route::middleware('tenant')->group(function () {
         Route::patch('eth/training-requests/{id}/officer-reject', [TrainingRequestController::class, 'officerReject']);
         Route::patch('eth/training-requests/{id}/supervisor-reject', [TrainingRequestController::class, 'supervisorReject']);
 
+        //GET TRAINING REQEUST BY DEPARTMENT
+        Route::get('eth/training-requests/by-department/{department}', [TrainingRequestController::class, 'getByDepartment']);
+
         //TRAINING REQUEST CRUD
         Route::apiResource('eth/training-requests', TrainingRequestController::class);
-
 
         //TRAINING COURSE CRUD
         Route::apiResource('eth/training-courses', TrainingCoursesController::class);
