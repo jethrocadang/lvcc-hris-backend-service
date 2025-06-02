@@ -30,7 +30,7 @@ class VerificationEmail extends Mailable
         . '&job_id=' . $this->jobId;
 
         return $this->from(config('mail.from.address'), config('mail.from.name'))
-            ->subject('Verify Your Email')
+            ->subject('[Verify Email] - Verify your email now')
             ->view('mail.verify-email')
             ->with([
                 'applicant' => $this->applicant,
