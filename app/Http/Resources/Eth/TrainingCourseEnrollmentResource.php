@@ -18,7 +18,9 @@ class TrainingCourseEnrollmentResource extends JsonResource
             'id' => $this->id,
             'courseId' => [
                 'id' => $this->course?->id,
-                'title' => $this->course?->title
+                'title' => $this->course?->title,
+                'description' => $this->course?->description,
+                'thumbnailUrl' => $this->course?->thumbnail_url
             ],
             'employeeId' => [
                 'id' => $this->employee?->id,
