@@ -86,6 +86,12 @@ Route::middleware(['auth.jwt'])->group(function () {
     // Roles and Permissions
     Route::get('hris/roles-permissions', [RolesPermissionsController::class, 'index']);
 
+    // Attach and Detach Roles and Permission to specific User
+    Route::post('hris/users/{user}/attach-role', [UserController::class, 'attachRole']);
+    Route::post('hris/users/{user}/detach-role', [UserController::class, 'detachRole']);
+    Route::post('hris/users/{user}/attach-permission', [UserController::class, 'attachPermission']);
+    Route::post('hris/users/{user}/detach-permission', [UserController::class, 'detachPermission']);
+
     //User
     Route::apiResource('hris/users', UserController::class);
 

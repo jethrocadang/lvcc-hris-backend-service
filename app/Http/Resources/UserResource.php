@@ -21,7 +21,7 @@ class UserResource extends JsonResource
             'emailVerifiedAt' => $this->email_verified_at,
             'avatarUrl' => $this->avatar_url,
             'role' => $this->roles->pluck('name'),
-            'permission' => $this->permissions->pluck('name'),
+            'permissions' => $this->permissions->pluck('name'),
         ];
     }
 }
