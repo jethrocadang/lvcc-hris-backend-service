@@ -25,6 +25,7 @@ use App\Http\Controllers\Api\V1\Hris\DepartmentController;
 use App\Http\Controllers\Api\V1\Hris\JobPositionController;
 use App\Http\Controllers\Api\V1\Hris\UserPolicyAgreementController;
 use App\Http\Controllers\Api\V1\Hris\InterviewScheduleSlotController;
+use App\Http\Controllers\Api\V1\Hris\UserController;
 use App\Http\Controllers\Api\V1\RolesPermissionsController;
 use App\Models\InterviewScheduleSlot;
 
@@ -84,5 +85,8 @@ Route::middleware(['auth.jwt'])->group(function () {
 
     // Roles and Permissions
     Route::get('hris/roles-permissions', [RolesPermissionsController::class, 'index']);
+
+    //User
+    Route::apiResource('hris/users', UserController::class);
 
 });
