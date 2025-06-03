@@ -35,6 +35,7 @@ class EmployeeCourseProgressResource extends JsonResource
             'watchedSeconds' => $this->watched_seconds,
             'lastPosition' => $this->last_position,
             'completionDate' => $this->completion_date,
+            'createdAt' => $this->created_at,
         ];
     }
 }
