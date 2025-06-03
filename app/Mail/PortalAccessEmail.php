@@ -22,7 +22,7 @@ class PortalAccessEmail extends Mailable
     }
     public function build()
     {
-        $portalAccessUrl = config('app.frontend_url') . '/applicant-portal?token=' . $this->portalToken;
+        $portalAccessUrl = config('app.frontend_url') . '/applicant-portal/entry?token=' . $this->portalToken;
 
         return $this->from(config('mail.from.address'), config('mail.from.name'))
             ->subject('Email Verification')

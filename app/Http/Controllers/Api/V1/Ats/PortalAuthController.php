@@ -29,6 +29,8 @@ class PortalAuthController extends Controller
      */
     public function authenticate(TokenRequest $request)
     {
+        Log::info("🔑 AUTH REQUEST with token: " . $request->token);
+
         $token = $request->validated();
         // Find the applicant using the validated portal token
         $application = JobApplication::where('portal_token', $token['token'])->firstOrFail();
