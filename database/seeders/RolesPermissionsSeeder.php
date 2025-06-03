@@ -29,82 +29,102 @@ class RolesPermissionsSeeder extends Seeder
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
         // Create roles
-        Role::create([
-            'name' => 'System Admin',
-            'name' => 'Super Admin',
-            'name' => 'HR Officer',
-            'name' => 'HR Recruiter',
-            'name' => 'HR Staff',
-            'name' => 'Department Head',
-            'name' => 'Employee'
-        ]);
+        $roles = [
+            'System Admin',
+            'Super Admin',
+            'HR Officer',
+            'HR Recruiter',
+            'HR Staff',
+            'Department Head',
+            'Employee'
+        ];
 
-        /***********************
-         * ETH 
-         ********/
+        foreach ($roles as $role) {
+            Role::create(['name' => $role]);
+        }
 
         // Course permissions
-        Permission::create([
-            'name' => 'view:course',
-            'name' => 'update:course',
-            'name' => 'create:course',
-            'name' => 'delete:course',
-            'name' => 'enroll:course'
-        ]);
+        $coursePermissions = [
+            'view:course',
+            'update:course',
+            'create:course',
+            'delete:course',
+            'enroll:course'
+        ];
 
-        //Training request permissions
-        Permission::create([
-            //Employee-end
-            'permission' => 'view:request',
-            'permission' => 'create:request',
-            'permission' => 'update:request',
+        foreach ($coursePermissions as $perm) {
+            Permission::create(['name' => $perm]);
+        }
 
-            //Supervisor and Officer end
-            'permission' => 'approve:request',
-            'permission' => 'reject:request'
-        ]);
+        // Training request permissions
+        $trainingRequestPermissions = [
+            'view:request',
+            'create:request',
+            'update:request',
+            'approve:request',
+            'reject:request'
+        ];
 
-        //Training permissions
-        Permission::create([
-            'permission' => 'create:training',
-            'permission' => 'update:training',
-            'permission' => 'view:training',
-            'permission' => 'delete:training'
-        ]);
+        foreach ($trainingRequestPermissions as $perm) {
+            Permission::create(['name' => $perm]);
+        }
 
-        //External attendance permissions
-        Permission::create([
-            'permission' => 'view:attendance',
-            'permission' => 'create:attendance',
-            'permission' => 'update:attendance',
-            'permission' => 'delete:attendance'
-        ]);
+        // Training permissions
+        $trainingPermissions = [
+            'create:training',
+            'update:training',
+            'view:training',
+            'delete:training'
+        ];
 
-        /***********************
-         * ATS 
-         ********/
+        foreach ($trainingPermissions as $perm) {
+            Permission::create(['name' => $perm]);
+        }
 
-         //Job posting permissions
-        Permission::create([
-            'permission' => 'view:jobpost',
-            'permission' => 'create:jobpost',
-            'permission' => 'update:jobpost',
-            'permission' => 'delete:jobpost',
-        ]);
+        // External attendance permissions
+        $attendancePermissions = [
+            'view:attendance',
+            'create:attendance',
+            'update:attendance',
+            'delete:attendance'
+        ];
 
-        //Application permission
-        Permission::create([
-            'permission' => 'accept:application',
-            'permission' => 'reject:application'
-        ]);
+        foreach ($attendancePermissions as $perm) {
+            Permission::create(['name' => $perm]);
+        }
 
-        //Interview scheduling permission
-        Permission::create([
-            'permission' => 'view:schedule',
-            'permission' => 'create:schedule',
-            'permission' => 'update:schedule',
-            'permission' => 'delete:schedule',
-        ]);
+        // ATS: Job posting permissions
+        $jobPostPermissions = [
+            'view:jobpost',
+            'create:jobpost',
+            'update:jobpost',
+            'delete:jobpost',
+        ];
 
+        foreach ($jobPostPermissions as $perm) {
+            Permission::create(['name' => $perm]);
+        }
+
+        // Application permissions
+        $appPermissions = [
+            'accept:application',
+            'reject:application'
+        ];
+
+        foreach ($appPermissions as $perm) {
+            Permission::create(['name' => $perm]);
+        }
+
+        // Interview scheduling permissions
+        $schedulePermissions = [
+            'view:schedule',
+            'create:schedule',
+            'update:schedule',
+            'delete:schedule'
+        ];
+
+        foreach ($schedulePermissions as $perm) {
+            Permission::create(['name' => $perm]);
+        }
     }
 }
