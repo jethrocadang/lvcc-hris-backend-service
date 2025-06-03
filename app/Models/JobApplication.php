@@ -59,6 +59,13 @@ class JobApplication extends Authenticatable implements JWTSubject
         return $this->hasMany(JobApplicationProgress::class, 'job_application_id');
     }
 
+    public function currentProgress()
+    {
+        return $this->hasOne(JobApplicationProgress::class)
+            ->latestOfMany(); // uses latest id or created_at by default
+    }
+
+
     public function jobInterviewScheduling()
     {
         return $this->hasMany(JobInterviewScheduling::class, 'job_application_id');

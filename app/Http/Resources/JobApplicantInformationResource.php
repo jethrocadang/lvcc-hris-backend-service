@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Storage;
 
 class JobApplicantInformationResource extends JsonResource
 {
@@ -21,7 +22,7 @@ class JobApplicantInformationResource extends JsonResource
             'religion' => $this->religion,
             'localeAndDivision' => $this->locale_and_division,
             'servantName' => $this->servant_name,
-            'servantContactNumber' =>$this->servant_contact_number,
+            'servantContactNumber' => $this->servant_contact_number,
             'dateOfBaptism' => $this->date_of_baptism,
             'churchStatus' => $this->church_status,
             'churchCommitee' => $this->church_commitee,
@@ -32,8 +33,8 @@ class JobApplicantInformationResource extends JsonResource
             'isEmployed' => $this->is_employed,
             'currentWork' => $this->current_work,
             'lastWork' => $this->last_work,
-            'resume' => $this->resume,
-            'transcriptOfRecords' => $this->transcript_of_records,
+            'resume' => $this->resume ? asset(Storage::url($this->resume)) : null,
+            'transcriptOfRecords' => $this->transcript_of_records ? asset(Storage::url($this->transcript_of_records)) : null,
             'canRelocate' => $this->can_relocate,
 
         ];
