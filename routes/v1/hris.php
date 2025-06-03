@@ -25,6 +25,7 @@ use App\Http\Controllers\Api\V1\Hris\DepartmentController;
 use App\Http\Controllers\Api\V1\Hris\JobPositionController;
 use App\Http\Controllers\Api\V1\Hris\UserPolicyAgreementController;
 use App\Http\Controllers\Api\V1\Hris\InterviewScheduleSlotController;
+use App\Http\Controllers\Api\V1\RolesPermissionsController;
 use App\Models\InterviewScheduleSlot;
 
 // Authentication routes: Public routes
@@ -47,7 +48,6 @@ Route::controller(AuthController::class)->group(function () {
 
 Route::get('hris/interview-slots', [InterviewScheduleSlotController::class, 'index']);
 
-
 // Protected routes for Main Users (requires auth.jwt)
 Route::middleware(['auth.jwt'])->group(function () {
 
@@ -57,22 +57,22 @@ Route::middleware(['auth.jwt'])->group(function () {
     Route::delete('hris/departments/{departmentId}/job-position/{jobPositionId}', [DepartmentController::class, 'detachDepartmentJobPosition']);
 
     // Department management (CRUD)
-    Route::apiResource('hris/departments', DepartmentController::class); //done
+    Route::apiResource('hris/departments', DepartmentController::class); 
 
     // Job Position management (CRUD)
-    Route::apiResource('hris/job-positions', JobPositionController::class); //done
+    Route::apiResource('hris/job-positions', JobPositionController::class); 
 
     // Data Privacy Policies management (CRUD)
-    Route::apiResource('hris/policies', PolicyController::class); //done
+    Route::apiResource('hris/policies', PolicyController::class); 
 
     // User Policy Agreements management (CRUD)
     Route::apiResource('hris/user-policy', UserPolicyAgreementController::class);
 
     // Email Templates management (CRUD)
-    Route::apiResource('hris/email-templates', EmailTemplateController::class); //done
+    Route::apiResource('hris/email-templates', EmailTemplateController::class); 
 
     // Interview Schedule Slots management (CRUD)
-    Route::apiResource('hris/interview-slots', InterviewScheduleSlotController::class)->except(['index']); //done
+    Route::apiResource('hris/interview-slots', InterviewScheduleSlotController::class)->except(['index']); 
 
     // Update only the employee's additional information or the core
     Route::get('hris/employees/auth-user', [EmployeeController::class, 'getByAuthenticatedUser']);
@@ -80,6 +80,9 @@ Route::middleware(['auth.jwt'])->group(function () {
     Route::patch('hris/employees/{id}/core', [EmployeeController::class, 'updateEmployeeOnly']);
 
     // Employees management (CRUD)
-    Route::apiResource('hris/employees', EmployeeController::class); //done
+    Route::apiResource('hris/employees', EmployeeController::class); 
+
+    // Roles and Permissions
+    Route::get('hris/roles-permissions', [RolesPermissionsController::class, 'index']);
 
 });
