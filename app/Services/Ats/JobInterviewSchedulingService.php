@@ -33,7 +33,8 @@ class JobInterviewSchedulingService
             // Check time slot availability
             $timeSlot = InterviewScheduleTimeSlot::where('id', $validated['interview_time_slot_id'])
                 ->where('interview_slot_id', $slot->id)
-                ->where('available', true)
+                ->where('is_available', true)
+                ->where('is_booked', false)
                 ->first();
 
             if (!$timeSlot) {

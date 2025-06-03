@@ -23,7 +23,7 @@ class JobPostRequest extends FormRequest
     {
         return [
             'work_type' => 'required|in:full-time,part-time,internship',
-            'jobType' => 'required|in:onsite,remote,hybrid',
+            'job_type' => 'required|in:onsite,remote,hybrid',
             'title' => 'required|string|max:40',
             'description' => 'required|string',
             'icon_name' => 'nullable|string',

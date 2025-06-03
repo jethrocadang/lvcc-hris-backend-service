@@ -15,13 +15,19 @@ class JobApplicationWithInfoResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id'                => $this->id,
+            'id' => $this->id,
             'portalToken' => $this->portal_token,
-            'createdAt'        => $this->created_at,
+            'createdAt' => $this->created_at,
             'jobApplicant' => new JobApplicantResource($this->whenLoaded('jobApplicant')),
-            'jobSelectionOptions' => JobSelectionOptionsResource::collection($this->whenLoaded(('jobSelectionOptions'))),
-            'jobApplicationProgress' =>  JobApplicationProgressResource::collection(($this->whenLoaded('jobApplicationProgress'))),
-            'jobInterviewScheduling' => JobInterviewSchedulingResource::collection($this->whenLoaded('jobInterviewScheduling'))
+            'jobSelectionOptions' => JobSelectionOptionsResource::collection($this->whenLoaded('jobSelectionOptions')),
+
+            // NEW: only current/latest phase
+            'currentProgress' => new JobApplicationProgressResource($this->whenLoaded('currentProgress')),
+
+            // Optional: include full history only if needed
+            'jobApplicationProgress' => JobApplicationProgressResource::collection($this->whenLoaded('jobApplicationProgress')),
+
+            'jobInterviewScheduling' => JobInterviewSchedulingResource::collection($this->whenLoaded('jobInterviewScheduling')),
         ];
     }
 }
