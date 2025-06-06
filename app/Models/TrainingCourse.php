@@ -23,6 +23,7 @@ class TrainingCourse extends Model
         'description',
         'type',
         'thumbnail_url',
+        'certificate_url',
         'max_participants',
         'current_participants',
         'enrollment_deadline'
