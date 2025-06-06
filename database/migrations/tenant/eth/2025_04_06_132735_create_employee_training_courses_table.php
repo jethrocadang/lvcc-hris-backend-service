@@ -35,6 +35,7 @@ return new class extends Migration
             // TODO CREATE A TRAINING CATEGORY TABLE
             $table->enum('type', ['onboarding', 'general', 'specialized']); // Type/category
             $table->string('thumbnail_url')->nullable(); // Optional course image
+            $table->string('certificate_url')->nullable();
 
             $table->integer('max_participants')->nullable(); // Cap on participants
             $table->integer('current_participants')->default(0); // Tracks how many enrolled
