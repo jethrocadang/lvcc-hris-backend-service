@@ -25,8 +25,8 @@ class EmployeeCourseProgressResource extends JsonResource
                 'title' => $this->course?->title,
                 'type' => $this->course?->type,
                 'description' => $this->course?->description,
-                'thumbnailUrl' => $this->course?->thumbnail_url
-
+                'thumbnailUrl' => $this->course?->thumbnail_url,
+                'certificateUrl' => $this->course?->certificate_url
             ],
             'moduleId' => [
                 'id' => $this->module?->id,
