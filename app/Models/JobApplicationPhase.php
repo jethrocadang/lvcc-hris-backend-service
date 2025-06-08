@@ -17,6 +17,7 @@ class JobApplicationPhase extends Model
         'title',
         'description',
         'sequence_order',
+        'slug'
     ];
 
     public function jobApplicationProgress()

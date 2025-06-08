@@ -40,4 +40,16 @@ class JobApplicationAdminController extends Controller
             return $this->errorResponse("Error", [$e->getMessage()], 500);
         }
     }
+
+
+    public function getAllJobApplicationsBySlug(string $slug)
+    {
+        try {
+            $jobApplications = $this->jobApplicationAdmin->getAllJobApplicationBySlug($slug, request());
+
+            return $this->successResponse("Success", $jobApplications, 200);
+        } catch (Exception $e) {
+            return $this->errorResponse("Error", [$e->getMessage()], 500);
+        }
+    }
 }

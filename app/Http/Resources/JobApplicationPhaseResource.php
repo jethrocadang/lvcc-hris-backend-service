@@ -20,7 +20,8 @@ class JobApplicationPhaseResource extends JsonResource
             'rejectionEmailTemplateId' => $this->rejection_email_template_id,
             'title' => $this->title,
             'description' => $this->description,
-            'sequenceOrder' => $this->sequence_order
+            'sequenceOrder' => $this->sequence_order,
+            'slug' => $this->slug
         ];
     }
 }

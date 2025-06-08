@@ -50,6 +50,7 @@ Route::middleware('tenant')->group(function () {
         Route::apiResource('ats/job-application-phases', JobApplicationPhasesController::class)->except(['index']);
         Route::controller(JobApplicationAdminController::class)->group(function () {
             Route::get('ats/admin/view-all-applications', 'getAllJobApplications');
+            Route::get('ats/admin/view-all-applications/{slug}', 'getAllJobApplicationsBySlug');
             Route::get('ats/admin/view-application/{id}', 'getJobApplication');
         });
         Route::post('ats/admin/set-interview-schedule', [JobInterviewSchedulingController::class, 'scheduleForNextPhase']);

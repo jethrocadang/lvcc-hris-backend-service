@@ -19,6 +19,7 @@ return new class extends Migration {
             $table->string('title'); // Phase name (e.g., "Initial Screening")
             $table->text('description')->nullable(); // Phase description
             $table->unsignedInteger('sequence_order'); // Order of phase in the application flow
+            $table->string('slug');
 
             $table->timestamps(); // created_at and updated_at
         });
