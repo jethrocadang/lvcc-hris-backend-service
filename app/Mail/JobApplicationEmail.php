@@ -28,7 +28,7 @@ class JobApplicationEmail extends Mailable
         $portalAccessUrl = config('app.frontend_url') . '/applicant-portal/entry?token=' . $this->portalToken;
 
         return $this->from(config('mail.from.address'), config('mail.from.name'))
-            ->subject('Your Portal Access Token')
+            ->subject($this->email->subject)
             ->view('mail.portal-email')
             ->with([
                 'portalToken' => $this->portalToken,

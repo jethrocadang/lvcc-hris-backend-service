@@ -4,6 +4,7 @@ namespace App\Services\Ats;
 
 use App\Models\JobApplication;
 use App\Http\Resources\JobApplicationWithInfoResource;
+use Exception;
 use Spatie\QueryBuilder\QueryBuilder;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -64,5 +65,63 @@ class JobApplicationAdminService
         ])->findOrFail($id);
 
         return new JobApplicationWithInfoResource($jobApplication);
+    }
+
+
+    public function getAllJobApplicationBySlug(string $slug, Request $request)
+    {
+        try {
+            $applications = JobApplication::with([
+                'jobApplicant.jobApplicantInformation',
+                'jobSelectionOptions.jobPost',
+                'jobApplicationProgress.phase',
+                'jobInterviewScheduling',
+                'currentProgress.phase',
+            ])
+                ->when($request->filled('filter.job_category'), function ($query) use ($request) {
+                    $query->whereHas('jobSelectionOptions.jobPost', function ($query) use ($request) {
+                        $query->where('category', data_get($request->query(), 'filter.job_category'));
+                    });
+                })
+                ->when($request->filled('filter.email'), function ($query) use ($request) {
+                    $email = data_get($request->query(), 'filter.email');
+                    $query->whereHas('jobApplicant', function ($query) use ($email) {
+                        $query->where('email', 'LIKE', "%{$email}%");
+                    });
+                })
+                ->when($request->filled('filter.full_name'), function ($query) use ($request) {
+                    $fullName = data_get($request->query(), 'filter.full_name');
+                    $query->whereHas('jobApplicant', function ($query) use ($fullName) {
+                        $query->whereRaw(
+                            "CONCAT_WS(' ', first_name, middle_name, last_name) LIKE ?",
+                            ["%{$fullName}%"]
+                        );
+                    });
+                })
+                ->latest()
+                ->get();
+
+            $filtered = $applications->filter(function ($application) use ($slug) {
+                $latestProgress = $application->jobApplicationProgress
+                    ->sortByDesc('created_at')
+                    ->first();
+
+                return $latestProgress && $latestProgress->phase?->slug === $slug;
+            })->values();
+
+            $perPage = $request->query('per_page', 15);
+            $page = $request->query('page', 1);
+            $paginated = new LengthAwarePaginator(
+                $filtered->forPage($page, $perPage),
+                $filtered->count(),
+                $perPage,
+                $page,
+                ['path' => $request->url(), 'query' => $request->query()]
+            );
+
+            return JobApplicationWithInfoResource::collection($paginated);
+        } catch (Exception $e) {
+            throw $e;
+        }
     }
 }
