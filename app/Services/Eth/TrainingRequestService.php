@@ -28,7 +28,8 @@ class TrainingRequestService
                     AllowedFilter::exact('employee_id'),
                     AllowedFilter::exact('supervisor_status'),
                     AllowedFilter::exact('officer_status'),
-                    AllowedFilter::exact('department_position_id')
+                    AllowedFilter::exact('department_position_id'),
+                    AllowedFilter::exact('request_status')
                 ])
                 ->allowedSorts(['request_status', 'created_at'])
                 ->paginate($perPage)
