@@ -27,6 +27,9 @@ class TrainingCoursesResource extends JsonResource
             'thumbnailUrl' => $this->thumbnail_url
                             ? asset(Storage::url($this->thumbnail_url))
                             : null,
+            'certificateUrl' => $this->certificate_url
+                              ? asset (Storage::url($this->certificate_url))
+                              : null,
             'maxParticipants' => $this->max_participants,
             'currentParticipants' => $this->current_participants,
             'enrollmentDeadline' => $this->enrollment_deadline,
