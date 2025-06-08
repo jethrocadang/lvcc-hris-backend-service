@@ -81,6 +81,15 @@ class TrainingCoursesService
 
             $trainingCourse = TrainingCourse::findOrFail($id);
 
+            $uploadFields = ['certificate_url', 'thumbnail_url'];
+            
+            foreach ($uploadFields as $field) {
+                if ($request->hasFile($field)) {
+                    $path = $request->file($field)->store('course-assets', 'public');
+                    $data[$field] = $path;
+                }
+            }
+            
             $trainingCourse->update($data);
             
             return new TrainingCoursesResource($trainingCourse);
