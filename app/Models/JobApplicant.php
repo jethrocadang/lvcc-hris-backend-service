@@ -5,12 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
-use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 
 class JobApplicant extends Model
 {
-    use HasFactory, UsesTenantConnection;
+    use HasFactory, UsesTenantConnection, LogsActivity;
     protected $table = 'job_applicants';
 
     protected $fillable = [
@@ -38,17 +38,17 @@ class JobApplicant extends Model
         return $this->hasOne(JobApplicantInformation::class, 'job_applicant_id');
     }
 
-    // public function getActivitylogOptions(): LogOptions
-    // {
-    //     return LogOptions::defaults()
-    //         ->logOnly($this->getFillable()) // Log all fillable, but only if changed
-    //         ->logOnlyDirty()
-    //         ->useLogName('job applicant')
-    //         ->setDescriptionForEvent(function (string $eventName) {
-    //             $dirty = collect($this->getDirty())->except('updated_at')->toJson();
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly($this->getFillable()) // Log all fillable, but only if changed
+            ->logOnlyDirty()
+            ->useLogName('job applicant')
+            ->setDescriptionForEvent(function (string $eventName) {
+                $dirty = collect($this->getDirty())->except('updated_at')->toJson();
 
-    //             return ucfirst($eventName) . " job applicant: {$dirty}";
-    //         });
-    // }
+                return ucfirst($eventName) . " job applicant: {$dirty}";
+            });
+    }
 
 }

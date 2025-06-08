@@ -9,7 +9,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
 
 class JobApplicationProgress extends Model
 {
-    use UsesTenantConnection;
+    use UsesTenantConnection, LogsActivity;
 
     protected $table = 'job_application_progress';
 
@@ -39,16 +39,16 @@ class JobApplicationProgress extends Model
         return $this->belongsTo(JobApplicationPhase::class, 'job_application_phase_id');
     }
 
-    // public function getActivitylogOptions(): LogOptions
-    // {
-    //     return LogOptions::defaults()
-    //         ->logOnly($this->getFillable()) // Log all fillable, but only if changed
-    //         ->logOnlyDirty()
-    //         ->useLogName('job application progress')
-    //         ->setDescriptionForEvent(function (string $eventName) {
-    //             $dirty = collect($this->getDirty())->except('updated_at')->toJson();
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly($this->getFillable()) // Log all fillable, but only if changed
+            ->logOnlyDirty()
+            ->useLogName('job application progress')
+            ->setDescriptionForEvent(function (string $eventName) {
+                $dirty = collect($this->getDirty())->except('updated_at')->toJson();
 
-    //             return ucfirst($eventName) . " job application progress: {$dirty}";
-    //         });
-    // }
+                return ucfirst($eventName) . " job application progress: {$dirty}";
+            });
+    }
 }
