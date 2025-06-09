@@ -27,6 +27,7 @@ use App\Http\Controllers\Api\V1\Hris\UserPolicyAgreementController;
 use App\Http\Controllers\Api\V1\Hris\InterviewScheduleSlotController;
 use App\Http\Controllers\Api\V1\Hris\UserController;
 use App\Http\Controllers\Api\V1\RolesPermissionsController;
+use App\Http\Controllers\Api\V1\ActivityLogController;
 use App\Models\InterviewScheduleSlot;
 
 // Authentication routes: Public routes
@@ -94,5 +95,8 @@ Route::middleware(['auth.jwt'])->group(function () {
 
     //User
     Route::apiResource('hris/users', UserController::class);
+
+    // Activity Logs
+    Route::get('hris/activity-logs', [ActivityLogController::class, 'index']);
 
 });

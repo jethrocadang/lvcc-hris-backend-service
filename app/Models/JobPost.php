@@ -29,16 +29,16 @@ class JobPost extends Model
         $this->hasMany(JobSelectionOption::class, 'job_id');
     }
 
-    // public function getActivitylogOptions(): LogOptions
-    // {
-    //     return LogOptions::defaults()
-    //         ->logOnly($this->getFillable()) // Log all fillable, but only if changed
-    //         ->logOnlyDirty()
-    //         ->useLogName('job post')
-    //         ->setDescriptionForEvent(function (string $eventName) {
-    //             $dirty = collect($this->getDirty())->except('updated_at')->toJson();
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly($this->getFillable()) // Log all fillable, but only if changed
+            ->logOnlyDirty()
+            ->useLogName('job post')
+            ->setDescriptionForEvent(function (string $eventName) {
+                $dirty = collect($this->getDirty())->except('updated_at')->toJson();
 
-    //             return ucfirst($eventName) . " job post: {$dirty}";
-    //         });
-    // }
+                return ucfirst($eventName) . " job post: {$dirty}";
+            });
+    }
 }
