@@ -44,11 +44,11 @@ class TrainingCourseModule extends Model
         return LogOptions::defaults()
             ->logOnly($this->getFillable()) // Log all fillable, but only if changed
             ->logOnlyDirty()
-            ->useLogName('module')
+            ->useLogName('Module')
             ->setDescriptionForEvent(function (string $eventName) {
                 $dirty = collect($this->getDirty())->except('updated_at')->toJson();
     
-                return ucfirst($eventName) . " module: {$dirty}";
+                return ucfirst($eventName) . " course module: {$dirty}";
             });
     }
 }

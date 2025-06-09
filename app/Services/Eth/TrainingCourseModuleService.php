@@ -67,14 +67,13 @@ class TrainingCourseModuleService
 
             $data = $request->validated();
 
-            if ($request->hasFile('file_content')) {
-                $path = $request->file('file_content')->store('modules', 'public');
-                $data['file_content'] = $path; // This will be saved in the DB
-            }
+            $uploadFields = ['certificate_url', 'thumbnail_url', 'file_content', 'image_content'];
 
-            if ($request->hasFile('image_content')) {
-                $path = request()->file('image_content')->store('modules', 'public');
-                $data['image_content'] = $path; // This will be saved in the DB
+            foreach ($uploadFields as $field) {
+                if ($request->hasFile($field)) {
+                    $path = $request->file($field)->store('course-assets', 'public');
+                    $data[$field] = $path;
+                }
             }
 
             $courseModule->update($data);
