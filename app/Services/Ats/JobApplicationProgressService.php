@@ -54,12 +54,20 @@ class JobApplicationProgressService
             $jobApplication = $progress->jobApplication;
             $applicant = $jobApplication->jobApplicant;
 
-            // This method is for sending emails
-            $this->sendStatusEmail($progress, $applicant, $jobApplication->portal_token, $status);
-
-            // If and only if the status is accepted, next phase is created
             if ($status === 'accepted' && $nextPhaseId) {
-                $this->createNextPhase($jobApplication->id, $nextPhaseId, $screeningType );
+                // Create the next phase
+                $this->createNextPhase($jobApplication->id, $nextPhaseId, $screeningType);
+
+                // Fetch the next phase progress
+                $nextProgress = JobApplicationProgress::where('job_application_id', $jobApplication->id)
+                    ->where('job_application_phase_id', $nextPhaseId)
+                    ->first();
+
+                // Send email for the *next phase* (phase 3)
+                $this->sendStatusEmail($nextProgress, $applicant, $jobApplication->portal_token, 'accepted');
+            } else {
+                // Send rejection or status update for the current phase
+                $this->sendStatusEmail($progress, $applicant, $jobApplication->portal_token, $status);
             }
 
             // Update message
@@ -105,13 +113,14 @@ class JobApplicationProgressService
      */
     private function sendStatusEmail(JobApplicationProgress $progress, $applicant, string $portalToken, string $status): void
     {
-        Log::info('Status: '. $status);
+        Log::info('Status: ' . $status);
         $phase = $progress->phase;
         $emailTemplate = $status === 'accepted'
             ? $phase->acceptanceTemplate
             : $phase->rejectionTemplate;
 
-        Log::info('Email Template: '. $emailTemplate);
+        Log::info('Progress:' . $progress);
+        Log::info('Email Template: ' . $emailTemplate);
         if ($emailTemplate) {
             Mail::to($applicant->email)->send(
                 new JobApplicationEmail($applicant, $emailTemplate, $portalToken)

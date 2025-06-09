@@ -12,12 +12,10 @@ class ApiTenantFinder extends TenantFinder
 {
     public function findForRequest(Request $request): ?IsTenant
     {
-        Log::info('App\TenantFinders: Hit');
         // Get tenant ID from request headers
         $tenantId = $request->header('X-Tenant-ID');
 
         if (!$tenantId) {
-            Log::warning('No X-Tenant-ID header provided.');
             return null; // No tenant provided
         }
 
