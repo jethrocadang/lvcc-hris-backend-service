@@ -65,6 +65,7 @@ class JobApplication extends Authenticatable implements JWTSubject
             ->latestOfMany(); // uses latest id or created_at by default
     }
 
+    
 
     public function jobInterviewScheduling()
     {
