@@ -143,6 +143,9 @@
                                 <table cellpadding="0" cellspacing="0" border="0" width="100%">
                                     <tr>
                                         <td align="left" valign="top">
+                                            <div style="font-family: Georgia, serif; color: #ffffff; font-size: 10px; line-height: 15px;" class="Roboto400">
+                                            <i>***This is a system-generated email. Please do not reply.</i>
+                                            </div>
                                             <div style="font-family: Georgia, serif; color: #ffffff; font-size: 10px; line-height: 17px;" class="Roboto400">© {{ now()->year }} La Verdad Christian College, Inc. All rights reserved.</div>
                                         </td>
                                     </tr>
