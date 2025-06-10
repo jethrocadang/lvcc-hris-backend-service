@@ -54,7 +54,21 @@ class JobApplicationProgressService
             $jobApplication = $progress->jobApplication;
             $applicant = $jobApplication->jobApplicant;
 
-            if ($status === 'accepted' && $nextPhaseId) {
+            // If rejected, update applicant status to 'rejected'
+            if ($status === 'rejected') {
+                $applicant->status = 'rejected';
+                $applicant->save();
+                Log::info("Applicant status set to rejected", ['applicant_id' => $applicant->id]);
+                // Send rejection or status update for the current phase
+                $this->sendStatusEmail($progress, $applicant, $jobApplication->portal_token, $status);
+            } elseif ($status === 'accepted' && $nextPhaseId) {
+                // If next phase is 8, set applicant status to 'hired'
+                if ($nextPhaseId == 8) {
+                    $applicant->status = 'hired';
+                    $applicant->save();
+                    Log::info("Applicant status set to hired", ['applicant_id' => $applicant->id]);
+                }
+
                 // Create the next phase
                 $this->createNextPhase($jobApplication->id, $nextPhaseId, $screeningType);
 
@@ -66,7 +80,7 @@ class JobApplicationProgressService
                 // Send email for the *next phase* (phase 3)
                 $this->sendStatusEmail($nextProgress, $applicant, $jobApplication->portal_token, 'accepted');
             } else {
-                // Send rejection or status update for the current phase
+                // Send status update for the current phase
                 $this->sendStatusEmail($progress, $applicant, $jobApplication->portal_token, $status);
             }
 
