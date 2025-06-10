@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
+
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Activitylog\LogOptions;
 
@@ -32,6 +33,20 @@ class JobApplicant extends Model
     {
         return $this->hasOne(JobApplication::class, 'job_applicant_id');
     }
+
+    // In JobApplicant.php
+    public function jobApplicationProgress()
+    {
+        return $this->hasManyThrough(
+            JobApplicationProgress::class,
+            JobApplication::class,
+            'job_applicant_id', // Foreign key on job_applications
+            'job_application_id', // Foreign key on job_application_progress
+            'id', // Local key on job_applicants
+            'id' // Local key on job_applications
+        );
+    }
+
 
     public function jobApplicantInformation()
     {

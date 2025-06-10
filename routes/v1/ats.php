@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\V1\Ats\JobPostingController;
 use App\Http\Controllers\Api\V1\Ats\JobPreApplicationController;
 use App\Http\Controllers\Api\V1\Ats\PortalAuthController;
 use App\Http\Controllers\Api\V1\Ats\JobSelectionOptionsController;
+use App\Http\Controllers\Api\V1\Ats\AdminDashBoardContoller;
 
 Route::middleware('tenant')->group(function () {
 
@@ -39,8 +40,6 @@ Route::middleware('tenant')->group(function () {
         Route::get('ats/interview-schedule/{id}', [JobInterviewSchedulingController::class, 'getByJobApplication']);
         Route::get('ats/job-applicant/{id}', [JobApplicationFormController::class, 'show']);
         Route::get('ats/job-selection-options/by-job-application/{jobApplicationId}', [JobSelectionOptionsController::class, 'showByJobApplicationId']);
-
-
     });
 
     // ** ADMIN & REVIEWER ENDPOINTS
@@ -57,6 +56,10 @@ Route::middleware('tenant')->group(function () {
         Route::apiResource('ats/ats-email-templates', AtsEmailtemplateController::class)->except(['index', 'show']);
         Route::get('ats/select-interview-schedule', [JobInterviewSchedulingController::class, 'index']);
 
-
+        // Dashboard metrics endpoints
+        Route::controller(AdminDashBoardContoller::class)->prefix('ats/admin/dashboard')->group(function () {
+            Route::get('/metrics', 'getDashboardMetrics');
+            Route::get('/monthly-applications', 'getMonthlyApplicationCounts');
+        });
     });
 });
