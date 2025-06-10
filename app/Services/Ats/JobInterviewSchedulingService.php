@@ -106,6 +106,7 @@ class JobInterviewSchedulingService
                 JobInterviewScheduling::create([
                     'job_application_id' => $jobApplication,
                     'job_application_phase_id' => $validated['job_application_phase_id'],
+                    'interview_type' => $validated['interview_type'],
                     'selected_date' => $validated['selected_date'],
                     'selected_time' => $validated['selected_time'],
                     'schedule_status' => 'booked',

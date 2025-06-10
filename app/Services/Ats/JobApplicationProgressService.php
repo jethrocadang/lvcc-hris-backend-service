@@ -54,12 +54,20 @@ class JobApplicationProgressService
             $jobApplication = $progress->jobApplication;
             $applicant = $jobApplication->jobApplicant;
 
-            // This method is for sending emails
-            $this->sendStatusEmail($progress, $applicant, $jobApplication->portal_token, $status);
-
-            // If and only if the status is accepted, next phase is created
             if ($status === 'accepted' && $nextPhaseId) {
-                $this->createNextPhase($jobApplication->id, $nextPhaseId, $screeningType );
+                // Create the next phase
+                $this->createNextPhase($jobApplication->id, $nextPhaseId, $screeningType);
+
+                // Fetch the next phase progress
+                $nextProgress = JobApplicationProgress::where('job_application_id', $jobApplication->id)
+                    ->where('job_application_phase_id', $nextPhaseId)
+                    ->first();
+
+                // Send email for the *next phase* (phase 3)
+                $this->sendStatusEmail($nextProgress, $applicant, $jobApplication->portal_token, 'accepted');
+            } else {
+                // Send rejection or status update for the current phase
+                $this->sendStatusEmail($progress, $applicant, $jobApplication->portal_token, $status);
             }
 
             // Update message
@@ -105,13 +113,11 @@ class JobApplicationProgressService
      */
     private function sendStatusEmail(JobApplicationProgress $progress, $applicant, string $portalToken, string $status): void
     {
-        Log::info('Status: '. $status);
         $phase = $progress->phase;
         $emailTemplate = $status === 'accepted'
             ? $phase->acceptanceTemplate
             : $phase->rejectionTemplate;
 
-        Log::info('Email Template: '. $emailTemplate);
         if ($emailTemplate) {
             Mail::to($applicant->email)->send(
                 new JobApplicationEmail($applicant, $emailTemplate, $portalToken)
@@ -124,12 +130,21 @@ class JobApplicationProgressService
      */
     private function createNextPhase(int $jobApplicationId, int $nextPhaseId, string $screeningType): void
     {
-        JobApplicationProgress::create([
+        $payload = [
             'job_application_id' => $jobApplicationId,
             'job_application_phase_id' => $nextPhaseId,
             'screening_type' => $screeningType,
             'status' => 'in-progress',
-            'start_date' => now()
-        ]);
+            'start_date' => now(),
+            'reviewer_remarks' => "",
+        ];
+
+        $nextPhase = JobApplicationProgress::create($payload);
+
+        if ($nextPhase) {
+            Log::info("Next phase created successfully", ['next_phase_id' => $nextPhase->id, 'payload' => $payload]);
+        } else {
+            Log::error("Failed to create next phase", ['payload' => $payload]);
+        }
     }
 }

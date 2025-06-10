@@ -19,6 +19,7 @@ class JobInterviewScheduling extends Model
         'user_id',
         'job_application_id',
         'job_application_phase_id',
+        'interview_type',
         'selected_date',
         'selected_time',
         'schedule_status',

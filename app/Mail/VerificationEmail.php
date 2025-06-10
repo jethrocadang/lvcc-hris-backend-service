@@ -26,11 +26,11 @@ class VerificationEmail extends Mailable
     public function build()
     {
         $verifyEmailUrl = config('app.frontend_url') . '/verify-email?token='
-        . $this->applicant->verification_token
-        . '&job_id=' . $this->jobId;
+            . $this->applicant->verification_token
+            . '&job_id=' . $this->jobId;
 
         return $this->from(config('mail.from.address'), config('mail.from.name'))
-            ->subject('[Verify Email] - Verify your email now')
+            ->subject('[Action Required] Please verify your email address')
             ->view('mail.verify-email')
             ->with([
                 'applicant' => $this->applicant,
