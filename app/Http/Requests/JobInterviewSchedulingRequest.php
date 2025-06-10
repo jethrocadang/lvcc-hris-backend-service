@@ -26,6 +26,7 @@ class JobInterviewSchedulingRequest extends FormRequest
             'interview_time_slot_id' => 'sometimes|integer|exists:interview_schedule_time_slots,id',
             'job_application_phase_id' => 'sometimes|integer',
             'job_application_id' => 'sometimes|integer|exists:tenant.job_applications,id',
+            'interview_type' => 'sometimes|string',
             'selected_date' => 'required|date',
             'selected_time' => 'required|date_format:H:i',
             'schedule_status' => 'sometimes|string',

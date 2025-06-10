@@ -113,14 +113,11 @@ class JobApplicationProgressService
      */
     private function sendStatusEmail(JobApplicationProgress $progress, $applicant, string $portalToken, string $status): void
     {
-        Log::info('Status: ' . $status);
         $phase = $progress->phase;
         $emailTemplate = $status === 'accepted'
             ? $phase->acceptanceTemplate
             : $phase->rejectionTemplate;
 
-        Log::info('Progress:' . $progress);
-        Log::info('Email Template: ' . $emailTemplate);
         if ($emailTemplate) {
             Mail::to($applicant->email)->send(
                 new JobApplicationEmail($applicant, $emailTemplate, $portalToken)
@@ -133,12 +130,21 @@ class JobApplicationProgressService
      */
     private function createNextPhase(int $jobApplicationId, int $nextPhaseId, string $screeningType): void
     {
-        JobApplicationProgress::create([
+        $payload = [
             'job_application_id' => $jobApplicationId,
             'job_application_phase_id' => $nextPhaseId,
             'screening_type' => $screeningType,
             'status' => 'in-progress',
-            'start_date' => now()
-        ]);
+            'start_date' => now(),
+            'reviewer_remarks' => "",
+        ];
+
+        $nextPhase = JobApplicationProgress::create($payload);
+
+        if ($nextPhase) {
+            Log::info("Next phase created successfully", ['next_phase_id' => $nextPhase->id, 'payload' => $payload]);
+        } else {
+            Log::error("Failed to create next phase", ['payload' => $payload]);
+        }
     }
 }

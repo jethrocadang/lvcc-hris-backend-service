@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use phpDocumentor\Reflection\Types\Nullable;
 
 return new class extends Migration
 {
@@ -29,6 +30,7 @@ return new class extends Migration
                 ->constrained('job_application_phases')
                 ->onDelete('cascade'); // Cascade if application progress is removed
 
+            $table->string('interview_type')->nullable();
             $table->date('selected_date'); // Date selected by the applicant
             $table->time('selected_time'); // Time selected by the applicant
 
