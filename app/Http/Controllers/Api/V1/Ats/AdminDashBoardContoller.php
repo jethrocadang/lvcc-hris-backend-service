@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Api\V1\Ats;
 
 use App\Models\JobApplicant;
+use App\Models\JobApplicationPhase;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
-
 use Illuminate\Http\Request;
 
 class AdminDashBoardContoller extends Controller
@@ -17,17 +17,23 @@ class AdminDashBoardContoller extends Controller
         // Total applications
         $totalCandidates = JobApplicant::count();
 
-        // Shortlisted candidates (you may need to adjust logic depending on your schema)
-        $shortlisted = JobApplicant::whereHas('jobApplicationProgress', function ($query) {
-            $query->where('status', 'shortlisted');
-        })->count();
+        // Get the phase ID for "Shortlisted"
+        $shortlistedPhaseId = JobApplicationPhase::where('slug', 'phase-two')->value('id');
 
-        // Rejected candidates
+        // Applicants currently in the Shortlisted phase (latest progress is Shortlisted)
+        $shortlistedApplicants = JobApplicant::whereHas('jobApplicationProgress', function ($query) use ($shortlistedPhaseId) {
+            $query->where('job_application_phase_id', $shortlistedPhaseId);
+        })->get();
+
+        // Count of shortlisted applicants
+        $shortlisted = $shortlistedApplicants->count();
+
+        // Rejected candidates (status = rejected in any phase)
         $rejected = JobApplicant::whereHas('jobApplicationProgress', function ($query) {
             $query->where('status', 'rejected');
         })->count();
 
-        // Hired candidates
+        // Hired candidates (status = hired in any phase)
         $hired = JobApplicant::whereHas('jobApplicationProgress', function ($query) {
             $query->where('status', 'hired');
         })->count();
@@ -35,6 +41,7 @@ class AdminDashBoardContoller extends Controller
         return response()->json([
             'totalCandidates' => $totalCandidates,
             'shortlisted' => $shortlisted,
+            'shortlisted_applicants' => $shortlistedApplicants, // You can remove this if you only want the count
             'rejected' => $rejected,
             'hired' => $hired,
         ]);
@@ -62,5 +69,49 @@ class AdminDashBoardContoller extends Controller
         });
 
         return response()->json($months);
+    }
+
+    public function applicationFunnel(): JsonResponse
+    {
+        // Define the slugs for each phase in order
+        $phaseSlugs = [
+            'phase-one',
+            'phase-two',
+            'phase-three',
+            'phase-four',
+            'phase-five-demo',
+            'phase-five-technical',
+            'phase-six',
+            'phase-seven',
+        ];
+
+        $funnel = [];
+
+        foreach ($phaseSlugs as $slug) {
+            // Get the phase ID for the current slug
+            $phase = JobApplicationPhase::where('slug', $slug)->first();
+
+            if (!$phase) {
+                $funnel[] = [
+                    'slug' => $slug,
+                    'title' => null,
+                    'count' => 0,
+                ];
+                continue;
+            }
+
+            // Count applicants whose latest progress is this phase
+            $count = JobApplicant::whereHas('jobApplicationProgress', function ($query) use ($phase) {
+                $query->where('job_application_phase_id', $phase->id);
+            })->count();
+
+            $funnel[] = [
+                'slug' => $slug,
+                'title' => $phase->title,
+                'count' => $count,
+            ];
+        }
+
+        return response()->json($funnel);
     }
 }

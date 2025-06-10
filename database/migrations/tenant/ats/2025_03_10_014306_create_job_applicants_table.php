@@ -20,7 +20,7 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('avatar_url')->nullable();
             $table->string('verification_token', 40)->nullable()->unique();
-            $table->enum('status', ['not_verified', 'active', 'archived', 'rejected'])->default('active');
+            $table->enum('status', ['not_verified', 'active', 'archived', 'hired','rejected'])->default('active');
 
             $table->timestamps();
         });

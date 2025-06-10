@@ -60,6 +60,7 @@ Route::middleware('tenant')->group(function () {
         Route::controller(AdminDashBoardContoller::class)->prefix('ats/admin/dashboard')->group(function () {
             Route::get('/metrics', 'getDashboardMetrics');
             Route::get('/monthly-applications', 'getMonthlyApplicationCounts');
+            Route::get('/funnel', 'applicationFunnel');
         });
     });
 });
