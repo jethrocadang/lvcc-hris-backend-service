@@ -59,22 +59,22 @@ Route::middleware(['auth.jwt'])->group(function () {
     Route::delete('hris/departments/{departmentId}/job-position/{jobPositionId}', [DepartmentController::class, 'detachDepartmentJobPosition']);
 
     // Department management (CRUD)
-    Route::apiResource('hris/departments', DepartmentController::class); 
+    Route::apiResource('hris/departments', DepartmentController::class);
 
     // Job Position management (CRUD)
-    Route::apiResource('hris/job-positions', JobPositionController::class); 
+    Route::apiResource('hris/job-positions', JobPositionController::class);
 
     // Data Privacy Policies management (CRUD)
-    Route::apiResource('hris/policies', PolicyController::class); 
+    Route::apiResource('hris/policies', PolicyController::class);
 
     // User Policy Agreements management (CRUD)
     Route::apiResource('hris/user-policy', UserPolicyAgreementController::class);
 
     // Email Templates management (CRUD)
-    Route::apiResource('hris/email-templates', EmailTemplateController::class); 
+    Route::apiResource('hris/email-templates', EmailTemplateController::class);
 
     // Interview Schedule Slots management (CRUD)
-    Route::apiResource('hris/interview-slots', InterviewScheduleSlotController::class)->except(['index']); 
+    Route::apiResource('hris/interview-slots', InterviewScheduleSlotController::class)->except(['index']);
 
     // Update only the employee's additional information or the core
     Route::get('hris/employees/auth-user', [EmployeeController::class, 'getByAuthenticatedUser']);
@@ -82,7 +82,7 @@ Route::middleware(['auth.jwt'])->group(function () {
     Route::patch('hris/employees/{id}/core', [EmployeeController::class, 'updateEmployeeOnly']);
 
     // Employees management (CRUD)
-    Route::apiResource('hris/employees', EmployeeController::class); 
+    Route::apiResource('hris/employees', EmployeeController::class);
 
     // Roles and Permissions
     Route::get('hris/roles-permissions', [RolesPermissionsController::class, 'index']);
@@ -98,5 +98,7 @@ Route::middleware(['auth.jwt'])->group(function () {
 
     // Activity Logs
     Route::get('hris/activity-logs', [ActivityLogController::class, 'index']);
+
+    Route::post('auth/logout',[AuthController::class, 'logout']);
 
 });

@@ -12,6 +12,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\Auth\UpdatePasswordRequest;
+use Tymon\JWTAuth\Facades\JWTAuth;
+use Tymon\JWTAuth\Exceptions\JWTException;
 
 /**
  * AuthController handles user authentication-related operations,
@@ -124,6 +126,23 @@ class AuthController extends Controller
         return $result['success']
             ? $this->successResponse($result['message'], [])
             : $this->errorResponse($result['message'], [], 400);
+    }
+
+    public function logout(Request $request)
+    {
+        try {
+            JWTAuth::invalidate(JWTAuth::getToken());
+
+            return response()->json([
+                'message' => 'Successfully logged out'
+            ])->withCookie(
+                cookie()->forget('refresh_token') // Must match the cookie name used
+            );
+        } catch (JWTException $e) {
+            return response()->json([
+                'error' => 'Failed to logout'
+            ], 500);
+        }
     }
 
     //TODO add MFA
