@@ -19,12 +19,17 @@ class TrainingRequest extends Model
         'supervisor_id',
         'officer_id',
         'subject',
-        'body',
+        'description',
+        'justification',
+        'expected_outcome',
+        'training_format',
+        'estimated_duration',
         'supervisor_status',
         'supervisor_reviewed_at',
         'officer_status',
         'officer_reviewed_at',
         'request_status',
+        'rejection_reason'
     ];
 
     public function  employee()
@@ -50,7 +55,7 @@ class TrainingRequest extends Model
             ->useLogName('training request')
             ->setDescriptionForEvent(function (string $eventName) {
                 $dirty = collect($this->getDirty())->except('updated_at')->toJson();
-    
+
                 return ucfirst($eventName) . " training request: {$dirty}";
             });
     }
