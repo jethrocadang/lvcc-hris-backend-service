@@ -43,7 +43,7 @@ class TrainingRequestResource extends JsonResource
             'officerStatus' => $this->officer_status,
             'officerReviewedAt' => $this->officer_reviewed_at,
             'requestStatus' => $this->request_status,
-            'rejection_reason' => $this->rejection_reason,
+            'rejectionReason' => $this->rejection_reason,
             'createdAt' => $this->created_at,
             'updatedAt' => $this->updated_at,
         ];

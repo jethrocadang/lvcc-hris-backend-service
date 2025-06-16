@@ -40,6 +40,25 @@ class TrainingRequestService
         }
     }
 
+    public function getTrainingRequestByEmployeeId(int $employeeId, array $filters = [], int $perPage = 10)
+    {
+        try {
+            return QueryBuilder::for(TrainingRequest::with(['employee', 'supervisor', 'officer']))
+                ->where('employee_id', $employeeId)
+                ->allowedFilters([
+                    AllowedFilter::exact('supervisor_status'),
+                    AllowedFilter::exact('officer_status'),
+                    AllowedFilter::exact('department_position_id'),
+                    AllowedFilter::exact('request_status')
+                ])
+                ->allowedSorts(['request_status', 'created_at'])
+                ->paginate($perPage)
+                ->appends($filters);
+        } catch (Exception $e) {
+            \Log::error('Failed to retrieve training requests by employee', ['error' => $e->getMessage()]);
+            return new LengthAwarePaginator([], 0, $perPage);
+        }
+    }
 
     public function getByDepartment(int $departmentId, Request $request)
     {
@@ -198,6 +217,23 @@ class TrainingRequestService
             throw $e;
         } catch (Exception $e) {
             Log::error("Officer approval failed", ['error' => $e->getMessage()]);
+            throw $e;
+        }
+    }
+    public function updateTrainingRequest(int $id, TrainingRequestRequest $request): TrainingRequestResource
+    {
+        try {
+            $trainingRequest = TrainingRequest::findOrFail($id);
+
+            $data = $request->validated();
+            $trainingRequest->update($data);
+
+            return new TrainingRequestResource($trainingRequest);
+        } catch (ModelNotFoundException $e) {
+            Log::error('Training request not found for update.', ['id' => $id]);
+            throw $e;
+        } catch (Exception $e) {
+            Log::error('Training request update failed', ['error' => $e->getMessage()]);
             throw $e;
         }
     }

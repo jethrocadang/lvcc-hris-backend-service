@@ -22,6 +22,7 @@ Route::middleware('tenant')->group(function () {
 
         //GET TRAINING REQEUST BY DEPARTMENT
         Route::get('eth/training-requests/by-department/{department}', [TrainingRequestController::class, 'getByDepartment']);
+        Route::get('eth/training-requests/by-employee/{employeeId}', [TrainingRequestController::class, 'getRequestByEmployeeId']);
 
         //TRAINING REQUEST CRUD
         Route::apiResource('eth/training-requests', TrainingRequestController::class);
