@@ -30,8 +30,13 @@ class JobPost extends Model
      */
     public function department()
     {
-        return $this->belongsTo(Department::class, 'department_id')
-            ->on('landlord');
+        try {
+            return $this->belongsTo(Department::class, 'department_id')
+                ->on('landlord');
+        } catch (\Exception $e) {
+            \Log::error('Error in department relationship: ' . $e->getMessage());
+            return $this->morphTo()->morphWithoutConstraints();
+        }
     }
 
     public function jobSelectionOption()
