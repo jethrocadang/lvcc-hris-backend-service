@@ -40,7 +40,7 @@ return new class extends Migration
             $table->text('justification');
             $table->text('expected_outcome');
             $table->string('training_format');
-            $table->string('expected_duration');
+            $table->string('estimated_duration');
 
             // Supervisor review
             $table->enum('supervisor_status', ['approved', 'pending', 'rejected'])->default('pending'); // Default: pending
