@@ -14,15 +14,8 @@ class JobPostResource extends JsonResource
      */
     public function toArray($request)
     {
-        return [
+        $data = [
             'id' => $this->id,
-            'department' => $this->when($this->relationLoaded('department'), function () {
-                return [
-                    'id' => $this->department->id,
-                    'name' => $this->department->name,
-                    // 'description' => $this->department->description,
-                ];
-            }),
             'departmentId' => $this->department_id,
             'workType' => $this->work_type,
             'jobType' => $this->job_type,
@@ -35,5 +28,15 @@ class JobPostResource extends JsonResource
             'updatedAt' => $this->updated_at,
             'createdAt' => $this->created_at
         ];
+
+        // Only include department data if the relationship is loaded and accessible
+        if ($this->relationLoaded('department') && $this->department) {
+            $data['department'] = [
+                'id' => $this->department->id,
+                'name' => $this->department->name,
+            ];
+        }
+
+        return $data;
     }
 }

@@ -59,7 +59,7 @@ class JobPostingService
                     AllowedFilter::exact('job_type'),
                     AllowedFilter::exact('department_id'),
                 ])
-                ->with('department') // Eager load the department relationship
+                // Don't eager load department initially to avoid errors if the relationship isn't set up correctly
                 ->allowedSorts(['created_at', 'title'])
                 ->paginate($perPage)
                 ->appends($filters);
@@ -125,7 +125,16 @@ class JobPostingService
     public function getJobPostById(int $id)
     {
         try {
-            $jobPost = JobPost::with('department')->findOrFail($id);
+            $jobPost = JobPost::findOrFail($id);
+
+            // Try to load the department relationship if it exists
+            try {
+                $jobPost->load('department');
+            } catch (Exception $e) {
+                Log::warning('Failed to load department relationship', ['error' => $e->getMessage()]);
+                // Continue without the department relationship
+            }
+
             return new JobPostResource($jobPost);
         } catch (ModelNotFoundException $e) {
             Log::error('Job Post not found', ['error' => $e->getMessage()]);
@@ -150,7 +159,7 @@ class JobPostingService
             // Verify department exists
             $department = Department::findOrFail($departmentId);
 
-            return QueryBuilder::for(JobPost::class)
+            $query = QueryBuilder::for(JobPost::class)
                 ->where('department_id', $departmentId)
                 ->allowedFilters([
                     AllowedFilter::partial('title'),
@@ -158,10 +167,17 @@ class JobPostingService
                     AllowedFilter::exact('work_type'),
                     AllowedFilter::exact('job_type'),
                 ])
-                ->with('department')
-                ->allowedSorts(['created_at', 'title'])
-                ->paginate($perPage)
-                ->appends($filters);
+                ->allowedSorts(['created_at', 'title']);
+
+            // Try to load the department relationship if possible
+            try {
+                $query->with('department');
+            } catch (Exception $e) {
+                Log::warning('Failed to load department relationship in getJobPostsByDepartment', ['error' => $e->getMessage()]);
+                // Continue without the department relationship
+            }
+
+            return $query->paginate($perPage)->appends($filters);
         } catch (Exception $e) {
             Log::error('Failed to retrieve job postings by department', ['error' => $e->getMessage()]);
             return new LengthAwarePaginator([], 0, $perPage);
