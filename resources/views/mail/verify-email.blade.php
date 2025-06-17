@@ -91,8 +91,8 @@
                             <table cellpadding="0" cellspacing="0" border="0" width="100%" em="atom">
                                 <tr>
                                     <td style="padding: 17px 15px 10px; background-color: #ffffff; border-radius: 7px;" bgcolor="#ffffff">
-                                        <div style="font-size: 16px; line-height: 24px; color: #333333;"><span style="font-family: Georgia, serif;">Hello {{ $applicant->first_name }},</span><br><br>
-                                            <font face="Georgia, serif">We receive your application, please verify your email first to gain access for the portal by clicking the button below.</font>
+                                        <div style="font-size: 18px; line-height: 24px; color: #333333;"><span style="font-family: Georgia, serif;">Dear {{ $applicant->first_name }},</span><br><br>
+                                            <font face="Georgia, serif">We receive your application, please verify your email first to gain access to the portal by clicking the button below.</font>
                                         </div>
                                     </td>
                                 </tr>

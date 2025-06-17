@@ -183,10 +183,14 @@
                                 <tr>
                                     <td style="padding: 17px 15px 10px; background-color: #ffffff; border-radius: 7px;"
                                         bgcolor="#ffffff">
-                                        <div style="font-size: 16px; line-height: 24px; color: #333333;"><span
-                                                style="font-family: Georgia, serif;">Hello
+                                        <div style="font-size: 18px; line-height: 24px; color: #333333;"><span
+                                                style="font-family: Georgia, serif;">Dear
                                                 {{ $applicant->first_name }},</span><br><br>
                                             {!! str_replace('{applicant}', e($applicant->first_name), $email->body) !!}
+                                            <br>
+                                            <span>Best Regards,</span>
+                                            <br><br>
+                                            <span>HR Recruitment Team</span>
                                         </div>
                                     </td>
                                 </tr>
