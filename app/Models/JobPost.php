@@ -10,9 +10,10 @@ use Spatie\Activitylog\Traits\LogsActivity;
 
 class JobPost extends Model
 {
-    use HasFactory, UsesTenantConnection;
+    use HasFactory, UsesTenantConnection, LogsActivity;
 
     protected $fillable = [
+        'department_id',
         'work_type',
         'job_type',
         'title',
@@ -20,13 +21,22 @@ class JobPost extends Model
         'icon_url',
         'status',
         'location',
-        'category' 
+        'category'
     ];
 
+    /**
+     * Get the department associated with the job post.
+     * This relationship crosses database connections (tenant to landlord).
+     */
+    public function department()
+    {
+        return $this->belongsTo(Department::class, 'department_id')
+            ->on('landlord');
+    }
 
     public function jobSelectionOption()
     {
-        $this->hasMany(JobSelectionOption::class, 'job_id');
+        return $this->hasMany(JobSelectionOption::class, 'job_id');
     }
 
     public function getActivitylogOptions(): LogOptions

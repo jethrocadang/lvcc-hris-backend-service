@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\V1\Eth\EmployeeCourseProgressController;
 use App\Http\Controllers\Api\V1\Eth\TrainingCourseFeedbackController;
 use App\Http\Controllers\Api\V1\Eth\TrainingCourseEnrollmentController;
 use App\Http\Controllers\Api\V1\Eth\ExternalTrainingAttendanceController;
+use App\Http\Controllers\Api\V1\Eth\EvaluationFormController;
 
 Route::middleware('tenant')->group(function () {
 
@@ -46,6 +47,17 @@ Route::middleware('tenant')->group(function () {
 
         //EXTERNAL TRAINING ATTENDANCE
         Route::apiResource('eth/external-training', ExternalTrainingAttendanceController::class);
+
+        //EVALUATION FORMS
+        Route::apiResource('eth/evaluation-forms', EvaluationFormController::class);
+
+        //GET EVALUATION FORMS BY COURSE ID
+        Route::get('eth/courses/{courseId}/evaluation-forms', [EvaluationFormController::class, 'getByCourseId']);
+
+        //EVALUATION RESPONSE OPERATIONS
+        Route::post('eth/evaluation-responses', [EvaluationFormController::class, 'submitResponses']);
+        Route::get('eth/evaluation-forms/{formId}/responses', [EvaluationFormController::class, 'getResponses']);
+        Route::get('eth/evaluation-forms/{formId}/employees/{employeeId}/responses', [EvaluationFormController::class, 'getEmployeeResponses']);
 
     });
 

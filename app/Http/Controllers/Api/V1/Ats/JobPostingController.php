@@ -59,7 +59,6 @@ class JobPostingController extends Controller
     public function show(int $id): JsonResponse
     {
         try {
-
             $jobPost = $this->jobPostingService->getJobPostById($id);
             return $this->successResponse('Job Post retrieved successfully!', $jobPost);
         } catch (ModelNotFoundException $e) {
@@ -68,8 +67,6 @@ class JobPostingController extends Controller
             return $this->errorResponse('Failed to retrieve Job Posts!', ['error' => $e->getMessage()], 500);
         }
     }
-
-
 
     public function update(JobPostRequest $request, int $id): JsonResponse
     {
@@ -87,5 +84,40 @@ class JobPostingController extends Controller
         return $deleted
             ? $this->successResponse('Job posting deleted successfully!', [])
             : $this->errorResponse('Failed to delete job posting!', [], 500);
+    }
+
+    /**
+     * Get job posts by department ID.
+     *
+     * @param int $departmentId
+     * @param JobPostGetRequest $request
+     * @return JsonResponse
+     */
+    public function getByDepartment(int $departmentId, JobPostGetRequest $request): JsonResponse
+    {
+        try {
+            $filters = $request->validated();
+            $perPage = (int) ($filters['per_page'] ?? 10);
+
+            $jobPosts = $this->jobPostingService->getJobPostsByDepartment($departmentId, $filters, $perPage);
+
+            // Pagination info
+            $meta = [
+                'current_page' => $jobPosts->currentPage(),
+                'last_page' => $jobPosts->lastPage(),
+                'total' => $jobPosts->total(),
+            ];
+
+            return $this->successResponse(
+                'Job postings for department retrieved successfully!',
+                JobPostResource::collection($jobPosts),
+                200,
+                $meta
+            );
+        } catch (ModelNotFoundException $e) {
+            return $this->errorResponse('Department not found.', [], 404);
+        } catch (Exception $e) {
+            return $this->errorResponse('Failed to retrieve job postings by department!', ['error' => $e->getMessage()], 500);
+        }
     }
 }

@@ -16,6 +16,14 @@ class JobPostResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'department' => $this->when($this->relationLoaded('department'), function () {
+                return [
+                    'id' => $this->department->id,
+                    'name' => $this->department->name,
+                    // 'description' => $this->department->description,
+                ];
+            }),
+            'departmentId' => $this->department_id,
             'workType' => $this->work_type,
             'jobType' => $this->job_type,
             'title' => $this->title,
