@@ -7,6 +7,7 @@ use App\Http\Requests\Ats\JobPostGetRequest;
 use App\Traits\ApiResponse;
 use App\Http\Requests\Ats\JobPostRequest;
 use App\Http\Resources\JobPostResource;
+use App\Http\Resources\JobPostCollection;
 use App\Services\Ats\JobPostingService;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -47,10 +48,10 @@ class JobPostingController extends Controller
             'total' => $jobPosts->total(),
         ];
 
-        // Return data with meta
+        // Return data with meta using JobPostCollection
         return $this->successResponse(
             'Job postings retrieved successfully!',
-            JobPostResource::collection($jobPosts),
+            new JobPostCollection($jobPosts),
             200,
             $meta
         );
@@ -110,7 +111,7 @@ class JobPostingController extends Controller
 
             return $this->successResponse(
                 'Job postings for department retrieved successfully!',
-                JobPostResource::collection($jobPosts),
+                new JobPostCollection($jobPosts),
                 200,
                 $meta
             );

@@ -51,7 +51,7 @@ class JobPostingService
     public function getJobPosts(array $filters = [], int $perPage = 10): LengthAwarePaginator
     {
         try {
-            return QueryBuilder::for(JobPost::class)
+            $query = QueryBuilder::for(JobPost::class)
                 ->allowedFilters([
                     AllowedFilter::partial('title'),
                     AllowedFilter::exact('status'),
@@ -59,10 +59,24 @@ class JobPostingService
                     AllowedFilter::exact('job_type'),
                     AllowedFilter::exact('department_id'),
                 ])
-                // Don't eager load department initially to avoid errors if the relationship isn't set up correctly
-                ->allowedSorts(['created_at', 'title'])
-                ->paginate($perPage)
-                ->appends($filters);
+                ->allowedSorts(['created_at', 'title']);
+
+            // Explicitly load department relationship
+            try {
+                // Try to load department relationship
+                $jobPosts = $query->paginate($perPage)->appends($filters);
+                foreach ($jobPosts as $jobPost) {
+                    try {
+                        $jobPost->load('department');
+                    } catch (\Exception $e) {
+                        \Log::warning("Failed to load department for job post {$jobPost->id}: {$e->getMessage()}");
+                    }
+                }
+                return $jobPosts;
+            } catch (\Exception $e) {
+                \Log::warning("Failed to load departments: {$e->getMessage()}");
+                return $query->paginate($perPage)->appends($filters);
+            }
         } catch (Exception $e) {
             Log::error('Failed to retrieve job postings', ['error' => $e->getMessage()]);
             return new LengthAwarePaginator([], 0, $perPage);
@@ -129,7 +143,14 @@ class JobPostingService
 
             // Try to load the department relationship if it exists
             try {
-                $jobPost->load('department');
+                $departmentId = $jobPost->department_id;
+                if ($departmentId) {
+                    $department = \App\Models\Department::find($departmentId);
+                    if ($department) {
+                        // Force load the department relationship
+                        $jobPost->setRelation('department', $department);
+                    }
+                }
             } catch (Exception $e) {
                 Log::warning('Failed to load department relationship', ['error' => $e->getMessage()]);
                 // Continue without the department relationship
@@ -169,15 +190,20 @@ class JobPostingService
                 ])
                 ->allowedSorts(['created_at', 'title']);
 
-            // Try to load the department relationship if possible
-            try {
-                $query->with('department');
-            } catch (Exception $e) {
-                Log::warning('Failed to load department relationship in getJobPostsByDepartment', ['error' => $e->getMessage()]);
-                // Continue without the department relationship
+            // Get paginated results
+            $jobPosts = $query->paginate($perPage)->appends($filters);
+
+            // Manually set the department relation for each job post
+            foreach ($jobPosts as $jobPost) {
+                try {
+                    // Force set the department relation to ensure it's available
+                    $jobPost->setRelation('department', $department);
+                } catch (\Exception $e) {
+                    Log::warning("Failed to set department relation for job post {$jobPost->id}", ['error' => $e->getMessage()]);
+                }
             }
 
-            return $query->paginate($perPage)->appends($filters);
+            return $jobPosts;
         } catch (Exception $e) {
             Log::error('Failed to retrieve job postings by department', ['error' => $e->getMessage()]);
             return new LengthAwarePaginator([], 0, $perPage);
