@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             UsersTableSeeder::class,
             EmployeeSeeder::class,
             CourseSeeder::class,
+            EvaluationFormSeeder::class,
         ]);
 
     }

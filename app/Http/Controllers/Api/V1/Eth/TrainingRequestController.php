@@ -49,6 +49,27 @@ class TrainingRequestController extends Controller
         );
     }
 
+    public function getRequestByEmployeeId($employeeId, Request $request)
+    {
+        $filters = $request->all();
+        $perPage = (int) ($filters['per_page'] ?? 10);
+
+        $trainingRequests = $this->trainingRequestService->getTrainingRequestByEmployeeId($employeeId, $filters, $perPage);
+
+        $meta = [
+            'current_page' => $trainingRequests->currentPage(),
+            'last_page' => $trainingRequests->lastPage(),
+            'total' => $trainingRequests->total(),
+        ];
+
+        return $this->successResponse(
+            'Training requests retrieved successfully!',
+            TrainingRequestResource::collection($trainingRequests),
+            200,
+            $meta
+        );
+    }
+
 
     public function getByDepartment($departmentId, Request $request)
     {
@@ -71,7 +92,17 @@ class TrainingRequestController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id) {}
+    public function show(int $id):JsonResponse
+    {
+        try {
+            $trainingRequest = $this->trainingRequestService->getTrainingRequestById($id);
+            return $this->successResponse('Training request retrieved successfully!', $trainingRequest, 200);
+        } catch (ModelNotFoundException $e) {
+            return $this->errorResponse('Training request not found.', ['error' => $e->getMessage()], 404);
+        } catch (Exception $e) {
+            return $this->errorResponse('An error occurred while retrieving the training request.', ['error' => $e->getMessage()], 500);
+        }
+    }
 
     /**
      * Store a newly created resource in storage.
@@ -111,5 +142,20 @@ class TrainingRequestController extends Controller
     public function supervisorReject($id)
     {
         return $this->trainingRequestService->rejectBySupervisor($id);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(TrainingRequestRequest $request, int $id): JsonResponse
+    {
+        try {
+            $trainingRequest = $this->trainingRequestService->updateTrainingRequest($id, $request);
+            return $this->successResponse('Training request updated successfully!', $trainingRequest, 200);
+        } catch (ModelNotFoundException $e) {
+            return $this->errorResponse('Training request not found.', ['error' => $e->getMessage()], 404);
+        } catch (Exception $e) {
+            return $this->errorResponse('An error occurred while updating the training request.', ['error' => $e->getMessage()], 500);
+        }
     }
 }

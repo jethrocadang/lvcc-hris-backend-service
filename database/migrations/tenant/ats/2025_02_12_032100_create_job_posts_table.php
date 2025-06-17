@@ -19,6 +19,9 @@ return new class extends Migration
 
             $table->unsignedBigInteger('created_by')->index()->nullable();
 
+            //Link to department in hris
+            $table->unsignedBigInteger('department_id')->index()->nullable();
+
             $table->enum('work_type', ['full-time', 'part-time', 'internship']);
             // Specifies the employment arrangement (e.g., full-time or internship)
 

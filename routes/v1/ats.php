@@ -19,6 +19,7 @@ Route::middleware('tenant')->group(function () {
     Route::get('ats/ats-email-templates', [AtsEmailtemplateController::class, 'index']);
     Route::get('ats/ats-email-templates/{id}', [AtsEmailtemplateController::class, 'show']);
     Route::get('ats/job-posts/{id}', [JobPostingController::class, 'show']);
+    Route::get('ats/departments/{departmentId}/job-posts', [JobPostingController::class, 'getByDepartment']);
 
     // Public API endpoint for pre-application [Input Data: Name, Email]
     Route::post('ats/pre-application', [JobPreApplicationController::class, 'jobPreApplication']);

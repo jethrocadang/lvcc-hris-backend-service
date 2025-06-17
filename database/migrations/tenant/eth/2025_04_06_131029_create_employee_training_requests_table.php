@@ -36,7 +36,11 @@ return new class extends Migration
 
             // Request content
             $table->string('subject'); // Brief request title
-            $table->text('body'); // Full message or details
+            $table->text('description'); // Full message or details
+            $table->text('justification');
+            $table->text('expected_outcome');
+            $table->string('training_format');
+            $table->string('estimated_duration');
 
             // Supervisor review
             $table->enum('supervisor_status', ['approved', 'pending', 'rejected'])->default('pending'); // Default: pending
@@ -48,6 +52,7 @@ return new class extends Migration
 
             // Final request status (may duplicate logic but helps filtering)
             $table->enum('request_status', ['approved', 'pending', 'rejected'])->default('pending');
+            $table->text('rejection_status')->nullable();
 
             $table->timestamps(); // created_at & updated_at
         });
