@@ -15,8 +15,8 @@ class EvaluationFormSeeder extends Seeder
      */
     public function run(): void
     {
-        // Get some training courses to attach evaluation forms to
-        $trainingCourses = TrainingCourse::take(3)->get();
+        // Get all training courses to attach evaluation forms to
+        $trainingCourses = TrainingCourse::all();
 
         if ($trainingCourses->isEmpty()) {
             // If no courses exist, create a dummy course for the evaluation form
