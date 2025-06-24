@@ -30,6 +30,20 @@ class ExternalTrainingAttendanceController extends Controller
             ? $this->successResponse('External training attendance retrieved successfully!', $externalTrainingAttendance)
             : $this->errorResponse('No external training attendance found', [], 404);
     }
+
+    public function getByEmployeeId(int $employeeId): JsonResponse
+    {
+        try {
+            $externalTrainingAttendances = $this->externalTrainingAttendanceService->getExternalTrainingAttendanceByEmployeeId($employeeId);
+
+            return $externalTrainingAttendances->isNotEmpty()
+                ? $this->successResponse('External training attendance for employee retrieved successfully!', $externalTrainingAttendances)
+                : $this->errorResponse('No external training attendance found for this employee', [], 404);
+        } catch (Exception $e) {
+            return $this->errorResponse('Failed to retrieve external training attendance!', ['error' => $e->getMessage()], 500);
+        }
+    }
+
     public function show(int $id): JsonResponse
     {
         try {
@@ -50,6 +64,19 @@ class ExternalTrainingAttendanceController extends Controller
             return $this->errorResponse('An error occurred while creating the external training attendance.', ['error' => $e->getMessage()], 500);
         }
     }
+
+    public function update(int $id, ExternalTrainingAttendanceRequest $request): JsonResponse
+    {
+        try {
+            $externalTrainingAttendance = $this->externalTrainingAttendanceService->updateExternalTrainingAttendance($id, $request);
+            return $this->successResponse('External training attendance updated successfully!', $externalTrainingAttendance);
+        } catch (ModelNotFoundException $e) {
+            return $this->errorResponse($e->getMessage(), [], 404);
+        } catch (Exception $e) {
+            return $this->errorResponse('Failed to update external training attendance!', ['error' => $e->getMessage()], 500);
+        }
+    }
+
     public function destroy(int $id): JsonResponse
     {
         try{
