@@ -17,11 +17,17 @@ class ExternalTrainingAttendance extends Model
     protected $fillable = [
         'employee_id',
         'training_type',
+        'title',
+        'description',
+        'provider',
+        'training_mode',
+        'location',
         'certificate_url',
+        'hours_completed',
         'date_started',
         'date_completed',
     ];
-    
+
     public function employee()
     {
         return $this->belongsTo(User::class, 'employee_id');

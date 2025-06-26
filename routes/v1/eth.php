@@ -46,6 +46,7 @@ Route::middleware('tenant')->group(function () {
         Route::apiResource('eth/course-feedback', TrainingCourseFeedbackController::class);
 
         //EXTERNAL TRAINING ATTENDANCE
+        Route::get('eth/external-training/by-employee/{employeeId}', [ExternalTrainingAttendanceController::class, 'getByEmployeeId']);
         Route::apiResource('eth/external-training', ExternalTrainingAttendanceController::class);
 
         //EVALUATION FORMS
